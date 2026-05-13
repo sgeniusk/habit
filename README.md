@@ -47,4 +47,5 @@ npm run ci
 ## Product Docs
 
 - PRD: `docs/superpowers/specs/2026-05-13-persona-habit-prd.md`
+- PRD Korean: `docs/superpowers/specs/2026-05-13-persona-habit-prd-ko.md`
 - Implementation plan: `docs/superpowers/plans/2026-05-13-persona-habit-prototype.md`
