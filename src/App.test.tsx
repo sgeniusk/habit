@@ -8,10 +8,45 @@ describe("Persona Habit prototype", () => {
     render(<App />);
 
     expect(screen.getByRole("button", { name: "오늘" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "인증" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "페르소나" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "방" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "스냅" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "집" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "모임" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "리포트" })).toBeInTheDocument();
+  });
+
+  it("shows weather, location, and daily journal choices on Today", () => {
+    render(<App />);
+
+    expect(screen.getByText("서울 성수동")).toBeInTheDocument();
+    expect(screen.getByText("18도 · 산책하기 좋은 맑음")).toBeInTheDocument();
+    expect(screen.getByText("오늘 기록 방식")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "AI랑 같이쓰기" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "혼자 기록하기" })).toBeInTheDocument();
+  });
+
+  it("opens the Snap view with filters and stickers", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "스냅" }));
+
+    expect(screen.getByText("오늘의 한 컷")).toBeInTheDocument();
+    expect(screen.getByText("필터")).toBeInTheDocument();
+    expect(screen.getByText("스티커")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "꾸며서 올리기" })).toBeInTheDocument();
+  });
+
+  it("opens the Home view with persona activities and decoration", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "집" }));
+
+    expect(screen.getByText("페르소나의 집")).toBeInTheDocument();
+    expect(screen.getByText("지금 하는 일")).toBeInTheDocument();
+    expect(screen.getByText("방 꾸미기")).toBeInTheDocument();
+    expect(screen.getByText("페르소나 꾸미기")).toBeInTheDocument();
+    expect(screen.getByText("새벽 학습자")).toBeInTheDocument();
   });
 
   it("opens the report view from the tab bar", async () => {
