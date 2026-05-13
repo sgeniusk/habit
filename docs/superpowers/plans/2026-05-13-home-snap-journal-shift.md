@@ -42,5 +42,5 @@
 - Modify: `README.md` if wording needs alignment.
 
 - [x] Step 1: Update PRDs with the new tab structure and benchmark-inspired feature scope.
-- [ ] Step 2: Run `npm run ci`.
-- [ ] Step 3: Browser verify Vercel/local target after deployment.
+- [x] Step 2: Run `npm run ci`.
+- [x] Step 3: Browser verify Vercel/local target after deployment.
