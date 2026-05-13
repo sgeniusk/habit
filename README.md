@@ -35,13 +35,16 @@ http://127.0.0.1:5173/
 ## Checks
 
 ```bash
-npm test -- --run
+npm run lint
+npm run format:check
+npm run test:run
 npm run build
-npm audit --audit-level=moderate
+npm run ci
 ```
+
+`npm run ci` is the full local harness. GitHub Actions runs the same command on pushes and pull requests to `main`.
 
 ## Product Docs
 
 - PRD: `docs/superpowers/specs/2026-05-13-persona-habit-prd.md`
 - Implementation plan: `docs/superpowers/plans/2026-05-13-persona-habit-prototype.md`
-

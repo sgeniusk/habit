@@ -62,4 +62,3 @@ describe("findHiddenHabitInsights", () => {
     expect(insights.map((insight) => insight.title)).toContain("밤 루틴을 살펴볼 시간");
   });
 });
-

@@ -27,8 +27,7 @@ body {
   margin: 0;
   background:
     linear-gradient(90deg, rgba(28, 39, 51, 0.04) 1px, transparent 1px),
-    linear-gradient(0deg, rgba(28, 39, 51, 0.04) 1px, transparent 1px),
-    #edf4e9;
+    linear-gradient(0deg, rgba(28, 39, 51, 0.04) 1px, transparent 1px), #edf4e9;
   background-size: 22px 22px;
 }
 

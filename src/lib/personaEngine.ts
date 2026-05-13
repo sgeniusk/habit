@@ -105,10 +105,13 @@ export function getPlaceLabel(placeType: PlaceType) {
 }
 
 export function buildPersonaSummaries(records: VerificationRecord[]): PersonaSummary[] {
-  const grouped = records.reduce<Record<HabitCategory, VerificationRecord[]>>((acc, record) => {
-    acc[record.category] = [...(acc[record.category] ?? []), record];
-    return acc;
-  }, {} as Record<HabitCategory, VerificationRecord[]>);
+  const grouped = records.reduce<Record<HabitCategory, VerificationRecord[]>>(
+    (acc, record) => {
+      acc[record.category] = [...(acc[record.category] ?? []), record];
+      return acc;
+    },
+    {} as Record<HabitCategory, VerificationRecord[]>
+  );
 
   const categories = Object.keys(grouped) as HabitCategory[];
   const hasStudy = Boolean(grouped.study?.length);
@@ -118,7 +121,9 @@ export function buildPersonaSummaries(records: VerificationRecord[]): PersonaSum
     .map((category) => {
       const categoryRecords = grouped[category];
       const primaryPlace = findPrimaryPlace(categoryRecords);
-      const samePlaceCount = categoryRecords.filter((record) => record.placeType === primaryPlace).length;
+      const samePlaceCount = categoryRecords.filter(
+        (record) => record.placeType === primaryPlace
+      ).length;
       const consistencyBonus = samePlaceCount > 1 ? samePlaceCount * 20 : 20;
       const xp = categoryRecords.length * 100 + consistencyBonus;
       const level = Math.max(1, Math.floor(xp / 100) + 1);
@@ -187,10 +192,13 @@ export function findHiddenHabitInsights(records: VerificationRecord[]): HabitIns
 }
 
 function findPrimaryPlace(records: VerificationRecord[]): PlaceType {
-  const counts = records.reduce<Record<PlaceType, number>>((acc, record) => {
-    acc[record.placeType] = (acc[record.placeType] ?? 0) + 1;
-    return acc;
-  }, {} as Record<PlaceType, number>);
+  const counts = records.reduce<Record<PlaceType, number>>(
+    (acc, record) => {
+      acc[record.placeType] = (acc[record.placeType] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<PlaceType, number>
+  );
 
   return (Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "other") as PlaceType;
 }
@@ -206,4 +214,3 @@ function buildEvolutionLabel(category: HabitCategory, level: number, placeType: 
 
   return `${getCategoryLabel(category)} 씨앗 단계`;
 }
-

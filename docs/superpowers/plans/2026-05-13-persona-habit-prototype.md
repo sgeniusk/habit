@@ -101,4 +101,3 @@ Expected: local URL is available for browser verification.
 - [ ] **Step 4: Browser verify prototype**
 
 Open the local URL and verify the UI renders, tabs work, text fits, and the capture flow is visible.
-

@@ -370,7 +370,10 @@ function PersonaView({ personas }: { personas: ReturnType<typeof buildPersonaSum
       <div className="persona-list">
         {personas.map((persona, index) => (
           <article className="persona-card" key={persona.archetype}>
-            <PersonaAvatar tone={index % 2 === 0 ? "leaf" : "coral"} accessory={persona.archetype} />
+            <PersonaAvatar
+              tone={index % 2 === 0 ? "leaf" : "coral"}
+              accessory={persona.archetype}
+            />
             <div className="persona-detail">
               <div className="persona-heading">
                 <h2>{persona.name}</h2>
@@ -418,12 +421,7 @@ function RoomsView() {
       </article>
 
       <div className="room-stack">
-        <RoomRow
-          title="도서관 9시 클럽"
-          subtitle="오늘 3명 인증"
-          value="82%"
-          icon={BookOpen}
-        />
+        <RoomRow title="도서관 9시 클럽" subtitle="오늘 3명 인증" value="82%" icon={BookOpen} />
         <RoomRow title="저녁 산책반" subtitle="이번 주 11개 기록" value="64%" icon={Activity} />
         <RoomRow title="덜 시켜먹기" subtitle="식단 인증 연속 4일" value="71%" icon={Apple} />
       </div>
