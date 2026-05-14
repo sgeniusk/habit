@@ -1,0 +1,8 @@
+interface:
+  display_name: "Agent Org Chart"
+  short_description: "Vertical agent org charts"
+  brand_color: "#0F8EDB"
+  default_prompt: "Use $agent-org-chart to create a clean company-style agent organization chart and document the roles, reporting lines, and harness gates."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,73 @@
+---
+name: agent-org-chart
+description: Create and document clean company-style agent organization charts. Use when the user asks for an agent org chart, production agent team map, multi-agent organization, agent reporting lines, harness-managed agent structure, or a visual chart like a corporate organizational chart.
+---
+
+# Agent Org Chart
+
+Use this skill to turn an agent system into a readable, presentation-ready organization chart and a supporting document. Favor a vertical company-org-chart composition over wide left-to-right diagrams.
+
+## Workflow
+
+1. Inspect current project docs before inventing roles. Prioritize PRDs, harness plans, README, recent specs, and existing architecture notes.
+2. Identify the top-level owner, orchestration layer, harness gates, and specialist agents.
+3. Group specialists into 3-5 departments so the chart remains compact.
+4. Create a visual artifact and a written document:
+   - Visual: polished HTML first, using the template pattern in `assets/org-chart-template.html`.
+   - Written doc: Markdown under `docs/agents/` with responsibilities, inputs, outputs, and harness checks.
+5. Keep the diagram portrait or square when possible. Avoid long horizontal Mermaid chains.
+6. Include a short “Operating Rhythm” section that explains how work moves from request to implementation to verification.
+
+## Chart Rules
+
+- Use a central vertical spine with cards branching in compact rows.
+- Show a clear reporting line: Founder/User -> Orchestrator -> Departments -> Specialist agents.
+- Place the Harness Gate near the Orchestrator, not as a distant leaf. It is a recurring approval/checkpoint, not a worker.
+- Use short labels on cards. Put details in the Markdown table, not inside the chart.
+- Use rounded white cards, circular role badges, subtle shadows, connector lines, and restrained blue/teal accents.
+- For Korean projects, write chart labels in Korean unless the repo already uses English for the feature.
+
+## Required Role Set
+
+Adapt names to the project, but cover these responsibilities:
+
+- Founder/User: vision, priorities, final approval.
+- Orchestrator Agent: decomposes work, assigns agents, resolves conflicts.
+- Harness Gate: validates PRD fit, tests, build, UX, deployment, and documentation.
+- Product Detail Agent: turns vague ideas into scoped requirements.
+- Benchmark Agent: studies comparable apps and extracts reusable patterns.
+- UX Flow Agent: owns user journeys and screen transitions.
+- Design System Agent: owns visual language, components, character/room rules.
+- Implementation Agent: builds the prototype or app.
+- AI/Intelligence Agent: owns AI analysis, recommendations, and generated text.
+- Data/Backend Agent: owns schemas, APIs, storage, privacy boundaries.
+- Social/Growth Agent: owns invitation, groups, loops, retention.
+- QA/Release Agent: tests, audits, and release readiness.
+
+## Output Format
+
+Create files with predictable names:
+
+- `docs/agents/<project>-agent-org-chart.md`
+- `docs/agents/<project>-agent-org-chart.html`
+
+The Markdown doc should include:
+
+- Purpose
+- Organization chart link
+- Mermaid fallback using `flowchart TB`
+- Role table
+- Harness gates
+- Operating rhythm
+- Next build queue
+
+The HTML doc should be self-contained, responsive, and visually polished. It may use inline CSS and no external assets.
+
+## Validation
+
+Before finishing:
+
+- Check that the chart does not sprawl horizontally.
+- Check all role cards have concise labels.
+- Check harness gates map to existing scripts or realistic future checks.
+- If the project has tests or docs linting, run the relevant verification.
