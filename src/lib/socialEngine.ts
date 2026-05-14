@@ -12,6 +12,15 @@ export type MeetSuggestion = {
   cta: string;
 };
 
+export type MeetInvite = {
+  status: "초대 링크 생성됨";
+  roomTitle: string;
+  inviteUrl: string;
+  description: string;
+  previewMemberName: string;
+  sharedXp: number;
+};
+
 export function buildMeetSuggestions(records: MeetSignalRecord[]): MeetSuggestion[] {
   const suggestions: MeetSuggestion[] = [];
   const runningRecords = records.filter(isRunningRecord);
@@ -81,4 +90,33 @@ function isRunningRecord(record: MeetSignalRecord) {
   const runningText = /러닝|런닝|run|km|산책|걷/i.test(`${memo} ${sticker}`);
 
   return record.category === "exercise" && (record.placeType === "outdoors" || runningText);
+}
+
+export function buildMeetInvite(suggestion: MeetSuggestion): MeetInvite {
+  const roomTitle = suggestion.title.replace(/\s*추천$/, "");
+
+  return {
+    status: "초대 링크 생성됨",
+    roomTitle,
+    inviteUrl: `https://persona-habit.app/invite/${suggestion.id}-${suggestion.matchScore}`,
+    description: "친구가 링크를 열면 모임 대기실로 들어오고, 첫 스냅을 남기면 공동 XP가 쌓여요.",
+    previewMemberName: buildPreviewMemberName(suggestion.category),
+    sharedXp: 40
+  };
+}
+
+function buildPreviewMemberName(category: HabitCategory) {
+  if (category === "exercise") {
+    return "예비 러너";
+  }
+
+  if (category === "study") {
+    return "집중 메이트";
+  }
+
+  if (category === "meal") {
+    return "식단 메이트";
+  }
+
+  return "루틴 메이트";
 }

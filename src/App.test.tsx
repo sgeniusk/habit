@@ -205,6 +205,25 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByRole("button", { name: "러닝 친구 초대하기" })).toBeInTheDocument();
   });
 
+  it("creates a meet invite link and previews an accepted invite", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "모임" }));
+    await user.click(screen.getByRole("button", { name: "러닝 친구 초대하기" }));
+
+    expect(screen.getByText("초대 링크 생성됨")).toBeInTheDocument();
+    expect(
+      screen.getByText("https://persona-habit.app/invite/running-meet-88")
+    ).toBeInTheDocument();
+    expect(screen.getByText("성수천 러닝 모임 대기실")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "초대 수락 미리보기" }));
+
+    expect(screen.getByText("친구 1명 참여 대기")).toBeInTheDocument();
+    expect(screen.getByText("+40 공동 XP")).toBeInTheDocument();
+  });
+
   it("opens the report view from the tab bar", async () => {
     const user = userEvent.setup();
     render(<App />);

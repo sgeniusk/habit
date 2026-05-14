@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildMeetSuggestions, type MeetSignalRecord } from "./socialEngine";
+import { buildMeetInvite, buildMeetSuggestions, type MeetSignalRecord } from "./socialEngine";
 
 const runningRecords: MeetSignalRecord[] = [
   {
@@ -50,5 +50,20 @@ describe("buildMeetSuggestions", () => {
 
     expect(suggestions[0].title).toBe("도서관 9시 클럽 추천");
     expect(suggestions[0].signalLabel).toBe("도서관 공부 2회");
+  });
+});
+
+describe("buildMeetInvite", () => {
+  it("turns a meet suggestion into a shareable invite", () => {
+    const suggestion = buildMeetSuggestions(runningRecords)[0];
+    const invite = buildMeetInvite(suggestion);
+
+    expect(invite).toMatchObject({
+      status: "초대 링크 생성됨",
+      roomTitle: "성수천 러닝 모임",
+      inviteUrl: "https://persona-habit.app/invite/running-meet-88",
+      previewMemberName: "예비 러너"
+    });
+    expect(invite.description).toContain("친구가 링크를 열면");
   });
 });

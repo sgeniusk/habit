@@ -1,12 +1,29 @@
-import { Activity, Apple, BookOpen, Sparkles, UserPlus, Users } from "lucide-react";
+import { useState } from "react";
+import {
+  Activity,
+  Apple,
+  BookOpen,
+  CheckCircle2,
+  Link,
+  Sparkles,
+  UserPlus,
+  Users
+} from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { RoomRow } from "../components/RoomRow";
-import { buildMeetSuggestions } from "../lib/socialEngine";
+import { buildMeetInvite, buildMeetSuggestions, type MeetInvite } from "../lib/socialEngine";
 import type { SnapRecord } from "../types/habit";
 
 export function MeetView({ records }: { records: SnapRecord[] }) {
   const suggestions = buildMeetSuggestions(records);
   const topSuggestion = suggestions[0];
+  const [invite, setInvite] = useState<MeetInvite | null>(null);
+  const [hasAcceptedPreview, setHasAcceptedPreview] = useState(false);
+
+  function createInvite() {
+    setInvite(buildMeetInvite(topSuggestion));
+    setHasAcceptedPreview(false);
+  }
 
   return (
     <section className="screen rooms-screen" aria-labelledby="meet-title">
@@ -44,11 +61,43 @@ export function MeetView({ records }: { records: SnapRecord[] }) {
           <span>{topSuggestion.signalLabel}</span>
           <strong>{topSuggestion.matchScore}% 맞음</strong>
         </div>
-        <button type="button" className="invite-suggestion-button">
+        <button type="button" className="invite-suggestion-button" onClick={createInvite}>
           <UserPlus size={18} aria-hidden="true" />
           {topSuggestion.cta}
         </button>
       </section>
+
+      {invite ? (
+        <section className="meet-invite-card" aria-labelledby="meet-invite-title">
+          <div className="invite-status-row">
+            <span>
+              <Link size={15} aria-hidden="true" />
+              {hasAcceptedPreview ? "친구 1명 참여 대기" : invite.status}
+            </span>
+            {hasAcceptedPreview ? <strong>+{invite.sharedXp} 공동 XP</strong> : null}
+          </div>
+          <div>
+            <p className="eyebrow">Invite Room</p>
+            <h2 id="meet-invite-title">{invite.roomTitle} 대기실</h2>
+          </div>
+          <p>{invite.description}</p>
+          <code>{invite.inviteUrl}</code>
+          {hasAcceptedPreview ? (
+            <div className="invite-member-row">
+              <CheckCircle2 size={18} aria-hidden="true" />
+              <span>{invite.previewMemberName}가 첫 스냅을 준비 중이에요.</span>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="accept-preview-button"
+              onClick={() => setHasAcceptedPreview(true)}
+            >
+              초대 수락 미리보기
+            </button>
+          )}
+        </section>
+      ) : null}
 
       <div className="room-stack">
         <RoomRow title="도서관 9시 클럽" subtitle="오늘 3명 기록" value="82%" icon={BookOpen} />

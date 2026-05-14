@@ -302,6 +302,7 @@ p {
 }
 
 .meet-suggestion-card,
+.meet-invite-card,
 .memory-section {
   display: grid;
   gap: 13px;
@@ -370,6 +371,80 @@ p {
   font-size: 14px;
   font-weight: 950;
   cursor: pointer;
+}
+
+.meet-invite-card {
+  border-color: rgba(47, 157, 101, 0.32);
+  background:
+    linear-gradient(135deg, rgba(204, 239, 214, 0.88), rgba(255, 255, 255, 0.9)),
+    repeating-linear-gradient(120deg, rgba(47, 157, 101, 0.08) 0 10px, transparent 10px 20px);
+}
+
+.invite-status-row,
+.invite-member-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.invite-status-row {
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.invite-status-row span,
+.invite-status-row strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 0 9px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.invite-status-row span {
+  border: 1px solid rgba(84, 119, 210, 0.28);
+  background: #ffffff;
+  color: var(--blue);
+}
+
+.invite-status-row strong {
+  background: var(--leaf);
+  color: #ffffff;
+}
+
+.meet-invite-card code {
+  display: block;
+  overflow-wrap: anywhere;
+  padding: 11px;
+  border: 1px solid rgba(28, 39, 51, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.accept-preview-button {
+  min-height: 42px;
+  border: 1px solid rgba(47, 157, 101, 0.34);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.invite-member-row {
+  padding: 10px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 900;
 }
 
 .record-icon.meal {
