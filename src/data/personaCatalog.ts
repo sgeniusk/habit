@@ -127,6 +127,21 @@ export const personaCatalog: PersonaCard[] = [
   }
 ];
 
+const personaByCategory: Record<HabitCategory, string> = {
+  study: "dawn-learner",
+  meal: "clean-meal",
+  exercise: "routine-runner",
+  reading: "page-collector",
+  cleaning: "reset-maker",
+  selfcare: "healthy-exam",
+  hobby: "healthy-exam"
+};
+
+export function findPersonaByCategory(category: HabitCategory): PersonaCard {
+  const personaId = personaByCategory[category];
+  return personaCatalog.find((persona) => persona.id === personaId) ?? personaCatalog[0];
+}
+
 export const filterOptions = ["맑은빛", "필름", "집중", "새벽", "단백질"];
 export const stickerOptions = ["🔥 루틴", "📚 공부", "🏃 러닝", "🥗 식단", "✨ 성장"];
 export const roomItems = ["원목 책상", "낮은 서가", "러닝 매트", "그린 식탁"];

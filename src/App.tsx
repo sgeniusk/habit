@@ -19,6 +19,7 @@ import { useMemo, useState } from "react";
 import {
   categoryOptions,
   filterOptions,
+  findPersonaByCategory,
   outfitItems,
   personaCatalog,
   placeOptions,
@@ -48,6 +49,10 @@ export default function App() {
 
   const personas = useMemo(() => buildPersonaSummaries(records), [records]);
   const insights = useMemo(() => findHiddenHabitInsights(records), [records]);
+  const activeHomePersona = useMemo(
+    () => findPersonaByCategory(records[0]?.category ?? "study"),
+    [records]
+  );
   const todayCount = Math.min(3, records.length - initialRecords.length + 1);
 
   function saveRecord() {
@@ -97,7 +102,9 @@ export default function App() {
             onSave={saveRecord}
           />
         )}
-        {activeTab === "home" && <HomeView personas={personaCatalog} />}
+        {activeTab === "home" && (
+          <HomeView personas={personaCatalog} activePersona={activeHomePersona} />
+        )}
         {activeTab === "meet" && <MeetView />}
         {activeTab === "report" && (
           <ReportView records={records} personas={personas} insights={insights} />
@@ -377,9 +384,13 @@ function SnapView({
   );
 }
 
-function HomeView({ personas }: { personas: PersonaCard[] }) {
-  const activePersona = personas[0];
-
+function HomeView({
+  personas,
+  activePersona
+}: {
+  personas: PersonaCard[];
+  activePersona: PersonaCard;
+}) {
   return (
     <section className="screen persona-screen" aria-labelledby="home-title">
       <div className="top-strip">

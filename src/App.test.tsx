@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import App from "./App";
@@ -64,6 +64,28 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByText("방 꾸미기")).toBeInTheDocument();
     expect(screen.getByText("페르소나 꾸미기")).toBeInTheDocument();
     expect(screen.getByText("새벽 학습자")).toBeInTheDocument();
+  });
+
+  it("updates the Home persona activity from the latest snap category", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "스냅" }));
+    await user.click(screen.getByRole("button", { name: "운동" }));
+    await user.click(screen.getByRole("button", { name: "꾸며서 올리기" }));
+    await user.click(
+      within(screen.getByRole("navigation", { name: "주요 화면" })).getByRole("button", {
+        name: "집"
+      })
+    );
+
+    expect(screen.getByRole("heading", { name: "루틴 러너", level: 2 })).toBeInTheDocument();
+    expect(
+      within(screen.getByRole("region", { name: "루틴 러너" })).getByText(
+        "러닝화를 말리고 스트레칭을 하는 중"
+      )
+    ).toBeInTheDocument();
+    expect(screen.getByText("대표 · 루틴 러너")).toBeInTheDocument();
   });
 
   it("opens the report view from the tab bar", async () => {
