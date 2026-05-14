@@ -1,8 +1,28 @@
-import { Camera, Check, ChevronRight, MapPin, PenLine, Sun, Wand2 } from "lucide-react";
+import { useState } from "react";
+import {
+  Camera,
+  Check,
+  ChevronRight,
+  Droplets,
+  MapPin,
+  MessageCircle,
+  PenLine,
+  Route,
+  Send,
+  Sun,
+  Wand2
+} from "lucide-react";
 import { MetricTile } from "../components/MetricTile";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { RecordRow } from "../components/RecordRow";
 import { personaCatalog } from "../data/personaCatalog";
+import {
+  buildJournalDraft,
+  buildJournalOpening,
+  todayJournalContext,
+  type JournalDraft,
+  type JournalMode
+} from "../lib/journalEngine";
 import { findHiddenHabitInsights } from "../lib/personaEngine";
 import type { SnapRecord } from "../types/habit";
 
@@ -18,6 +38,31 @@ export function TodayView({
   onSnap: () => void;
 }) {
   const featuredPersona = personaCatalog[0];
+  const [journalMode, setJournalMode] = useState<JournalMode>("ai");
+  const [journalLine, setJournalLine] = useState("");
+  const [journalDrafts, setJournalDrafts] = useState<JournalDraft[]>([]);
+  const personaOpening =
+    journalMode === "ai"
+      ? buildJournalOpening(todayJournalContext)
+      : "네 문장 그대로 남겨둘게. 오늘의 목소리를 먼저 믿어보자.";
+
+  function saveJournalDraft() {
+    const trimmedLine = journalLine.trim();
+
+    if (!trimmedLine) {
+      return;
+    }
+
+    setJournalDrafts((current) => [
+      buildJournalDraft({
+        text: trimmedLine,
+        mode: journalMode,
+        context: todayJournalContext
+      }),
+      ...current
+    ]);
+    setJournalLine("");
+  }
 
   return (
     <section className="screen today-screen" aria-labelledby="today-title">
@@ -72,16 +117,79 @@ export function TodayView({
           <h2 id="journal-title">오늘 기록 방식</h2>
         </div>
         <div className="mode-switch">
-          <button type="button">
+          <button
+            type="button"
+            className={journalMode === "ai" ? "is-selected" : ""}
+            aria-pressed={journalMode === "ai"}
+            onClick={() => setJournalMode("ai")}
+          >
             <Wand2 size={17} aria-hidden="true" />
             AI랑 같이쓰기
           </button>
-          <button type="button">
+          <button
+            type="button"
+            className={journalMode === "solo" ? "is-selected" : ""}
+            aria-pressed={journalMode === "solo"}
+            onClick={() => setJournalMode("solo")}
+          >
             <PenLine size={17} aria-hidden="true" />
             혼자 기록하기
           </button>
         </div>
-        <p>사진, 날씨, 장소, 오늘의 감정을 바탕으로 일기를 시작할 수 있어요.</p>
+        <div className="journal-context-row" aria-label="오늘 일기 맥락">
+          <span>
+            <Droplets size={15} aria-hidden="true" />
+            습도 {todayJournalContext.humidity}%
+          </span>
+          <span>
+            <Route size={15} aria-hidden="true" />
+            집에서 {todayJournalContext.distanceFromHomeKm}km
+          </span>
+        </div>
+        <div className="journal-dialogue">
+          <div className="journal-persona">
+            <PersonaAvatar tone={featuredPersona.tone} accessory="study" />
+          </div>
+          <div className="journal-bubble">
+            <span>
+              <MessageCircle size={15} aria-hidden="true" />
+              {featuredPersona.name}
+            </span>
+            <p>{personaOpening}</p>
+          </div>
+        </div>
+        <label className="journal-compose">
+          <span>한 줄 일기</span>
+          <textarea
+            value={journalLine}
+            onChange={(event) => setJournalLine(event.target.value)}
+            placeholder="예: 오늘은 괜히 멀리 걷고 싶었어"
+            rows={3}
+          />
+        </label>
+        <button type="button" className="journal-send-button" onClick={saveJournalDraft}>
+          <Send size={18} aria-hidden="true" />
+          <span>정리해줘</span>
+        </button>
+        {journalDrafts.length > 0 ? (
+          <div className="journal-draft-list">
+            {journalDrafts.map((draft) => (
+              <article className="journal-draft-card" key={`${draft.originalLine}-${draft.mode}`}>
+                <p className="journal-original">{draft.originalLine}</p>
+                <p className="journal-persona-line">{draft.personaLine}</p>
+                <div>
+                  <span>정리된 한 줄</span>
+                  <strong>{draft.polishedLine}</strong>
+                </div>
+                <div className="trait-row">
+                  {draft.moodTags.map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       <div className="daily-grid">

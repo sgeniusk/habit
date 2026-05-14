@@ -24,6 +24,34 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByRole("button", { name: "혼자 기록하기" })).toBeInTheDocument();
   });
 
+  it("opens a persona one-line journal and organizes a casual note", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "AI랑 같이쓰기" }));
+
+    expect(
+      screen.getByText("오늘은 맑고 습도 42%. 집에서 조금 멀리 나왔네. 어디 좋은 데 놀러 가?")
+    ).toBeInTheDocument();
+
+    await user.type(
+      screen.getByPlaceholderText("예: 오늘은 괜히 멀리 걷고 싶었어"),
+      "오늘은 괜히 멀리 걷고 싶었어"
+    );
+    await user.click(screen.getByRole("button", { name: "정리해줘" }));
+
+    expect(screen.getByText("오늘은 괜히 멀리 걷고 싶었어")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "집에서 조금 멀리 나왔네. 어디 좋은 데 놀러 가? 돌아오는 길의 느낌도 나한테 말해줘."
+      )
+    ).toBeInTheDocument();
+    expect(screen.getByText("정리된 한 줄")).toBeInTheDocument();
+    expect(
+      screen.getByText("맑은 날씨에 멀리 걸으며 마음의 방향을 다시 잡은 날.")
+    ).toBeInTheDocument();
+  });
+
   it("opens the Snap view with filters and stickers", async () => {
     const user = userEvent.setup();
     render(<App />);
