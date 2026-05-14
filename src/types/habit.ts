@@ -51,3 +51,9 @@ export type PersonaDecorSelection = {
   roomItem: string;
   outfit: string;
 };
+
+export type UserPreferenceState = {
+  decorSelections: Record<string, PersonaDecorSelection>;
+  personaNicknames: Partial<Record<HabitCategory, string>>;
+  selectedProofStamps: ProofStampId[];
+};

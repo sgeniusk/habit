@@ -2,10 +2,15 @@ import { describe, expect, it } from "vitest";
 import {
   loadInsightFeedback,
   loadMeetSuggestionFeedback,
+  loadSnapRecords,
+  loadUserPreferences,
   saveInsightFeedback,
-  saveMeetSuggestionFeedback
+  saveMeetSuggestionFeedback,
+  saveSnapRecords,
+  saveUserPreferences
 } from "./persistence";
 import type { MeetSuggestionFeedback } from "./socialEngine";
+import type { SnapRecord, UserPreferenceState } from "../types/habit";
 
 function createMemoryStorage() {
   const store = new Map<string, string>();
@@ -54,5 +59,60 @@ describe("persistence", () => {
     saveMeetSuggestionFeedback(feedback, storage);
 
     expect(loadMeetSuggestionFeedback(storage)).toEqual(feedback);
+  });
+
+  it("stores snap records for alpha refresh persistence", () => {
+    const storage = createMemoryStorage();
+    const records: SnapRecord[] = [
+      {
+        id: "alpha-snap",
+        category: "study",
+        placeType: "library",
+        memo: "알파 저장 테스트",
+        filter: "필름",
+        sticker: "📚 공부",
+        proofStamps: ["time", "persona"],
+        createdAt: "2026-05-15T09:00:00.000+09:00"
+      }
+    ];
+
+    saveSnapRecords(records, storage);
+
+    expect(loadSnapRecords([], storage)).toEqual(records);
+  });
+
+  it("stores persona, decor, and proof stamp preferences", () => {
+    const storage = createMemoryStorage();
+    const preferences: UserPreferenceState = {
+      decorSelections: {
+        "dawn-learner": {
+          roomItem: "낮은 서가",
+          outfit: "바람막이"
+        }
+      },
+      personaNicknames: {
+        study: "토리",
+        meal: "냠냠",
+        exercise: "달림",
+        reading: "책콩",
+        cleaning: "차곡",
+        selfcare: "숨숨",
+        hobby: "쏙쏙"
+      },
+      selectedProofStamps: ["time", "persona"]
+    };
+
+    saveUserPreferences(preferences, storage);
+
+    expect(
+      loadUserPreferences(
+        {
+          decorSelections: {},
+          personaNicknames: {},
+          selectedProofStamps: []
+        },
+        storage
+      )
+    ).toEqual(preferences);
   });
 });

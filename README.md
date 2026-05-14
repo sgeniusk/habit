@@ -19,6 +19,7 @@
 - Vitest
 - CSS layered character animation
 - Interactive snap decoration and latest-snap persona home reaction
+- Local alpha persistence for snap records, persona nicknames, decor, and proof stamps
 
 ## Local Run
 
@@ -49,6 +50,7 @@ npm run ci
 
 - PRD: `docs/superpowers/specs/2026-05-13-persona-habit-prd.md`
 - PRD Korean: `docs/superpowers/specs/2026-05-13-persona-habit-prd-ko.md`
+- Alpha report: `docs/alpha/persona-habit-alpha-report.md`
 - Roadmap: `docs/roadmap/persona-habit-roadmap.md`
 - Agent org chart: `docs/agents/persona-habit-agent-org-chart.md`
 - Native readiness: `docs/native/expo-readiness-plan.md`

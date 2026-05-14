@@ -1,8 +1,11 @@
+import type { SnapRecord, UserPreferenceState } from "../types/habit";
 import type { MeetSession, MeetSuggestionFeedback } from "./socialEngine";
 
 export const MEET_SESSION_STORAGE_KEY = "persona-habit:meet-session";
 export const MEET_SUGGESTION_FEEDBACK_STORAGE_KEY = "persona-habit:meet-suggestion-feedback";
 export const INSIGHT_FEEDBACK_STORAGE_KEY = "persona-habit:insight-feedback";
+export const SNAP_RECORDS_STORAGE_KEY = "persona-habit:snap-records";
+export const USER_PREFERENCES_STORAGE_KEY = "persona-habit:user-preferences";
 
 export type InsightFeedbackState = {
   hiddenInsightTitles: string[];
@@ -61,6 +64,31 @@ export function saveInsightFeedback(
   storage: StorageLike = window.localStorage
 ) {
   storage.setItem(INSIGHT_FEEDBACK_STORAGE_KEY, JSON.stringify(feedback));
+}
+
+export function loadSnapRecords(
+  fallbackRecords: SnapRecord[],
+  storage: StorageLike = window.localStorage
+) {
+  return loadJson<SnapRecord[]>(SNAP_RECORDS_STORAGE_KEY, fallbackRecords, storage);
+}
+
+export function saveSnapRecords(records: SnapRecord[], storage: StorageLike = window.localStorage) {
+  storage.setItem(SNAP_RECORDS_STORAGE_KEY, JSON.stringify(records));
+}
+
+export function loadUserPreferences(
+  fallbackPreferences: UserPreferenceState,
+  storage: StorageLike = window.localStorage
+) {
+  return loadJson<UserPreferenceState>(USER_PREFERENCES_STORAGE_KEY, fallbackPreferences, storage);
+}
+
+export function saveUserPreferences(
+  preferences: UserPreferenceState,
+  storage: StorageLike = window.localStorage
+) {
+  storage.setItem(USER_PREFERENCES_STORAGE_KEY, JSON.stringify(preferences));
 }
 
 function loadJson<T>(key: string, fallback: T, storage: StorageLike): T {

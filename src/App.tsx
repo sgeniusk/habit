@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   filterOptions,
   findPersonaByCategory,
@@ -7,6 +7,12 @@ import {
   tabs
 } from "./data/personaCatalog";
 import { initialRecords } from "./data/sampleRecords";
+import {
+  loadSnapRecords,
+  loadUserPreferences,
+  saveSnapRecords,
+  saveUserPreferences
+} from "./lib/persistence";
 import { defaultPersonaNicknames } from "./lib/personaIdentity";
 import { buildPersonaSummaries, findHiddenHabitInsights } from "./lib/personaEngine";
 import type {
@@ -15,7 +21,8 @@ import type {
   PlaceType,
   ProofStampId,
   SnapRecord,
-  TabId
+  TabId,
+  UserPreferenceState
 } from "./types/habit";
 import { HomeView } from "./views/HomeView";
 import { MeetView } from "./views/MeetView";
@@ -23,36 +30,42 @@ import { ReportView } from "./views/ReportView";
 import { SnapView } from "./views/SnapView";
 import { TodayView } from "./views/TodayView";
 
+const defaultDecorSelections = Object.fromEntries(
+  personaCatalog.map((persona) => [
+    persona.id,
+    { roomItem: persona.roomItem, outfit: persona.outfit }
+  ])
+) as Record<string, PersonaDecorSelection>;
+
+const defaultUserPreferences: UserPreferenceState = {
+  decorSelections: defaultDecorSelections,
+  personaNicknames: defaultPersonaNicknames,
+  selectedProofStamps: ["time", "count", "persona"]
+};
+
 export default function App() {
   const initialRoute = getInitialRoute();
   const [activeTab, setActiveTab] = useState<TabId>(initialRoute.activeTab);
   const [inviteToken, setInviteToken] = useState(initialRoute.inviteToken);
-  const [records, setRecords] = useState(initialRecords);
-  const [decorSelections, setDecorSelections] = useState<Record<string, PersonaDecorSelection>>(
-    () =>
-      Object.fromEntries(
-        personaCatalog.map((persona) => [
-          persona.id,
-          { roomItem: persona.roomItem, outfit: persona.outfit }
-        ])
-      )
+  const [records, setRecords] = useState(() => loadSnapRecords(initialRecords));
+  const [userPreferences, setUserPreferences] = useState(() =>
+    loadUserPreferences(defaultUserPreferences)
   );
   const [selectedCategory, setSelectedCategory] = useState<HabitCategory>("study");
   const [selectedPlace, setSelectedPlace] = useState<PlaceType>("library");
   const [selectedFilter, setSelectedFilter] = useState(filterOptions[0]);
   const [selectedSticker, setSelectedSticker] = useState(stickerOptions[0]);
-  const [selectedProofStamps, setSelectedProofStamps] = useState<ProofStampId[]>([
-    "time",
-    "count",
-    "persona"
-  ]);
-  const [personaNicknames, setPersonaNicknames] =
-    useState<Record<HabitCategory, string>>(defaultPersonaNicknames);
   const [memo, setMemo] = useState("");
   const [photoName, setPhotoName] = useState("스냅을 찍어보세요");
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState("");
   const [photoError, setPhotoError] = useState("");
   const [savedPulse, setSavedPulse] = useState(false);
+  const decorSelections = userPreferences.decorSelections;
+  const selectedProofStamps = userPreferences.selectedProofStamps;
+  const personaNicknames = {
+    ...defaultPersonaNicknames,
+    ...userPreferences.personaNicknames
+  };
 
   const personas = useMemo(() => buildPersonaSummaries(records), [records]);
   const insights = useMemo(() => findHiddenHabitInsights(records), [records]);
@@ -72,6 +85,14 @@ export default function App() {
     minute: "2-digit",
     hour12: false
   }).format(new Date());
+
+  useEffect(() => {
+    saveSnapRecords(records);
+  }, [records]);
+
+  useEffect(() => {
+    saveUserPreferences(userPreferences);
+  }, [userPreferences]);
 
   function saveRecord() {
     const nextRecord: SnapRecord = {
@@ -127,34 +148,41 @@ export default function App() {
   }
 
   function updateActiveDecor(nextDecor: Partial<PersonaDecorSelection>) {
-    setDecorSelections((current) => {
-      const currentDecor = current[activeHomePersona.id] ?? {
+    setUserPreferences((current) => {
+      const currentDecor = current.decorSelections[activeHomePersona.id] ?? {
         roomItem: activeHomePersona.roomItem,
         outfit: activeHomePersona.outfit
       };
 
       return {
         ...current,
-        [activeHomePersona.id]: {
-          ...currentDecor,
-          ...nextDecor
+        decorSelections: {
+          ...current.decorSelections,
+          [activeHomePersona.id]: {
+            ...currentDecor,
+            ...nextDecor
+          }
         }
       };
     });
   }
 
   function toggleProofStamp(stampId: ProofStampId) {
-    setSelectedProofStamps((current) =>
-      current.includes(stampId)
-        ? current.filter((currentStampId) => currentStampId !== stampId)
-        : [...current, stampId]
-    );
+    setUserPreferences((current) => ({
+      ...current,
+      selectedProofStamps: current.selectedProofStamps.includes(stampId)
+        ? current.selectedProofStamps.filter((currentStampId) => currentStampId !== stampId)
+        : [...current.selectedProofStamps, stampId]
+    }));
   }
 
   function updatePersonaNickname(category: HabitCategory, nickname: string) {
-    setPersonaNicknames((current) => ({
+    setUserPreferences((current) => ({
       ...current,
-      [category]: nickname
+      personaNicknames: {
+        ...current.personaNicknames,
+        [category]: nickname
+      }
     }));
   }
 

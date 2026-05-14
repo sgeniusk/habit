@@ -238,6 +238,70 @@ describe("Persona Habit prototype", () => {
     );
   });
 
+  it("keeps alpha snap records and persona preferences after remounting", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<App />);
+    const getTabBar = () => screen.getByRole("navigation", { name: "주요 화면" });
+
+    await user.click(within(getTabBar()).getByRole("button", { name: "스냅" }));
+    await user.click(screen.getByRole("button", { name: "횟수 도장" }));
+    await user.click(screen.getByRole("button", { name: "필름" }));
+    await user.click(screen.getByRole("button", { name: "📚 공부" }));
+    await user.upload(
+      screen.getByLabelText("사진 선택"),
+      new File(["alpha"], "alpha-study.png", { type: "image/png" })
+    );
+    await screen.findByRole("img", { name: "alpha-study.png 미리보기" });
+    await user.type(screen.getByPlaceholderText("예: 맑아서 조금 더 걸었다"), "알파 저장 테스트");
+    await user.click(screen.getByRole("button", { name: "꾸며서 올리기" }));
+
+    await user.click(within(getTabBar()).getByRole("button", { name: "집" }));
+    await user.clear(screen.getByLabelText("페르소나 애칭"));
+    await user.type(screen.getByLabelText("페르소나 애칭"), "토리");
+    await user.click(
+      within(screen.getByRole("region", { name: "방 꾸미기" })).getByRole("button", {
+        name: "낮은 서가"
+      })
+    );
+    await user.click(
+      within(screen.getByRole("region", { name: "페르소나 꾸미기" })).getByRole("button", {
+        name: "바람막이"
+      })
+    );
+
+    unmount();
+    render(<App />);
+
+    expect(screen.getByText("도서관 · 알파 저장 테스트")).toBeInTheDocument();
+
+    await user.click(within(getTabBar()).getByRole("button", { name: "집" }));
+
+    expect(screen.getByLabelText("페르소나 애칭")).toHaveValue("토리");
+    expect(
+      screen.getByText("토리야. 이번에는 공부를 많이 했네. 척척박사 페르소나로 업글됐어.")
+    ).toBeInTheDocument();
+
+    const activePersona = screen.getByRole("region", { name: "새벽 학습자" });
+
+    expect(within(activePersona).getByText("방 · 낮은 서가")).toBeInTheDocument();
+    expect(within(activePersona).getByText("의상 · 바람막이")).toBeInTheDocument();
+
+    await user.click(within(getTabBar()).getByRole("button", { name: "스냅" }));
+
+    expect(screen.getByRole("button", { name: "시간 도장" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    expect(screen.getByRole("button", { name: "횟수 도장" })).toHaveAttribute(
+      "aria-pressed",
+      "false"
+    );
+    expect(screen.getByRole("button", { name: "페르소나 도장" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+  });
+
   it("updates the Home persona activity from the latest snap category", async () => {
     const user = userEvent.setup();
     render(<App />);
