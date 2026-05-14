@@ -7,11 +7,13 @@ import {
   tabs
 } from "./data/personaCatalog";
 import { initialRecords } from "./data/sampleRecords";
+import { defaultPersonaNicknames } from "./lib/personaIdentity";
 import { buildPersonaSummaries, findHiddenHabitInsights } from "./lib/personaEngine";
 import type {
   HabitCategory,
   PersonaDecorSelection,
   PlaceType,
+  ProofStampId,
   SnapRecord,
   TabId
 } from "./types/habit";
@@ -39,6 +41,13 @@ export default function App() {
   const [selectedPlace, setSelectedPlace] = useState<PlaceType>("library");
   const [selectedFilter, setSelectedFilter] = useState(filterOptions[0]);
   const [selectedSticker, setSelectedSticker] = useState(stickerOptions[0]);
+  const [selectedProofStamps, setSelectedProofStamps] = useState<ProofStampId[]>([
+    "time",
+    "count",
+    "persona"
+  ]);
+  const [personaNicknames, setPersonaNicknames] =
+    useState<Record<HabitCategory, string>>(defaultPersonaNicknames);
   const [memo, setMemo] = useState("");
   const [photoName, setPhotoName] = useState("스냅을 찍어보세요");
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState("");
@@ -51,11 +60,18 @@ export default function App() {
     () => findPersonaByCategory(records[0]?.category ?? "study"),
     [records]
   );
+  const snapPersona = useMemo(() => findPersonaByCategory(selectedCategory), [selectedCategory]);
   const activeDecor = decorSelections[activeHomePersona.id] ?? {
     roomItem: activeHomePersona.roomItem,
     outfit: activeHomePersona.outfit
   };
   const todayCount = Math.min(3, records.length - initialRecords.length + 1);
+  const nextSnapCountLabel = `오늘 ${todayCount}회차`;
+  const snapTimeLabel = new Intl.DateTimeFormat("ko-KR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  }).format(new Date());
 
   function saveRecord() {
     const nextRecord: SnapRecord = {
@@ -66,6 +82,7 @@ export default function App() {
       filter: selectedFilter,
       sticker: selectedSticker,
       imageUrl: photoPreviewUrl || undefined,
+      proofStamps: selectedProofStamps,
       createdAt: new Date().toISOString()
     };
 
@@ -126,6 +143,21 @@ export default function App() {
     });
   }
 
+  function toggleProofStamp(stampId: ProofStampId) {
+    setSelectedProofStamps((current) =>
+      current.includes(stampId)
+        ? current.filter((currentStampId) => currentStampId !== stampId)
+        : [...current, stampId]
+    );
+  }
+
+  function updatePersonaNickname(category: HabitCategory, nickname: string) {
+    setPersonaNicknames((current) => ({
+      ...current,
+      [category]: nickname
+    }));
+  }
+
   return (
     <div className="app-shell">
       <main className="app-main">
@@ -143,6 +175,13 @@ export default function App() {
             selectedPlace={selectedPlace}
             selectedFilter={selectedFilter}
             selectedSticker={selectedSticker}
+            selectedProofStamps={selectedProofStamps}
+            snapTimeLabel={snapTimeLabel}
+            snapCountLabel={nextSnapCountLabel}
+            personaNickname={personaNicknames[selectedCategory]}
+            personaCategory={selectedCategory}
+            personaTone={snapPersona.tone}
+            personaAccessory={snapPersona.accessory}
             memo={memo}
             photoName={photoName}
             photoPreviewUrl={photoPreviewUrl}
@@ -152,6 +191,7 @@ export default function App() {
             onPlaceChange={setSelectedPlace}
             onFilterChange={setSelectedFilter}
             onStickerChange={setSelectedSticker}
+            onProofStampToggle={toggleProofStamp}
             onMemoChange={setMemo}
             onPhotoSelect={handlePhotoSelect}
             onSave={saveRecord}
@@ -164,8 +204,12 @@ export default function App() {
             activePersona={activeHomePersona}
             selectedRoomItem={activeDecor.roomItem}
             selectedOutfitItem={activeDecor.outfit}
+            personaNickname={personaNicknames[activeHomePersona.category]}
             onRoomItemChange={(roomItem) => updateActiveDecor({ roomItem })}
             onOutfitItemChange={(outfit) => updateActiveDecor({ outfit })}
+            onPersonaNicknameChange={(nickname) =>
+              updatePersonaNickname(activeHomePersona.category, nickname)
+            }
           />
         )}
         {activeTab === "meet" && <MeetView records={records} inviteToken={inviteToken} />}

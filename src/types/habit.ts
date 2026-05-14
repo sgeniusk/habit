@@ -1,5 +1,7 @@
 export type TabId = "today" | "snap" | "home" | "meet" | "report";
 
+export type ProofStampId = "time" | "count" | "persona";
+
 export type HabitCategory =
   | "study"
   | "meal"
@@ -28,6 +30,7 @@ export type SnapRecord = {
   imageUrl?: string;
   filter?: string;
   sticker?: string;
+  proofStamps?: ProofStampId[];
 };
 
 export type PersonaCard = {

@@ -1,6 +1,7 @@
 import { Shirt, Sofa } from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { outfitItems, roomItems } from "../data/personaCatalog";
+import { buildPersonaCompanionLine, buildPersonaIdentity } from "../lib/personaIdentity";
 import type { PersonaSummary } from "../lib/personaEngine";
 import type { PersonaCard } from "../types/habit";
 
@@ -10,16 +11,20 @@ export function HomeView({
   activePersona,
   selectedRoomItem,
   selectedOutfitItem,
+  personaNickname,
   onRoomItemChange,
-  onOutfitItemChange
+  onOutfitItemChange,
+  onPersonaNicknameChange
 }: {
   personas: PersonaCard[];
   personaSummaries: PersonaSummary[];
   activePersona: PersonaCard;
   selectedRoomItem: string;
   selectedOutfitItem: string;
+  personaNickname: string;
   onRoomItemChange: (item: string) => void;
   onOutfitItemChange: (item: string) => void;
+  onPersonaNicknameChange: (nickname: string) => void;
 }) {
   const activeSummary = personaSummaries.find(
     (summary) => summary.archetype === activePersona.category
@@ -29,6 +34,17 @@ export function HomeView({
   const activeProgress = activeSummary?.progress ?? 0;
   const nextLevelXp = activeXp === 0 ? 100 : activeProgress === 0 ? 100 : 100 - activeProgress;
   const unlockedRewards = activeSummary?.unlockedItems ?? [];
+  const personaIdentity = buildPersonaIdentity({
+    category: activePersona.category,
+    nickname: personaNickname,
+    level: activeLevel,
+    xp: activeXp
+  });
+  const companionLine = buildPersonaCompanionLine({
+    category: activePersona.category,
+    nickname: personaNickname,
+    level: activeLevel
+  });
 
   function getSummaryForPersona(persona: PersonaCard) {
     return personaSummaries.find((summary) => summary.archetype === persona.category);
@@ -44,7 +60,7 @@ export function HomeView({
         <span className="deck-count">{personas.length}종</span>
       </div>
 
-      <section className="home-stage" aria-labelledby="activity-title">
+      <section className="home-stage" aria-label={activePersona.name}>
         <div className="room-scene">
           <span className="room-window" />
           <span className="room-rug" />
@@ -56,6 +72,21 @@ export function HomeView({
         <div className="activity-panel">
           <p className="eyebrow">지금 하는 일</p>
           <h2 id="activity-title">{activePersona.name}</h2>
+          <strong className="nickname-title">{personaIdentity.displayName}</strong>
+          <div className="persona-identity-row" aria-label="페르소나 정체성">
+            <span>애칭 · {personaIdentity.displayName}</span>
+            <span>직업 · {personaIdentity.roleLabel}</span>
+          </div>
+          <label className="nickname-field">
+            <span>페르소나 애칭</span>
+            <input
+              aria-label="페르소나 애칭"
+              value={personaNickname}
+              onChange={(event) => onPersonaNicknameChange(event.target.value)}
+              placeholder="예: 곰곰"
+            />
+          </label>
+          <p className="persona-talk">{companionLine}</p>
           <p>{activePersona.activity}</p>
           <div className="reward-meter" aria-label={`${activePersona.name} 성장 보상`}>
             <div>
@@ -71,6 +102,7 @@ export function HomeView({
               <span style={{ width: `${activeProgress}%` }} />
             </div>
           </div>
+          <strong className="evolution-badge">진화 · {personaIdentity.upgradeLabel}</strong>
           <div className="trait-row">
             {(activeSummary?.traits ?? activePersona.tags).slice(0, 4).map((tag) => (
               <span key={tag}>{tag}</span>

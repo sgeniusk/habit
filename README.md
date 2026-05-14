@@ -52,5 +52,6 @@ npm run ci
 - Roadmap: `docs/roadmap/persona-habit-roadmap.md`
 - Agent org chart: `docs/agents/persona-habit-agent-org-chart.md`
 - Native readiness: `docs/native/expo-readiness-plan.md`
+- Proof snap benchmark: `docs/snap/persona-proof-snap-benchmark.md`
 - Implementation plan: `docs/superpowers/plans/2026-05-13-persona-habit-prototype.md`
 - Next build plan: `docs/superpowers/plans/2026-05-14-roadmap-refresh-next-build.md`

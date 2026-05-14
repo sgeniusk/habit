@@ -1,18 +1,33 @@
 import { ImagePlus, Sparkles } from "lucide-react";
+import { PersonaAvatar } from "../components/PersonaAvatar";
 import {
   categoryOptions,
   filterOptions,
   placeOptions,
   stickerOptions
 } from "../data/personaCatalog";
+import { buildPersonaIdentity } from "../lib/personaIdentity";
 import { getPlaceLabel } from "../lib/personaEngine";
-import type { HabitCategory, PlaceType } from "../types/habit";
+import type { HabitCategory, PlaceType, ProofStampId } from "../types/habit";
+
+const proofStampOptions: { id: ProofStampId; label: string }[] = [
+  { id: "time", label: "시간 도장" },
+  { id: "count", label: "횟수 도장" },
+  { id: "persona", label: "페르소나 도장" }
+];
 
 export function SnapView({
   selectedCategory,
   selectedPlace,
   selectedFilter,
   selectedSticker,
+  selectedProofStamps,
+  snapTimeLabel,
+  snapCountLabel,
+  personaNickname,
+  personaCategory,
+  personaTone,
+  personaAccessory,
   memo,
   photoName,
   photoPreviewUrl,
@@ -22,6 +37,7 @@ export function SnapView({
   onPlaceChange,
   onFilterChange,
   onStickerChange,
+  onProofStampToggle,
   onMemoChange,
   onPhotoSelect,
   onSave
@@ -30,6 +46,13 @@ export function SnapView({
   selectedPlace: PlaceType;
   selectedFilter: string;
   selectedSticker: string;
+  selectedProofStamps: ProofStampId[];
+  snapTimeLabel: string;
+  snapCountLabel: string;
+  personaNickname: string;
+  personaCategory: HabitCategory;
+  personaTone: string;
+  personaAccessory: string;
   memo: string;
   photoName: string;
   photoPreviewUrl: string;
@@ -39,10 +62,17 @@ export function SnapView({
   onPlaceChange: (place: PlaceType) => void;
   onFilterChange: (filter: string) => void;
   onStickerChange: (sticker: string) => void;
+  onProofStampToggle: (stampId: ProofStampId) => void;
   onMemoChange: (memo: string) => void;
   onPhotoSelect: (file?: File) => void;
   onSave: () => void;
 }) {
+  const personaIdentity = buildPersonaIdentity({
+    category: personaCategory,
+    nickname: personaNickname,
+    level: 1,
+    xp: 0
+  });
   const previewClassName = [
     "photo-drop snap-preview",
     savedPulse ? "is-saved" : "",
@@ -83,6 +113,24 @@ export function SnapView({
               <span className="sticker-badge" aria-label={`선택 스티커 ${selectedSticker}`}>
                 {selectedSticker}
               </span>
+              {selectedProofStamps.includes("time") ? (
+                <span className="proof-badge time">{snapTimeLabel} 인증</span>
+              ) : null}
+              {selectedProofStamps.includes("count") ? (
+                <span className="proof-badge count">{snapCountLabel}</span>
+              ) : null}
+              {selectedProofStamps.includes("persona") ? (
+                <div
+                  className="persona-proof-stamp"
+                  aria-label={`페르소나 도장 ${personaIdentity.displayName}`}
+                >
+                  <div className="mini-persona-wrap">
+                    <PersonaAvatar tone={personaTone} accessory={personaAccessory} />
+                  </div>
+                  <strong>{personaIdentity.displayName}와 함께해요</strong>
+                  <small>직업 · {personaIdentity.roleLabel}</small>
+                </div>
+              ) : null}
             </figcaption>
           </figure>
         ) : (
@@ -126,6 +174,23 @@ export function SnapView({
               onClick={() => onStickerChange(sticker)}
             >
               {sticker}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="choice-section" aria-labelledby="proof-stamp-title">
+        <h2 id="proof-stamp-title">인증 도장</h2>
+        <div className="proof-stamp-strip">
+          {proofStampOptions.map((stamp) => (
+            <button
+              key={stamp.id}
+              type="button"
+              className={selectedProofStamps.includes(stamp.id) ? "is-selected" : ""}
+              aria-pressed={selectedProofStamps.includes(stamp.id)}
+              onClick={() => onProofStampToggle(stamp.id)}
+            >
+              {stamp.label}
             </button>
           ))}
         </div>

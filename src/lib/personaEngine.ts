@@ -180,6 +180,10 @@ function findPrimaryPlace(records: VerificationRecord[]): PlaceType {
 }
 
 function buildEvolutionLabel(category: HabitCategory, level: number, placeType: PlaceType) {
+  if (category === "study" && level >= 3) {
+    return "척척박사 페르소나";
+  }
+
   if (level >= 4) {
     return `${getPlaceLabel(placeType)} 기반 ${getCategoryLabel(category)} 마스터`;
   }

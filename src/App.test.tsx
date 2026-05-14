@@ -108,6 +108,25 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByLabelText("선택 스티커 🏃 러닝")).toBeInTheDocument();
   });
 
+  it("adds time, count, and persona proof stamps to the snap preview", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "스냅" }));
+    await user.upload(
+      screen.getByLabelText("사진 선택"),
+      new File(["study"], "library-proof.png", { type: "image/png" })
+    );
+
+    await screen.findByRole("img", { name: "library-proof.png 미리보기" });
+
+    expect(screen.getByText("인증 도장")).toBeInTheDocument();
+    expect(screen.getByText(/인증$/)).toBeInTheDocument();
+    expect(screen.getByText("오늘 1회차")).toBeInTheDocument();
+    expect(screen.getByText("곰곰이와 함께해요")).toBeInTheDocument();
+    expect(screen.getByText("직업 · 학습자")).toBeInTheDocument();
+  });
+
   it("saves a decorated snap with the selected filter and sticker", async () => {
     const user = userEvent.setup();
     render(<App />);
@@ -153,6 +172,29 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByText("방 꾸미기")).toBeInTheDocument();
     expect(screen.getByText("페르소나 꾸미기")).toBeInTheDocument();
     expect(screen.getByText("새벽 학습자")).toBeInTheDocument();
+  });
+
+  it("lets the user name the persona and uses the nickname in companion dialogue", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "집" }));
+
+    const nicknameInput = screen.getByLabelText("페르소나 애칭");
+
+    expect(nicknameInput).toHaveValue("곰곰");
+    expect(screen.getByText("직업 · 학습자")).toBeInTheDocument();
+    expect(screen.getByText("척척박사 페르소나")).toBeInTheDocument();
+    expect(
+      screen.getByText("곰곰아. 이번에는 공부를 많이 했네. 척척박사 페르소나로 업글됐어.")
+    ).toBeInTheDocument();
+
+    await user.clear(nicknameInput);
+    await user.type(nicknameInput, "토리");
+
+    expect(
+      screen.getByText("토리야. 이번에는 공부를 많이 했네. 척척박사 페르소나로 업글됐어.")
+    ).toBeInTheDocument();
   });
 
   it("shows record-based XP and unlocked rewards on Home", async () => {

@@ -52,6 +52,13 @@ describe("buildPersonaSummaries", () => {
 
     expect(studyPersona?.traits).toContain("건강한 학습 루프");
   });
+
+  it("upgrades a high-XP study persona into a know-it-all scholar evolution", () => {
+    const personas = buildPersonaSummaries(records);
+    const studyPersona = personas.find((persona) => persona.archetype === "study");
+
+    expect(studyPersona?.evolution).toBe("척척박사 페르소나");
+  });
 });
 
 describe("findHiddenHabitInsights", () => {
