@@ -5,202 +5,35 @@ import {
   Camera,
   Check,
   ChevronRight,
-  Home,
   ImagePlus,
   MapPin,
-  Medal,
-  Moon,
   PenLine,
   Shirt,
   Sofa,
   Sparkles,
   Sun,
   Users,
-  Utensils,
   Wand2
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import {
+  categoryOptions,
+  filterOptions,
+  outfitItems,
+  personaCatalog,
+  placeOptions,
+  roomItems,
+  stickerOptions,
+  tabs
+} from "./data/personaCatalog";
+import { initialRecords } from "./data/sampleRecords";
+import {
   buildPersonaSummaries,
   findHiddenHabitInsights,
   getCategoryLabel,
-  getPlaceLabel,
-  type HabitCategory,
-  type PlaceType,
-  type VerificationRecord
+  getPlaceLabel
 } from "./lib/personaEngine";
-
-type TabId = "today" | "snap" | "home" | "meet" | "report";
-
-type PersonaCard = {
-  id: string;
-  name: string;
-  activity: string;
-  place: string;
-  level: number;
-  tone: "leaf" | "coral" | "blue";
-  accessory: string;
-  tags: string[];
-  roomItem: string;
-  outfit: string;
-};
-
-const initialRecords: VerificationRecord[] = [
-  {
-    id: "sample-study-1",
-    category: "study",
-    placeType: "library",
-    memo: "아침 문제풀이",
-    createdAt: "2026-05-09T09:20:00.000+09:00"
-  },
-  {
-    id: "sample-meal-1",
-    category: "meal",
-    placeType: "restaurant",
-    memo: "가벼운 점심",
-    createdAt: "2026-05-09T12:40:00.000+09:00"
-  },
-  {
-    id: "sample-exercise-1",
-    category: "exercise",
-    placeType: "outdoors",
-    memo: "20분 러닝",
-    createdAt: "2026-05-10T21:15:00.000+09:00"
-  },
-  {
-    id: "sample-study-2",
-    category: "study",
-    placeType: "library",
-    memo: "도서관 2층",
-    createdAt: "2026-05-11T09:35:00.000+09:00"
-  },
-  {
-    id: "sample-reading-1",
-    category: "reading",
-    placeType: "cafe",
-    memo: "책 18쪽",
-    createdAt: "2026-05-12T18:10:00.000+09:00"
-  },
-  {
-    id: "sample-selfcare-1",
-    category: "selfcare",
-    placeType: "home",
-    memo: "잠들기 전 스트레칭",
-    createdAt: "2026-05-12T22:20:00.000+09:00"
-  }
-];
-
-const categoryOptions: Array<{
-  id: HabitCategory;
-  label: string;
-  icon: typeof BookOpen;
-  tone: string;
-}> = [
-  { id: "study", label: "공부", icon: BookOpen, tone: "leaf" },
-  { id: "meal", label: "식단", icon: Utensils, tone: "coral" },
-  { id: "exercise", label: "운동", icon: Activity, tone: "blue" },
-  { id: "reading", label: "독서", icon: BookOpen, tone: "gold" },
-  { id: "cleaning", label: "정리", icon: Home, tone: "mint" },
-  { id: "selfcare", label: "셀프케어", icon: Moon, tone: "ink" }
-];
-
-const placeOptions: PlaceType[] = [
-  "home",
-  "library",
-  "school",
-  "cafe",
-  "gym",
-  "restaurant",
-  "outdoors"
-];
-
-const tabs: Array<{ id: TabId; label: string; icon: typeof Home }> = [
-  { id: "today", label: "오늘", icon: Sun },
-  { id: "snap", label: "스냅", icon: Camera },
-  { id: "home", label: "집", icon: Home },
-  { id: "meet", label: "모임", icon: Users },
-  { id: "report", label: "리포트", icon: Medal }
-];
-
-const personaCatalog: PersonaCard[] = [
-  {
-    id: "dawn-learner",
-    name: "새벽 학습자",
-    activity: "창가 책상에서 오늘의 오답을 정리하는 중",
-    place: "집 · 조용한 책상",
-    level: 7,
-    tone: "leaf",
-    accessory: "study",
-    tags: ["아침집중", "도서관형", "꾸준함"],
-    roomItem: "원목 책상",
-    outfit: "집중 후드"
-  },
-  {
-    id: "routine-runner",
-    name: "루틴 러너",
-    activity: "러닝화를 말리고 스트레칭을 하는 중",
-    place: "야외 · 성수천",
-    level: 5,
-    tone: "blue",
-    accessory: "exercise",
-    tags: ["밤러닝", "회복", "심폐루틴"],
-    roomItem: "러닝 트랙 매트",
-    outfit: "바람막이"
-  },
-  {
-    id: "clean-meal",
-    name: "클린식단러",
-    activity: "내일 도시락 재료를 고르는 중",
-    place: "집 · 작은 주방",
-    level: 4,
-    tone: "coral",
-    accessory: "meal",
-    tags: ["단백질", "물마시기", "가벼운 점심"],
-    roomItem: "그린 식탁",
-    outfit: "앞치마"
-  },
-  {
-    id: "page-collector",
-    name: "페이지 수집가",
-    activity: "카페 구석에서 책갈피를 옮기는 중",
-    place: "카페 · 창가 자리",
-    level: 3,
-    tone: "leaf",
-    accessory: "reading",
-    tags: ["독서", "조용한 몰입", "기록"],
-    roomItem: "낮은 서가",
-    outfit: "니트 조끼"
-  },
-  {
-    id: "reset-maker",
-    name: "방정리 장인",
-    activity: "책상 위 물건을 색깔별로 정리하는 중",
-    place: "집 · 정리된 방",
-    level: 3,
-    tone: "blue",
-    accessory: "cleaning",
-    tags: ["공간리셋", "정돈", "시작전 루틴"],
-    roomItem: "라벨 정리함",
-    outfit: "포켓 앞치마"
-  },
-  {
-    id: "healthy-exam",
-    name: "건강관리형 수험생",
-    activity: "문제집 옆에 물컵과 러닝화를 두는 중",
-    place: "집 · 복합 루틴존",
-    level: 6,
-    tone: "coral",
-    accessory: "group",
-    tags: ["공부+운동", "회복", "균형"],
-    roomItem: "집중 스탠드",
-    outfit: "트레이닝 셋업"
-  }
-];
-
-const filterOptions = ["맑은빛", "필름", "집중", "새벽", "단백질"];
-const stickerOptions = ["🔥 루틴", "📚 공부", "🏃 러닝", "🥗 식단", "✨ 성장"];
-const roomItems = ["원목 책상", "낮은 서가", "러닝 매트", "그린 식탁"];
-const outfitItems = ["집중 후드", "바람막이", "앞치마", "니트 조끼"];
+import type { HabitCategory, PersonaCard, PlaceType, SnapRecord, TabId } from "./types/habit";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>("today");
@@ -216,7 +49,7 @@ export default function App() {
   const todayCount = Math.min(3, records.length - initialRecords.length + 1);
 
   function saveRecord() {
-    const nextRecord: VerificationRecord = {
+    const nextRecord: SnapRecord = {
       id: `record-${Date.now()}`,
       category: selectedCategory,
       placeType: selectedPlace,
@@ -290,7 +123,7 @@ function TodayView({
   todayCount,
   onSnap
 }: {
-  records: VerificationRecord[];
+  records: SnapRecord[];
   insights: ReturnType<typeof findHiddenHabitInsights>;
   todayCount: number;
   onSnap: () => void;
@@ -639,7 +472,7 @@ function ReportView({
   personas,
   insights
 }: {
-  records: VerificationRecord[];
+  records: SnapRecord[];
   personas: ReturnType<typeof buildPersonaSummaries>;
   insights: ReturnType<typeof findHiddenHabitInsights>;
 }) {
@@ -684,7 +517,7 @@ function MetricTile({ label, value, tone }: { label: string; value: string; tone
   );
 }
 
-function RecordRow({ record }: { record: VerificationRecord }) {
+function RecordRow({ record }: { record: SnapRecord }) {
   return (
     <article className="record-row">
       <div className={`record-icon ${record.category}`}>

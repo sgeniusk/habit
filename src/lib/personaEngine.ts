@@ -1,30 +1,6 @@
-export type HabitCategory =
-  | "study"
-  | "meal"
-  | "exercise"
-  | "reading"
-  | "cleaning"
-  | "selfcare"
-  | "hobby";
+import type { HabitCategory, PlaceType, SnapRecord } from "../types/habit";
 
-export type PlaceType =
-  | "home"
-  | "library"
-  | "school"
-  | "cafe"
-  | "gym"
-  | "restaurant"
-  | "outdoors"
-  | "other";
-
-export type VerificationRecord = {
-  id: string;
-  category: HabitCategory;
-  placeType: PlaceType;
-  createdAt: string;
-  memo?: string;
-  imageUrl?: string;
-};
+export type VerificationRecord = SnapRecord;
 
 export type PersonaSummary = {
   archetype: HabitCategory;
