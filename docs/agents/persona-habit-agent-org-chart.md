@@ -4,13 +4,11 @@
 
 Persona Habit은 아이디어, UX, 캐릭터, AI 분석, 모바일 구현, 소셜 기능이 동시에 자라는 제품이다. 이 조직도는 제작 에이전트들이 각자 무엇을 책임지고, 어떤 산출물을 하네스가 검증해야 하는지 정리한다.
 
-## 조직도 이미지
+## 조직도
 
-![Persona Habit 제작 에이전트 조직도](./assets/persona-habit-agent-org-chart-gpt-image-2.png)
+대표 조직도는 이미지 생성 결과물이 아니라 수정 가능한 HTML/CSS로 관리한다.
 
-생성 방식: `gpt-image-2` 기반 이미지 생성 결과물을 프로젝트 문서 에셋으로 저장했다.
-
-보조 HTML 버전: [persona-habit-agent-org-chart.html](./persona-habit-agent-org-chart.html)
+HTML 조직도: [persona-habit-agent-org-chart.html](./persona-habit-agent-org-chart.html)
 
 ## 역할과 산출물
 

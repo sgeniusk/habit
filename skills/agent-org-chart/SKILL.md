@@ -5,7 +5,7 @@ description: Create and document clean company-style agent organization charts. 
 
 # Agent Org Chart
 
-Use this skill to turn an agent system into a readable, presentation-ready organization chart and a supporting document. Favor a vertical company-org-chart composition over wide left-to-right diagrams.
+Use this skill to turn an agent system into a readable, presentation-ready organization chart and a supporting document. Favor a simple editable HTML/CSS org chart over generated images or wide left-to-right diagrams.
 
 ## Workflow
 
@@ -13,19 +13,19 @@ Use this skill to turn an agent system into a readable, presentation-ready organ
 2. Identify the top-level owner, orchestration layer, harness gates, and specialist agents.
 3. Group specialists into 3-5 departments so the chart remains compact.
 4. Create a visual artifact and a written document:
-   - Primary visual: generated PNG image using `gpt-image-2` when available.
-   - Fallback/editable visual: polished HTML using the template pattern in `assets/org-chart-template.html`.
+   - Primary visual: simple polished HTML using the template pattern in `assets/org-chart-template.html`.
    - Written doc: Markdown under `docs/agents/` with responsibilities, inputs, outputs, and harness checks.
 5. Keep the diagram portrait or square when possible. Avoid long horizontal Mermaid chains.
 6. Include a short “Operating Rhythm” section that explains how work moves from request to implementation to verification.
 
 ## Chart Rules
 
-- Use a central vertical spine with cards branching in compact rows.
+- Use a simple company org chart layout with compact rectangular boxes.
 - Show a clear reporting line: Founder/User -> Orchestrator -> Departments -> Specialist agents.
 - Place the Harness Gate near the Orchestrator, not as a distant leaf. It is a recurring approval/checkpoint, not a worker.
-- Use short labels on cards. Put details in the Markdown table, not inside the chart.
-- Use rounded white cards, circular role badges, subtle shadows, connector lines, and restrained blue/teal accents.
+- Use short labels and one-line descriptions on cards. Put detailed responsibilities in the Markdown table.
+- Do not use decorative icons, circular badges, avatar graphics, generated illustrations, heavy shadows, or dense text.
+- Use clean system fonts, flat neutral panels, subtle connector lines, and muted slate/gray headers.
 - For Korean projects, write chart labels in Korean unless the repo already uses English for the feature.
 
 ## Required Role Set
@@ -50,20 +50,18 @@ Adapt names to the project, but cover these responsibilities:
 Create files with predictable names:
 
 - `docs/agents/<project>-agent-org-chart.md`
-- `docs/agents/assets/<project>-agent-org-chart-gpt-image-2.png`
 - `docs/agents/<project>-agent-org-chart.html`
 
 The Markdown doc should include:
 
 - Purpose
-- The generated PNG embedded as the main organization chart
-- HTML fallback link
+- HTML organization chart link as the main visual
 - Role table
 - Harness gates
 - Operating rhythm
 - Next build queue
 
-The PNG should be treated as the main presentation graphic. The HTML doc should be self-contained, responsive, and visually polished as a non-generated fallback. Avoid using Mermaid as the main organization chart because it tends to sprawl horizontally.
+The HTML doc should be self-contained, responsive, and visually polished. Avoid using generated PNGs or Mermaid as the main organization chart because they are harder to edit and can sprawl horizontally.
 
 ## Validation
 

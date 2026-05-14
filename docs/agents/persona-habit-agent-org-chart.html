@@ -6,16 +6,14 @@
     <title>Persona Habit 제작 에이전트 조직도</title>
     <style>
       :root {
-        --ink: #263241;
-        --muted: #6c7788;
-        --line: #b8c0cc;
-        --paper: #f2f3f7;
-        --card: #ffffff;
-        --teal: #14b8d5;
-        --blue: #0f8edb;
-        --indigo: #5168d9;
-        --green: #28a88d;
-        --shadow: 0 18px 35px rgba(24, 37, 56, 0.16);
+        --ink: #30363d;
+        --muted: #6b7280;
+        --line: #d6d9df;
+        --paper: #f7f7f9;
+        --panel: #f0f1f4;
+        --head: #4e5a62;
+        --accent: #9d9b87;
+        --white: #ffffff;
       }
 
       * {
@@ -24,12 +22,9 @@
 
       body {
         margin: 0;
-        background:
-          radial-gradient(circle at 50% 2%, #ffffff 0 18%, transparent 42%),
-          linear-gradient(135deg, #f7f8fb, var(--paper));
+        background: var(--paper);
         color: var(--ink);
         font-family:
-          Inter,
           ui-sans-serif,
           system-ui,
           -apple-system,
@@ -39,381 +34,319 @@
           sans-serif;
       }
 
-      .canvas {
-        width: min(1180px, 100%);
+      .page {
+        width: min(1080px, 100%);
         min-height: 100vh;
         margin: 0 auto;
-        padding: 54px 28px 70px;
+        padding: 48px 28px 64px;
       }
 
-      .title {
-        text-align: center;
-        margin-bottom: 34px;
-      }
-
-      .title p {
-        margin: 0 0 8px;
-        color: var(--teal);
-        font-size: 13px;
-        font-weight: 900;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-      }
-
-      .title h1 {
-        margin: 0;
-        color: var(--ink);
-        font-size: clamp(30px, 4vw, 48px);
-        line-height: 1.05;
+      h1 {
+        margin: 0 0 34px;
+        color: #252b31;
+        font-size: clamp(28px, 4vw, 44px);
+        font-weight: 800;
         letter-spacing: 0;
+        text-align: center;
       }
 
-      .org {
+      .chart {
         position: relative;
         display: grid;
-        gap: 30px;
-        justify-items: center;
+        gap: 34px;
       }
 
-      .org::before {
+      .top-grid {
+        display: grid;
+        grid-template-columns: 1fr minmax(220px, 280px) 1fr;
+        gap: 26px;
+        align-items: end;
+      }
+
+      .top-grid .side {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+        gap: 16px;
+      }
+
+      .top-grid .side.left {
+        visibility: hidden;
+      }
+
+      .node,
+      .agent {
+        display: grid;
+        min-height: 74px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        text-align: center;
+      }
+
+      .node {
+        align-self: end;
+      }
+
+      .node::before,
+      .agent::before {
+        display: block;
+        padding: 9px 12px;
+        background: var(--head);
+        color: var(--white);
+        content: attr(data-title);
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      .node.accent::before,
+      .agent.accent::before {
+        background: var(--accent);
+      }
+
+      .node span,
+      .agent span {
+        display: grid;
+        min-height: 44px;
+        place-items: center;
+        padding: 9px 10px 11px;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 650;
+        line-height: 1.35;
+      }
+
+      .middle-grid {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(220px, 280px));
+        justify-content: center;
+        gap: 120px;
+        padding-top: 10px;
+      }
+
+      .middle-grid::before {
         position: absolute;
-        top: 92px;
-        bottom: 210px;
+        top: -18px;
         left: 50%;
-        width: 2px;
+        width: min(48%, 520px);
+        height: 1px;
         background: var(--line);
         content: "";
         transform: translateX(-50%);
       }
 
-      .connector {
-        position: absolute;
-        left: 50%;
-        width: min(76%, 860px);
-        height: 2px;
-        background: var(--line);
-        transform: translateX(-50%);
-      }
-
-      .connector.one {
-        top: 338px;
-      }
-
-      .connector.two {
-        top: 686px;
-      }
-
-      .tier {
+      .departments {
         position: relative;
-        z-index: 1;
         display: grid;
-        width: 100%;
-        gap: 22px;
-        justify-items: center;
-      }
-
-      .tier.top {
-        grid-template-columns: minmax(0, 360px);
-        justify-content: center;
-      }
-
-      .tier.departments {
         grid-template-columns: repeat(5, minmax(0, 1fr));
-        align-items: stretch;
+        gap: 14px;
+        padding-top: 22px;
       }
 
-      .card {
-        position: relative;
-        display: grid;
-        align-content: center;
-        min-height: 118px;
-        width: min(100%, 350px);
-        padding: 20px 24px 20px 96px;
-        border: 1px solid rgba(184, 192, 204, 0.82);
-        border-right: 8px solid var(--blue);
-        border-radius: 999px 30px 30px 999px;
-        background: var(--card);
-        box-shadow: var(--shadow);
-      }
-
-      .card.teal {
-        border-right-color: var(--teal);
-      }
-
-      .card.indigo {
-        border-right-color: var(--indigo);
-      }
-
-      .card.green {
-        border-right-color: var(--green);
-      }
-
-      .badge {
+      .departments::before {
         position: absolute;
-        top: 50%;
-        left: 18px;
-        display: grid;
-        place-items: center;
-        width: 60px;
-        height: 60px;
-        border: 8px solid var(--blue);
-        border-radius: 50%;
-        background: #ffffff;
-        color: var(--ink);
-        font-size: 23px;
-        font-weight: 950;
-        box-shadow: 0 10px 20px rgba(24, 37, 56, 0.18);
-        transform: translateY(-50%);
-      }
-
-      .teal .badge {
-        border-color: var(--teal);
-      }
-
-      .indigo .badge {
-        border-color: var(--indigo);
-      }
-
-      .green .badge {
-        border-color: var(--green);
-      }
-
-      .card small,
-      .department small {
-        color: var(--blue);
-        font-size: 11px;
-        font-weight: 950;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      .card strong {
-        display: block;
-        margin-top: 5px;
-        color: var(--ink);
-        font-size: 18px;
-        line-height: 1.2;
-      }
-
-      .card span {
-        display: block;
-        margin-top: 6px;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.35;
-      }
-
-      .gate {
-        width: min(100%, 420px);
-        padding: 22px 26px;
-        border-radius: 28px;
-        border-right-color: var(--teal);
-        text-align: center;
-      }
-
-      .gate .badge {
-        display: none;
+        top: 0;
+        left: 7%;
+        right: 7%;
+        height: 1px;
+        background: var(--line);
+        content: "";
       }
 
       .department {
+        position: relative;
         display: grid;
-        align-content: start;
-        min-height: 344px;
-        padding: 18px;
-        border: 1px solid rgba(184, 192, 204, 0.75);
-        border-radius: 28px;
-        background: rgba(255, 255, 255, 0.72);
-        box-shadow: 0 15px 32px rgba(24, 37, 56, 0.08);
+        gap: 8px;
       }
 
-      .department h2 {
-        margin: 3px 0 14px;
-        color: var(--ink);
-        text-align: center;
-        font-size: 18px;
-        line-height: 1.22;
+      .department::before {
+        position: absolute;
+        top: -22px;
+        left: 50%;
+        width: 1px;
+        height: 22px;
+        background: var(--line);
+        content: "";
       }
 
-      .department .card {
-        width: 100%;
-        min-height: 106px;
-        margin-top: 12px;
-        padding-left: 82px;
-        border-radius: 999px 24px 24px 999px;
-        box-shadow: 0 12px 24px rgba(24, 37, 56, 0.11);
+      .agent {
+        min-height: 66px;
       }
 
-      .department .badge {
-        left: 14px;
-        width: 52px;
-        height: 52px;
-        border-width: 7px;
-        font-size: 19px;
+      .agent::before {
+        font-size: 13px;
+      }
+
+      .agent span {
+        min-height: 40px;
+        font-size: 13px;
       }
 
       .note {
-        width: min(100%, 780px);
-        margin: 8px auto 0;
-        padding: 18px 22px;
-        border: 1px solid rgba(184, 192, 204, 0.78);
-        border-radius: 24px;
-        background: rgba(255, 255, 255, 0.74);
+        width: min(760px, 100%);
+        margin: 10px auto 0;
         color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
         text-align: center;
-        font-size: 14px;
-        line-height: 1.55;
       }
 
-      @media (max-width: 1060px) {
-        .tier.departments {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+      @media (max-width: 880px) {
+        .page {
+          padding-inline: 18px;
         }
 
-        .org::before,
-        .connector {
-          display: none;
+        .top-grid {
+          grid-template-columns: minmax(90px, 1fr) minmax(170px, 220px) minmax(180px, 1fr);
+          gap: 10px;
+        }
+
+        .top-grid .side {
+          grid-template-columns: repeat(2, minmax(78px, 1fr));
+          gap: 8px;
+        }
+
+        .middle-grid {
+          grid-template-columns: repeat(2, minmax(170px, 220px));
+          gap: 34px;
+        }
+
+        .departments {
+          gap: 8px;
+        }
+
+        .node::before,
+        .agent::before {
+          padding-inline: 7px;
+          font-size: 11px;
+        }
+
+        .node span,
+        .agent span {
+          padding-inline: 7px;
+          font-size: 11px;
         }
       }
 
-      @media (max-width: 640px) {
-        .canvas {
-          padding: 32px 14px 44px;
+      @media (max-width: 560px) {
+        .top-grid,
+        .middle-grid,
+        .departments {
+          grid-template-columns: 1fr;
+          gap: 14px;
         }
 
-        .tier.departments {
+        .top-grid .side {
           grid-template-columns: 1fr;
         }
 
-        .card {
-          min-height: 112px;
-          padding-right: 18px;
+        .top-grid .side.left,
+        .middle-grid::before,
+        .departments::before,
+        .department::before {
+          display: none;
         }
       }
     </style>
   </head>
   <body>
-    <main class="canvas">
-      <header class="title">
-        <p>Agent Production System</p>
-        <h1>Persona Habit 제작 에이전트 조직도</h1>
-      </header>
+    <main class="page">
+      <h1>Persona Habit 제작 에이전트 조직도</h1>
 
-      <section class="org" aria-label="Persona Habit 제작 에이전트 조직도">
-        <span class="connector one" aria-hidden="true"></span>
-        <span class="connector two" aria-hidden="true"></span>
+      <section class="chart" aria-label="Persona Habit 제작 에이전트 조직도">
+        <div class="top-grid">
+          <div class="side left" aria-hidden="true">
+            <div class="node" data-title="공백"><span>공백</span></div>
+          </div>
 
-        <div class="tier top">
-          <article class="card teal">
-            <div class="badge">F</div>
-            <small>Founder</small>
-            <strong>사용자 / 제품 오너</strong>
+          <div class="node" data-title="사용자 / 제품 오너">
             <span>비전, 우선순위, 최종 승인</span>
-          </article>
+          </div>
 
-          <article class="card indigo">
-            <div class="badge">O</div>
-            <small>Orchestrator</small>
-            <strong>제작 총괄 에이전트</strong>
-            <span>작업 분해, 담당 배정, 충돌 조정</span>
-          </article>
-
-          <article class="card gate teal">
-            <small>Harness Gate</small>
-            <strong>하네스 검문소</strong>
-            <span>PRD, UX, 테스트, 빌드, 배포 상태를 통과시킴</span>
-          </article>
+          <div class="side">
+            <div class="node" data-title="하네스 검문소">
+              <span>PRD·UX·테스트 검증</span>
+            </div>
+            <div class="node" data-title="릴리즈 관리">
+              <span>GitHub·Vercel 배포 확인</span>
+            </div>
+          </div>
         </div>
 
-        <div class="tier departments">
-          <section class="department">
-            <small>Product Office</small>
-            <h2>제품 전략실</h2>
-            <article class="card teal">
-              <div class="badge">P</div>
-              <small>Product Detail</small>
-              <strong>기능 세부화</strong>
+        <div class="middle-grid">
+          <div class="node" data-title="제작 총괄 에이전트">
+            <span>작업 분해, 담당 배정, 충돌 조정</span>
+          </div>
+          <div class="node" data-title="운영 관리 에이전트">
+            <span>하네스 기준, 실행 순서, 상태 기록</span>
+          </div>
+        </div>
+
+        <div class="departments">
+          <section class="department" aria-label="제품 전략실">
+            <div class="agent accent" data-title="제품 전략실">
+              <span>Product Detail Agent</span>
+            </div>
+            <div class="agent" data-title="기능 세부화">
               <span>PRD, 유저 스토리, MVP 범위</span>
-            </article>
-            <article class="card">
-              <div class="badge">B</div>
-              <small>Benchmark</small>
-              <strong>레퍼런스 분석</strong>
-              <span>인증앱, 일기앱, 꾸미기앱 비교</span>
-            </article>
+            </div>
+            <div class="agent" data-title="레퍼런스 분석">
+              <span>Benchmark Agent</span>
+            </div>
           </section>
 
-          <section class="department">
-            <small>Experience Office</small>
-            <h2>경험 디자인실</h2>
-            <article class="card indigo">
-              <div class="badge">U</div>
-              <small>UX Flow</small>
-              <strong>사용 흐름</strong>
+          <section class="department" aria-label="경험 디자인실">
+            <div class="agent accent" data-title="경험 디자인실">
+              <span>UX Flow Agent</span>
+            </div>
+            <div class="agent" data-title="사용 흐름">
               <span>오늘, 스냅, 집, 모임, 리포트</span>
-            </article>
-            <article class="card">
-              <div class="badge">D</div>
-              <small>Design System</small>
-              <strong>시각 규칙</strong>
-              <span>페르소나, 방, 컴포넌트, 모션</span>
-            </article>
+            </div>
+            <div class="agent" data-title="시각 규칙">
+              <span>Design System Agent</span>
+            </div>
           </section>
 
-          <section class="department">
-            <small>Build Office</small>
-            <h2>구현 플랫폼실</h2>
-            <article class="card green">
-              <div class="badge">W</div>
-              <small>Frontend</small>
-              <strong>웹 프로토타입</strong>
+          <section class="department" aria-label="구현 플랫폼실">
+            <div class="agent accent" data-title="구현 플랫폼실">
+              <span>Frontend Agent</span>
+            </div>
+            <div class="agent" data-title="웹 프로토타입">
               <span>React 화면, 테스트, 브라우저 QA</span>
-            </article>
-            <article class="card">
-              <div class="badge">M</div>
-              <small>Mobile</small>
-              <strong>iOS / Android</strong>
-              <span>카메라, 위치, 알림, 앱스토어</span>
-            </article>
+            </div>
+            <div class="agent" data-title="모바일 앱">
+              <span>Mobile Agent</span>
+            </div>
           </section>
 
-          <section class="department">
-            <small>Intelligence Office</small>
-            <h2>AI·데이터실</h2>
-            <article class="card indigo">
-              <div class="badge">A</div>
-              <small>AI Habit</small>
-              <strong>숨은 습관 분석</strong>
+          <section class="department" aria-label="AI·데이터실">
+            <div class="agent accent" data-title="AI·데이터실">
+              <span>AI Habit Agent</span>
+            </div>
+            <div class="agent" data-title="숨은 습관 분석">
               <span>AI 일기, 추천, 안전 기준</span>
-            </article>
-            <article class="card">
-              <div class="badge">S</div>
-              <small>Data Backend</small>
-              <strong>데이터 구조</strong>
-              <span>유저, 스냅, 페르소나, 모임</span>
-            </article>
+            </div>
+            <div class="agent" data-title="데이터 구조">
+              <span>Data Backend Agent</span>
+            </div>
           </section>
 
-          <section class="department">
-            <small>Growth Office</small>
-            <h2>소셜·출시실</h2>
-            <article class="card teal">
-              <div class="badge">G</div>
-              <small>Social Loop</small>
-              <strong>친구와 모임</strong>
+          <section class="department" aria-label="소셜·출시실">
+            <div class="agent accent" data-title="소셜·출시실">
+              <span>Social Loop Agent</span>
+            </div>
+            <div class="agent" data-title="친구와 모임">
               <span>초대, 공동 페르소나, 리텐션</span>
-            </article>
-            <article class="card">
-              <div class="badge">Q</div>
-              <small>QA Release</small>
-              <strong>검증과 출시</strong>
-              <span>CI, 접근성, Vercel, 릴리즈</span>
-            </article>
+            </div>
+            <div class="agent" data-title="검증과 출시">
+              <span>QA Release Agent</span>
+            </div>
           </section>
         </div>
 
         <p class="note">
-          모든 제작 에이전트는 산출물을 바로 병합하지 않는다. Orchestrator가 합치고, Harness Gate가
-          PRD 일치성, 사용 흐름, 테스트, 빌드, 배포 상태를 확인한 뒤 다음 단계로 넘긴다.
+          모든 제작 에이전트의 산출물은 바로 병합하지 않고, 제작 총괄 에이전트가 정리한 뒤 하네스
+          검문소에서 제품 방향, 사용 흐름, 테스트, 배포 상태를 확인한다.
         </p>
       </section>
     </main>

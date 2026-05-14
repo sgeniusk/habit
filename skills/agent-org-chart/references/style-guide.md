@@ -4,20 +4,21 @@ Use this reference when a user asks for an agent organization chart that should 
 
 ## Composition
 
-- Prefer portrait, square, or compact vertical layouts.
-- Use one primary vertical spine from founder to orchestrator to departments.
+- Prefer compact vertical layouts that resemble a simple company organization chart.
+- Use top management boxes, middle operation boxes, and department columns.
 - Put specialist agents in compact department clusters.
-- Keep each card under three short text lines.
+- Keep each card to a title and one short description.
 - Avoid dense paragraphs inside visual cards.
 
 ## Visual Language
 
 - Background: light gray or off-white.
-- Cards: white, 18-28px radius, subtle border, soft shadow.
-- Badges: circular role emblem attached to the left or top of cards.
-- Connectors: thin gray lines with small nodes.
-- Accents: blue, teal, and a small amount of indigo.
-- Typography: strong title, compact labels, readable descriptions.
+- Cards: flat light gray panels with subtle borders.
+- Headers: muted slate or gray-green title bars.
+- Connectors: thin gray lines only when they improve readability.
+- Accents: use one muted accent for department headers.
+- Typography: clean system sans-serif, compact labels, readable descriptions.
+- Avoid icons, avatars, circular badges, decorative shadows, and image-generation artifacts.
 
 ## Information Hierarchy
 
