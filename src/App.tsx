@@ -166,7 +166,7 @@ export default function App() {
             onOutfitItemChange={(outfit) => updateActiveDecor({ outfit })}
           />
         )}
-        {activeTab === "meet" && <MeetView />}
+        {activeTab === "meet" && <MeetView records={records} />}
         {activeTab === "report" && (
           <ReportView records={records} personas={personas} insights={insights} />
         )}

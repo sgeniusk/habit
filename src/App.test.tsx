@@ -193,6 +193,18 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByText("대표 · 루틴 러너")).toBeInTheDocument();
   });
 
+  it("suggests a running meet when running snaps repeat", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "모임" }));
+
+    expect(screen.getByText("AI 모임 제안")).toBeInTheDocument();
+    expect(screen.getByText("성수천 러닝 모임 추천")).toBeInTheDocument();
+    expect(screen.getByText("러닝 스냅 2회")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "러닝 친구 초대하기" })).toBeInTheDocument();
+  });
+
   it("opens the report view from the tab bar", async () => {
     const user = userEvent.setup();
     render(<App />);
@@ -201,6 +213,18 @@ describe("Persona Habit prototype", () => {
 
     expect(screen.getByText("7일 생활 리포트")).toBeInTheDocument();
     expect(screen.getByText("AI가 발견한 숨은 습관")).toBeInTheDocument();
+  });
+
+  it("opens AI-curated old memories inside the report view", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "리포트" }));
+    await user.click(screen.getByRole("button", { name: "오래된 기억" }));
+
+    expect(screen.getByText("기억 더듬기")).toBeInTheDocument();
+    expect(screen.getByText("오래전의 러닝 감각")).toBeInTheDocument();
+    expect(screen.getByText("2026년 4월")).toBeInTheDocument();
   });
 
   it("renders a living animated persona instead of a static image", () => {

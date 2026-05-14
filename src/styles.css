@@ -250,7 +250,8 @@ p {
 
 .record-list,
 .room-stack,
-.persona-list {
+.persona-list,
+.memory-list {
   display: grid;
   gap: 10px;
 }
@@ -298,6 +299,77 @@ p {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--mint);
+}
+
+.meet-suggestion-card,
+.memory-section {
+  display: grid;
+  gap: 13px;
+  padding: 16px;
+  border: 1px solid rgba(84, 119, 210, 0.3);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(219, 230, 255, 0.82), rgba(255, 255, 255, 0.9)),
+    repeating-linear-gradient(120deg, rgba(84, 119, 210, 0.08) 0 9px, transparent 9px 18px);
+}
+
+.suggestion-heading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.suggestion-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: #fff7cf;
+}
+
+.suggestion-signal-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.suggestion-signal-row span,
+.suggestion-signal-row strong {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 9px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.suggestion-signal-row span {
+  border: 1px solid rgba(47, 157, 101, 0.28);
+  background: #ffffff;
+  color: var(--leaf);
+}
+
+.suggestion-signal-row strong {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.invite-suggestion-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 46px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--blue);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 950;
+  cursor: pointer;
 }
 
 .record-icon.meal {
@@ -1097,6 +1169,47 @@ p {
 }
 
 .insight-card strong {
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.report-mode-switch {
+  margin-top: -4px;
+}
+
+.memory-section {
+  border-color: rgba(240, 191, 59, 0.45);
+  background:
+    linear-gradient(135deg, rgba(255, 247, 207, 0.86), rgba(255, 255, 255, 0.9)),
+    repeating-linear-gradient(120deg, rgba(239, 111, 99, 0.08) 0 10px, transparent 10px 20px);
+}
+
+.memory-card {
+  display: grid;
+  gap: 11px;
+  padding: 14px;
+  border: 1px solid rgba(240, 191, 59, 0.48);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.memory-card > div:first-child {
+  display: grid;
+  gap: 5px;
+}
+
+.memory-card > div:first-child span {
+  color: var(--coral);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.memory-card strong {
+  padding: 10px;
+  border-left: 4px solid var(--gold);
+  border-radius: 8px;
+  background: #fffaf0;
   color: var(--ink);
   font-size: 14px;
   line-height: 1.45;

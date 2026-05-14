@@ -1,8 +1,13 @@
-import { Activity, Apple, BookOpen, Users } from "lucide-react";
+import { Activity, Apple, BookOpen, Sparkles, UserPlus, Users } from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { RoomRow } from "../components/RoomRow";
+import { buildMeetSuggestions } from "../lib/socialEngine";
+import type { SnapRecord } from "../types/habit";
 
-export function MeetView() {
+export function MeetView({ records }: { records: SnapRecord[] }) {
+  const suggestions = buildMeetSuggestions(records);
+  const topSuggestion = suggestions[0];
+
   return (
     <section className="screen rooms-screen" aria-labelledby="meet-title">
       <div className="top-strip">
@@ -23,6 +28,27 @@ export function MeetView() {
         </div>
         <PersonaAvatar tone="blue" accessory="group" />
       </article>
+
+      <section className="meet-suggestion-card" aria-labelledby="meet-suggestion-title">
+        <div className="suggestion-heading">
+          <span className="suggestion-icon">
+            <Sparkles size={18} aria-hidden="true" />
+          </span>
+          <div>
+            <p className="eyebrow">AI 모임 제안</p>
+            <h2 id="meet-suggestion-title">{topSuggestion.title}</h2>
+          </div>
+        </div>
+        <p>{topSuggestion.reason}</p>
+        <div className="suggestion-signal-row">
+          <span>{topSuggestion.signalLabel}</span>
+          <strong>{topSuggestion.matchScore}% 맞음</strong>
+        </div>
+        <button type="button" className="invite-suggestion-button">
+          <UserPlus size={18} aria-hidden="true" />
+          {topSuggestion.cta}
+        </button>
+      </section>
 
       <div className="room-stack">
         <RoomRow title="도서관 9시 클럽" subtitle="오늘 3명 기록" value="82%" icon={BookOpen} />
