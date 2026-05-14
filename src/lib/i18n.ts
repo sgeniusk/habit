@@ -18,6 +18,14 @@ export type TranslationKey =
   | "tabs.report"
   | "today.title"
   | "today.captureCta"
+  | "today.onboarding.eyebrow"
+  | "today.onboarding.title"
+  | "today.onboarding.body"
+  | "today.onboarding.stepSnap"
+  | "today.onboarding.stepHome"
+  | "today.onboarding.stepReport"
+  | "today.onboarding.primary"
+  | "today.onboarding.dismiss"
   | "snap.title"
   | "snap.emptyPhoto"
   | "snap.savedPhoto"
@@ -73,6 +81,15 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "tabs.report": "리포트",
     "today.title": "오늘의 기록",
     "today.captureCta": "오늘의 한 컷 남기기",
+    "today.onboarding.eyebrow": "첫 30초",
+    "today.onboarding.title": "스냅 하나로 앱이 움직여요",
+    "today.onboarding.body":
+      "처음엔 한 컷만 남겨도 충분해요. 그 한 컷이 집, 모임, 리포트로 이어집니다.",
+    "today.onboarding.stepSnap": "스냅을 남기면",
+    "today.onboarding.stepHome": "집에서 페르소나가 반응해요",
+    "today.onboarding.stepReport": "리포트가 숨은 습관을 찾아요",
+    "today.onboarding.primary": "첫 스냅 찍기",
+    "today.onboarding.dismiss": "안내 닫기",
     "snap.title": "오늘의 한 컷",
     "snap.emptyPhoto": "스냅을 찍어보세요",
     "snap.savedPhoto": "새 스냅 저장됨",
@@ -127,6 +144,15 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "tabs.report": "Report",
     "today.title": "Today's record",
     "today.captureCta": "Capture today's moment",
+    "today.onboarding.eyebrow": "First 30 seconds",
+    "today.onboarding.title": "One snap starts the loop",
+    "today.onboarding.body":
+      "One photo is enough to begin. That moment feeds Home, Meet, and Report.",
+    "today.onboarding.stepSnap": "Capture a snap",
+    "today.onboarding.stepHome": "Your persona reacts at home",
+    "today.onboarding.stepReport": "Report finds hidden habits",
+    "today.onboarding.primary": "Take first snap",
+    "today.onboarding.dismiss": "Hide guide",
     "snap.title": "Today's snap",
     "snap.emptyPhoto": "Take a snap",
     "snap.savedPhoto": "New snap saved",

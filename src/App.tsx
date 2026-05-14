@@ -16,8 +16,10 @@ import {
   t
 } from "./lib/i18n";
 import {
+  loadOnboardingDismissed,
   loadSnapRecords,
   loadUserPreferences,
+  saveOnboardingDismissed,
   saveSnapRecords,
   saveUserPreferences
 } from "./lib/persistence";
@@ -61,6 +63,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>(initialRoute.activeTab);
   const [inviteToken, setInviteToken] = useState(initialRoute.inviteToken);
   const [records, setRecords] = useState(() => loadSnapRecords(initialRecords));
+  const [onboardingDismissed, setOnboardingDismissed] = useState(() => loadOnboardingDismissed());
   const [userPreferences, setUserPreferences] = useState(() =>
     loadUserPreferences(defaultUserPreferences)
   );
@@ -277,6 +280,11 @@ export default function App() {
     }));
   }
 
+  function dismissOnboarding() {
+    setOnboardingDismissed(true);
+    saveOnboardingDismissed(true);
+  }
+
   return (
     <div className="app-shell">
       <div className="app-toolbar" aria-label={t(locale, "language.label")}>
@@ -301,6 +309,8 @@ export default function App() {
             records={records}
             insights={insights}
             todayCount={todayCount}
+            showOnboarding={!onboardingDismissed}
+            onDismissOnboarding={dismissOnboarding}
             onSnap={() => setActiveTab("snap")}
           />
         )}

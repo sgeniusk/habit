@@ -6,6 +6,7 @@ export const MEET_SUGGESTION_FEEDBACK_STORAGE_KEY = "persona-habit:meet-suggesti
 export const INSIGHT_FEEDBACK_STORAGE_KEY = "persona-habit:insight-feedback";
 export const SNAP_RECORDS_STORAGE_KEY = "persona-habit:snap-records";
 export const USER_PREFERENCES_STORAGE_KEY = "persona-habit:user-preferences";
+export const ONBOARDING_DISMISSED_STORAGE_KEY = "persona-habit:onboarding-dismissed";
 
 export type InsightFeedbackState = {
   hiddenInsightTitles: string[];
@@ -64,6 +65,17 @@ export function saveInsightFeedback(
   storage: StorageLike = window.localStorage
 ) {
   storage.setItem(INSIGHT_FEEDBACK_STORAGE_KEY, JSON.stringify(feedback));
+}
+
+export function loadOnboardingDismissed(storage: StorageLike = window.localStorage) {
+  return loadJson<boolean>(ONBOARDING_DISMISSED_STORAGE_KEY, false, storage);
+}
+
+export function saveOnboardingDismissed(
+  dismissed: boolean,
+  storage: StorageLike = window.localStorage
+) {
+  storage.setItem(ONBOARDING_DISMISSED_STORAGE_KEY, JSON.stringify(dismissed));
 }
 
 export function loadSnapRecords(

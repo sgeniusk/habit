@@ -163,6 +163,83 @@ p {
   font-weight: 800;
 }
 
+.onboarding-card {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(255, 244, 191, 0.94), rgba(255, 255, 255, 0.92)),
+    repeating-linear-gradient(90deg, rgba(47, 157, 101, 0.08) 0 10px, transparent 10px 20px);
+  box-shadow: 0 14px 26px rgba(28, 39, 51, 0.1);
+}
+
+.onboarding-copy {
+  display: grid;
+  gap: 5px;
+}
+
+.onboarding-copy h2 {
+  font-size: 22px;
+}
+
+.onboarding-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.onboarding-steps span {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 6px;
+  min-height: 78px;
+  padding: 8px;
+  border: 1px solid rgba(28, 39, 51, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.onboarding-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.onboarding-primary,
+.onboarding-dismiss {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.onboarding-primary {
+  border: 0;
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.onboarding-dismiss {
+  padding: 0 12px;
+  border: 1px solid rgba(28, 39, 51, 0.2);
+  background: #ffffff;
+  color: var(--muted);
+}
+
 .hero-band,
 .room-hero {
   display: grid;

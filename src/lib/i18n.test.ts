@@ -15,6 +15,7 @@ describe("i18n", () => {
     expect(defaultLocale).toBe("ko");
     expect(t("ko", "today.title")).toBe("오늘의 기록");
     expect(getTabLabel("today", "ko")).toBe("오늘");
+    expect(t("ko", "today.onboarding.primary")).toBe("첫 스냅 찍기");
   });
 
   it("translates core app chrome and taxonomy labels to English", () => {
@@ -24,6 +25,7 @@ describe("i18n", () => {
     expect(getPlaceLabelForLocale("library", "en")).toBe("Library");
     expect(getPersonaStampPositionLabel("top-left", "en")).toBe("Top left");
     expect(t("en", "snap.shareImage")).toBe("Save share image");
+    expect(t("en", "today.onboarding.title")).toBe("One snap starts the loop");
     expect(formatSnapCountLabel("en", 2)).toBe("Today #2");
   });
 

@@ -5,7 +5,9 @@ import {
   ChevronRight,
   CloudAlert,
   Droplets,
+  Home,
   LocateFixed,
+  Map,
   MapPin,
   MessageCircle,
   PenLine,
@@ -13,7 +15,8 @@ import {
   Route,
   Send,
   Sun,
-  Wand2
+  Wand2,
+  X
 } from "lucide-react";
 import { MetricTile } from "../components/MetricTile";
 import { PersonaAvatar } from "../components/PersonaAvatar";
@@ -45,6 +48,8 @@ export function TodayView({
   records,
   insights,
   todayCount,
+  showOnboarding,
+  onDismissOnboarding,
   onSnap,
   weatherAdapter = defaultWeatherAdapter
 }: {
@@ -52,6 +57,8 @@ export function TodayView({
   records: SnapRecord[];
   insights: ReturnType<typeof findHiddenHabitInsights>;
   todayCount: number;
+  showOnboarding: boolean;
+  onDismissOnboarding: () => void;
   onSnap: () => void;
   weatherAdapter?: WeatherAdapter;
 }) {
@@ -122,6 +129,40 @@ export function TodayView({
           <span>6일</span>
         </div>
       </div>
+
+      {showOnboarding ? (
+        <section className="onboarding-card" aria-labelledby="onboarding-title">
+          <div className="onboarding-copy">
+            <p className="eyebrow">{t(locale, "today.onboarding.eyebrow")}</p>
+            <h2 id="onboarding-title">{t(locale, "today.onboarding.title")}</h2>
+            <p>{t(locale, "today.onboarding.body")}</p>
+          </div>
+          <div className="onboarding-steps" aria-label={t(locale, "today.onboarding.title")}>
+            <span>
+              <Camera size={17} aria-hidden="true" />
+              {t(locale, "today.onboarding.stepSnap")}
+            </span>
+            <span>
+              <Home size={17} aria-hidden="true" />
+              {t(locale, "today.onboarding.stepHome")}
+            </span>
+            <span>
+              <Map size={17} aria-hidden="true" />
+              {t(locale, "today.onboarding.stepReport")}
+            </span>
+          </div>
+          <div className="onboarding-actions">
+            <button type="button" className="onboarding-primary" onClick={onSnap}>
+              <Camera size={18} aria-hidden="true" />
+              <span>{t(locale, "today.onboarding.primary")}</span>
+            </button>
+            <button type="button" className="onboarding-dismiss" onClick={onDismissOnboarding}>
+              <X size={17} aria-hidden="true" />
+              <span>{t(locale, "today.onboarding.dismiss")}</span>
+            </button>
+          </div>
+        </section>
+      ) : null}
 
       <section className="weather-card" aria-label="오늘 날씨와 지역">
         <div>

@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   loadInsightFeedback,
   loadMeetSuggestionFeedback,
+  loadOnboardingDismissed,
   loadSnapRecords,
   loadUserPreferences,
   saveInsightFeedback,
   saveMeetSuggestionFeedback,
+  saveOnboardingDismissed,
   saveSnapRecords,
   saveUserPreferences,
   USER_PREFERENCES_STORAGE_KEY
@@ -60,6 +62,16 @@ describe("persistence", () => {
     saveMeetSuggestionFeedback(feedback, storage);
 
     expect(loadMeetSuggestionFeedback(storage)).toEqual(feedback);
+  });
+
+  it("stores onboarding dismissal for returning alpha testers", () => {
+    const storage = createMemoryStorage();
+
+    expect(loadOnboardingDismissed(storage)).toBe(false);
+
+    saveOnboardingDismissed(true, storage);
+
+    expect(loadOnboardingDismissed(storage)).toBe(true);
   });
 
   it("stores snap records for alpha refresh persistence", () => {

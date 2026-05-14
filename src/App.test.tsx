@@ -17,6 +17,10 @@ describe("Persona Habit prototype", () => {
   it("shows weather, location, and daily journal choices on Today", () => {
     render(<App />);
 
+    expect(screen.getByText("스냅 하나로 앱이 움직여요")).toBeInTheDocument();
+    expect(screen.getByText("스냅을 남기면")).toBeInTheDocument();
+    expect(screen.getByText("집에서 페르소나가 반응해요")).toBeInTheDocument();
+    expect(screen.getByText("리포트가 숨은 습관을 찾아요")).toBeInTheDocument();
     expect(screen.getByText("서울 성수동")).toBeInTheDocument();
     expect(screen.getByText("18도 · 산책하기 좋은 맑음")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "권한 거부 미리보기" })).toBeInTheDocument();
@@ -24,6 +28,25 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByText("오늘 기록 방식")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "AI랑 같이쓰기" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "혼자 기록하기" })).toBeInTheDocument();
+  });
+
+  it("starts the first snap mission from onboarding and keeps dismissal after remounting", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "첫 스냅 찍기" }));
+
+    expect(screen.getByRole("heading", { name: "오늘의 한 컷", level: 1 })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "오늘" }));
+    await user.click(screen.getByRole("button", { name: "안내 닫기" }));
+
+    expect(screen.queryByText("스냅 하나로 앱이 움직여요")).toBeNull();
+
+    unmount();
+    render(<App />);
+
+    expect(screen.queryByText("스냅 하나로 앱이 움직여요")).toBeNull();
   });
 
   it("previews location weather permission and failure states on Today", async () => {
