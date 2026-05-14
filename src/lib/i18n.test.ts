@@ -23,6 +23,7 @@ describe("i18n", () => {
     expect(getCategoryLabelForLocale("study", "en")).toBe("Study");
     expect(getPlaceLabelForLocale("library", "en")).toBe("Library");
     expect(getPersonaStampPositionLabel("top-left", "en")).toBe("Top left");
+    expect(t("en", "snap.shareImage")).toBe("Save share image");
     expect(formatSnapCountLabel("en", 2)).toBe("Today #2");
   });
 

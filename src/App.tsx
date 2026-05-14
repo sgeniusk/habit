@@ -21,8 +21,9 @@ import {
   saveSnapRecords,
   saveUserPreferences
 } from "./lib/persistence";
-import { defaultPersonaNicknames } from "./lib/personaIdentity";
+import { buildPersonaIdentity, defaultPersonaNicknames } from "./lib/personaIdentity";
 import { buildPersonaSummaries, findHiddenHabitInsights } from "./lib/personaEngine";
+import { buildSnapExportFilename, createSnapExportBlob, downloadSnapBlob } from "./lib/snapExport";
 import type {
   HabitCategory,
   Locale,
@@ -71,15 +72,20 @@ export default function App() {
   const [photoName, setPhotoName] = useState("");
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState("");
   const [photoError, setPhotoError] = useState("");
+  const [shareStatus, setShareStatus] = useState("");
+  const [shareError, setShareError] = useState("");
   const [savedPulse, setSavedPulse] = useState(false);
   const locale = normalizeLocale(userPreferences.locale);
   const decorSelections = userPreferences.decorSelections;
   const selectedProofStamps = userPreferences.selectedProofStamps;
   const personaStampPosition = userPreferences.personaStampPosition;
-  const personaNicknames = {
-    ...defaultPersonaNicknames,
-    ...userPreferences.personaNicknames
-  };
+  const personaNicknames = useMemo(
+    () => ({
+      ...defaultPersonaNicknames,
+      ...userPreferences.personaNicknames
+    }),
+    [userPreferences.personaNicknames]
+  );
 
   const personas = useMemo(() => buildPersonaSummaries(records), [records]);
   const insights = useMemo(() => findHiddenHabitInsights(records), [records]);
@@ -88,6 +94,16 @@ export default function App() {
     [records]
   );
   const snapPersona = useMemo(() => findPersonaByCategory(selectedCategory), [selectedCategory]);
+  const snapPersonaIdentity = useMemo(
+    () =>
+      buildPersonaIdentity({
+        category: selectedCategory,
+        nickname: personaNicknames[selectedCategory],
+        level: 1,
+        xp: 0
+      }),
+    [personaNicknames, selectedCategory]
+  );
   const activeDecor = decorSelections[activeHomePersona.id] ?? {
     roomItem: activeHomePersona.roomItem,
     outfit: activeHomePersona.outfit
@@ -130,6 +146,8 @@ export default function App() {
     setPhotoName(t(locale, "snap.savedPhoto"));
     setPhotoPreviewUrl("");
     setPhotoError("");
+    setShareStatus("");
+    setShareError("");
     setSavedPulse(true);
     window.setTimeout(() => setSavedPulse(false), 800);
   }
@@ -143,6 +161,8 @@ export default function App() {
       setPhotoPreviewUrl("");
       setPhotoName("");
       setPhotoError(t(locale, "snap.imageOnlyError"));
+      setShareStatus("");
+      setShareError("");
       return;
     }
 
@@ -151,18 +171,57 @@ export default function App() {
       if (typeof reader.result === "string") {
         setPhotoPreviewUrl(reader.result);
         setPhotoError("");
+        setShareStatus("");
+        setShareError("");
       } else {
         setPhotoPreviewUrl("");
         setPhotoError(t(locale, "snap.imageLoadError"));
+        setShareStatus("");
+        setShareError("");
       }
     };
     reader.onerror = () => {
       setPhotoPreviewUrl("");
       setPhotoError(t(locale, "snap.imageLoadError"));
+      setShareStatus("");
+      setShareError("");
     };
 
     setPhotoName(file.name);
     reader.readAsDataURL(file);
+  }
+
+  async function exportShareImage() {
+    if (!photoPreviewUrl) {
+      setShareStatus("");
+      setShareError(t(locale, "snap.shareNoPhoto"));
+      return;
+    }
+
+    setShareError("");
+    setShareStatus(t(locale, "snap.sharePreparing"));
+
+    try {
+      const blob = await createSnapExportBlob({
+        imageUrl: photoPreviewUrl,
+        photoName: photoName || "snap",
+        filter: selectedFilter,
+        sticker: selectedSticker,
+        proofStamps: selectedProofStamps,
+        personaStampPosition,
+        personaDisplayName: snapPersonaIdentity.displayName,
+        personaRoleLabel: snapPersonaIdentity.roleLabel,
+        snapTimeLabel,
+        snapCountLabel: nextSnapCountLabel,
+        locale
+      });
+
+      downloadSnapBlob(blob, buildSnapExportFilename(photoName || "snap"));
+      setShareStatus(t(locale, "snap.shareReady"));
+    } catch {
+      setShareStatus("");
+      setShareError(t(locale, "snap.shareError"));
+    }
   }
 
   function updateActiveDecor(nextDecor: Partial<PersonaDecorSelection>) {
@@ -264,6 +323,8 @@ export default function App() {
             photoName={photoName}
             photoPreviewUrl={photoPreviewUrl}
             photoError={photoError}
+            shareStatus={shareStatus}
+            shareError={shareError}
             savedPulse={savedPulse}
             onCategoryChange={setSelectedCategory}
             onPlaceChange={setSelectedPlace}
@@ -273,6 +334,7 @@ export default function App() {
             onPersonaStampPositionChange={updatePersonaStampPosition}
             onMemoChange={setMemo}
             onPhotoSelect={handlePhotoSelect}
+            onShareImage={exportShareImage}
             onSave={saveRecord}
           />
         )}

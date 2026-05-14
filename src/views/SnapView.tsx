@@ -1,4 +1,4 @@
-import { ImagePlus, Sparkles } from "lucide-react";
+import { Download, ImagePlus, Sparkles } from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import {
   categoryOptions,
@@ -54,6 +54,8 @@ export function SnapView({
   photoName,
   photoPreviewUrl,
   photoError,
+  shareStatus,
+  shareError,
   savedPulse,
   onCategoryChange,
   onPlaceChange,
@@ -63,6 +65,7 @@ export function SnapView({
   onPersonaStampPositionChange,
   onMemoChange,
   onPhotoSelect,
+  onShareImage,
   onSave
 }: {
   locale: Locale;
@@ -82,6 +85,8 @@ export function SnapView({
   photoName: string;
   photoPreviewUrl: string;
   photoError: string;
+  shareStatus: string;
+  shareError: string;
   savedPulse: boolean;
   onCategoryChange: (category: HabitCategory) => void;
   onPlaceChange: (place: PlaceType) => void;
@@ -91,6 +96,7 @@ export function SnapView({
   onPersonaStampPositionChange: (position: PersonaStampPosition) => void;
   onMemoChange: (memo: string) => void;
   onPhotoSelect: (file?: File) => void;
+  onShareImage: () => void;
   onSave: () => void;
 }) {
   const personaIdentity = buildPersonaIdentity({
@@ -205,6 +211,23 @@ export function SnapView({
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="choice-section" aria-labelledby="proof-stamp-title">
+        <h2 id="proof-stamp-title">{t(locale, "snap.proofStamp")}</h2>
+        <div className="proof-stamp-strip">
+          {proofStampOptions.map((stamp) => (
+            <button
+              key={stamp.id}
+              type="button"
+              className={selectedProofStamps.includes(stamp.id) ? "is-selected" : ""}
+              aria-pressed={selectedProofStamps.includes(stamp.id)}
+              onClick={() => onProofStampToggle(stamp.id)}
+            >
+              {t(locale, stamp.labelKey)}
+            </button>
+          ))}
+        </div>
         {selectedProofStamps.includes("persona") ? (
           <div className="stamp-position-panel" aria-label={t(locale, "stampPosition.title")}>
             <strong>{t(locale, "stampPosition.title")}</strong>
@@ -223,23 +246,6 @@ export function SnapView({
             </div>
           </div>
         ) : null}
-      </section>
-
-      <section className="choice-section" aria-labelledby="proof-stamp-title">
-        <h2 id="proof-stamp-title">{t(locale, "snap.proofStamp")}</h2>
-        <div className="proof-stamp-strip">
-          {proofStampOptions.map((stamp) => (
-            <button
-              key={stamp.id}
-              type="button"
-              className={selectedProofStamps.includes(stamp.id) ? "is-selected" : ""}
-              aria-pressed={selectedProofStamps.includes(stamp.id)}
-              onClick={() => onProofStampToggle(stamp.id)}
-            >
-              {t(locale, stamp.labelKey)}
-            </button>
-          ))}
-        </div>
       </section>
 
       <section className="choice-section" aria-labelledby="category-title">
@@ -291,10 +297,24 @@ export function SnapView({
         />
       </label>
 
-      <button type="button" className="save-button" onClick={onSave}>
-        <Sparkles size={20} aria-hidden="true" />
-        <span>{t(locale, "snap.save")}</span>
-      </button>
+      <div className="snap-action-row">
+        <button
+          type="button"
+          className="share-image-button"
+          disabled={!photoPreviewUrl}
+          onClick={onShareImage}
+        >
+          <Download size={19} aria-hidden="true" />
+          <span>{t(locale, "snap.shareImage")}</span>
+        </button>
+        <button type="button" className="save-button" onClick={onSave}>
+          <Sparkles size={20} aria-hidden="true" />
+          <span>{t(locale, "snap.save")}</span>
+        </button>
+      </div>
+      <small className={shareError ? "share-image-help is-error" : "share-image-help"}>
+        {shareError || shareStatus || t(locale, "snap.shareHelp")}
+      </small>
     </section>
   );
 }

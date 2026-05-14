@@ -30,6 +30,12 @@ export type TranslationKey =
   | "snap.memo"
   | "snap.memoPlaceholder"
   | "snap.save"
+  | "snap.shareImage"
+  | "snap.shareHelp"
+  | "snap.sharePreparing"
+  | "snap.shareReady"
+  | "snap.shareNoPhoto"
+  | "snap.shareError"
   | "snap.imageOnlyError"
   | "snap.imageLoadError"
   | "proof.time"
@@ -79,6 +85,12 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "snap.memo": "한 줄 감정",
     "snap.memoPlaceholder": "예: 맑아서 조금 더 걸었다",
     "snap.save": "꾸며서 올리기",
+    "snap.shareImage": "공유 이미지 저장",
+    "snap.shareHelp": "친구에게 보낼 수 있는 PNG로 저장돼요",
+    "snap.sharePreparing": "공유 이미지 준비 중",
+    "snap.shareReady": "공유 이미지 저장됨",
+    "snap.shareNoPhoto": "사진을 먼저 선택해 주세요.",
+    "snap.shareError": "공유 이미지를 만들지 못했어요.",
     "snap.imageOnlyError": "이미지 파일만 선택할 수 있어요.",
     "snap.imageLoadError": "이미지를 불러오지 못했어요.",
     "proof.time": "시간 도장",
@@ -127,6 +139,12 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "snap.memo": "One-line feeling",
     "snap.memoPlaceholder": "Example: the clear weather made me walk more",
     "snap.save": "Post with style",
+    "snap.shareImage": "Save share image",
+    "snap.shareHelp": "Downloads a PNG you can share",
+    "snap.sharePreparing": "Preparing share image",
+    "snap.shareReady": "Share image saved",
+    "snap.shareNoPhoto": "Choose a photo first.",
+    "snap.shareError": "Couldn't create the share image.",
     "snap.imageOnlyError": "Please choose an image file.",
     "snap.imageLoadError": "Couldn't load this image.",
     "proof.time": "Time stamp",

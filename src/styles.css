@@ -228,6 +228,43 @@ p {
   background: var(--leaf);
 }
 
+.snap-action-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+.share-image-button {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  align-items: center;
+  min-height: 58px;
+  padding: 0 14px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.share-image-button:disabled {
+  border-color: var(--line);
+  background: #f4f1e8;
+  color: #8a8f84;
+  cursor: not-allowed;
+}
+
+.share-image-help {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.share-image-help.is-error {
+  color: #b23a30;
+}
+
 .daily-grid,
 .report-summary {
   display: grid;

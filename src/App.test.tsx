@@ -94,6 +94,10 @@ describe("Persona Habit prototype", () => {
     render(<App />);
 
     await user.click(screen.getByRole("button", { name: "스냅" }));
+    const shareButton = screen.getByRole("button", { name: "공유 이미지 저장" });
+
+    expect(shareButton).toBeDisabled();
+
     await user.click(screen.getByRole("button", { name: "필름" }));
     await user.click(screen.getByRole("button", { name: "🏃 러닝" }));
     await user.upload(
@@ -106,6 +110,8 @@ describe("Persona Habit prototype", () => {
     expect(preview).toHaveAttribute("src", expect.stringContaining("data:image/png;base64"));
     expect(screen.getByText("필름 필터")).toBeInTheDocument();
     expect(screen.getByLabelText("선택 스티커 🏃 러닝")).toBeInTheDocument();
+    expect(shareButton).toBeEnabled();
+    expect(screen.getByText("친구에게 보낼 수 있는 PNG로 저장돼요")).toBeInTheDocument();
   });
 
   it("adds time, count, and persona proof stamps to the snap preview", async () => {
@@ -326,6 +332,7 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByRole("button", { name: "Library" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Time stamp" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Bottom right" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save share image" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Post with style" })).toBeInTheDocument();
 
     unmount();
