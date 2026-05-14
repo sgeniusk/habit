@@ -40,6 +40,6 @@
 ## Chunk 3: Verification And Publish
 
 - [x] Step 1: Run `npm run ci`.
-- [ ] Step 2: Commit the harness changes.
-- [ ] Step 3: Push to GitHub.
-- [ ] Step 4: Confirm GitHub Actions run status.
+- [x] Step 2: Commit the harness changes.
+- [x] Step 3: Push to GitHub.
+- [x] Step 4: Confirm GitHub Actions run status.

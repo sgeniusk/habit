@@ -48,4 +48,7 @@ npm run ci
 
 - PRD: `docs/superpowers/specs/2026-05-13-persona-habit-prd.md`
 - PRD Korean: `docs/superpowers/specs/2026-05-13-persona-habit-prd-ko.md`
+- Roadmap: `docs/roadmap/persona-habit-roadmap.md`
+- Agent org chart: `docs/agents/persona-habit-agent-org-chart.md`
 - Implementation plan: `docs/superpowers/plans/2026-05-13-persona-habit-prototype.md`
+- Next build plan: `docs/superpowers/plans/2026-05-14-roadmap-refresh-next-build.md`
