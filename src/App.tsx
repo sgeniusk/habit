@@ -45,6 +45,8 @@ export default function App() {
   const [selectedSticker, setSelectedSticker] = useState(stickerOptions[0]);
   const [memo, setMemo] = useState("");
   const [photoName, setPhotoName] = useState("스냅을 찍어보세요");
+  const [photoPreviewUrl, setPhotoPreviewUrl] = useState("");
+  const [photoError, setPhotoError] = useState("");
   const [savedPulse, setSavedPulse] = useState(false);
 
   const personas = useMemo(() => buildPersonaSummaries(records), [records]);
@@ -63,14 +65,48 @@ export default function App() {
       memo: memo || photoName,
       filter: selectedFilter,
       sticker: selectedSticker,
+      imageUrl: photoPreviewUrl || undefined,
       createdAt: new Date().toISOString()
     };
 
     setRecords((current) => [nextRecord, ...current]);
     setMemo("");
     setPhotoName("새 스냅 저장됨");
+    setPhotoPreviewUrl("");
+    setPhotoError("");
     setSavedPulse(true);
     window.setTimeout(() => setSavedPulse(false), 800);
+  }
+
+  function handlePhotoSelect(file?: File) {
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setPhotoPreviewUrl("");
+      setPhotoName("이미지를 다시 선택해 주세요");
+      setPhotoError("이미지 파일만 선택할 수 있어요.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setPhotoPreviewUrl(reader.result);
+        setPhotoError("");
+      } else {
+        setPhotoPreviewUrl("");
+        setPhotoError("이미지를 불러오지 못했어요.");
+      }
+    };
+    reader.onerror = () => {
+      setPhotoPreviewUrl("");
+      setPhotoError("이미지를 불러오지 못했어요.");
+    };
+
+    setPhotoName(file.name);
+    reader.readAsDataURL(file);
   }
 
   return (
@@ -92,13 +128,15 @@ export default function App() {
             selectedSticker={selectedSticker}
             memo={memo}
             photoName={photoName}
+            photoPreviewUrl={photoPreviewUrl}
+            photoError={photoError}
             savedPulse={savedPulse}
             onCategoryChange={setSelectedCategory}
             onPlaceChange={setSelectedPlace}
             onFilterChange={setSelectedFilter}
             onStickerChange={setSelectedSticker}
             onMemoChange={setMemo}
-            onPhotoNameChange={setPhotoName}
+            onPhotoSelect={handlePhotoSelect}
             onSave={saveRecord}
           />
         )}
@@ -243,13 +281,15 @@ function SnapView({
   selectedSticker,
   memo,
   photoName,
+  photoPreviewUrl,
+  photoError,
   savedPulse,
   onCategoryChange,
   onPlaceChange,
   onFilterChange,
   onStickerChange,
   onMemoChange,
-  onPhotoNameChange,
+  onPhotoSelect,
   onSave
 }: {
   selectedCategory: HabitCategory;
@@ -258,15 +298,25 @@ function SnapView({
   selectedSticker: string;
   memo: string;
   photoName: string;
+  photoPreviewUrl: string;
+  photoError: string;
   savedPulse: boolean;
   onCategoryChange: (category: HabitCategory) => void;
   onPlaceChange: (place: PlaceType) => void;
   onFilterChange: (filter: string) => void;
   onStickerChange: (sticker: string) => void;
   onMemoChange: (memo: string) => void;
-  onPhotoNameChange: (name: string) => void;
+  onPhotoSelect: (file?: File) => void;
   onSave: () => void;
 }) {
+  const previewClassName = [
+    "photo-drop snap-preview",
+    savedPulse ? "is-saved" : "",
+    photoPreviewUrl ? "has-image" : ""
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <section className="screen capture-screen" aria-labelledby="snap-title">
       <div className="top-strip">
@@ -276,23 +326,43 @@ function SnapView({
         </div>
       </div>
 
-      <label
-        className={savedPulse ? "photo-drop snap-preview is-saved" : "photo-drop snap-preview"}
-      >
+      <label className={previewClassName}>
         <input
+          aria-label="사진 선택"
           type="file"
           accept="image/*"
           capture="environment"
           onChange={(event) => {
             const file = event.target.files?.[0];
-            if (file) {
-              onPhotoNameChange(file.name);
-            }
+            onPhotoSelect(file);
+            event.currentTarget.value = "";
           }}
         />
-        <ImagePlus size={30} aria-hidden="true" />
-        <strong>{photoName}</strong>
-        <span>찍고 꾸미면 페르소나의 하루에 바로 붙어요</span>
+        {photoPreviewUrl ? (
+          <figure
+            className={`snap-image-frame ${getPreviewFilterClass(selectedFilter)}`}
+            data-filter={selectedFilter}
+          >
+            <img src={photoPreviewUrl} alt={`${photoName} 미리보기`} />
+            <figcaption>
+              <span className="filter-badge">{selectedFilter} 필터</span>
+              <span className="sticker-badge" aria-label={`선택 스티커 ${selectedSticker}`}>
+                {selectedSticker}
+              </span>
+            </figcaption>
+          </figure>
+        ) : (
+          <>
+            <ImagePlus size={30} aria-hidden="true" />
+            <strong>{photoName}</strong>
+            <span>찍고 꾸미면 페르소나의 하루에 바로 붙어요</span>
+          </>
+        )}
+        {photoError ? (
+          <small className="snap-error" role="alert">
+            {photoError}
+          </small>
+        ) : null}
       </label>
 
       <section className="choice-section" aria-labelledby="filter-title">
@@ -555,13 +625,23 @@ function MetricTile({ label, value, tone }: { label: string; value: string; tone
 }
 
 function RecordRow({ record }: { record: SnapRecord }) {
+  const categoryLabel = getCategoryLabel(record.category);
+
   return (
     <article className="record-row">
       <div className={`record-icon ${record.category}`}>
-        <Camera size={17} aria-hidden="true" />
+        {record.imageUrl ? (
+          <img
+            className="record-thumbnail"
+            src={record.imageUrl}
+            alt={`${categoryLabel} 스냅 저장 이미지`}
+          />
+        ) : (
+          <Camera size={17} aria-hidden="true" />
+        )}
       </div>
       <div>
-        <h3>{getCategoryLabel(record.category)} 스냅</h3>
+        <h3>{categoryLabel} 스냅</h3>
         <p>
           {getPlaceLabel(record.placeType)}
           {record.memo ? ` · ${record.memo}` : ""}
@@ -575,6 +655,18 @@ function RecordRow({ record }: { record: SnapRecord }) {
       <span>+120xp</span>
     </article>
   );
+}
+
+function getPreviewFilterClass(filter: string) {
+  const filterClasses: Record<string, string> = {
+    맑은빛: "filter-bright",
+    필름: "filter-film",
+    집중: "filter-focus",
+    새벽: "filter-dawn",
+    단백질: "filter-protein"
+  };
+
+  return filterClasses[filter] ?? "filter-bright";
 }
 
 function RoomRow({

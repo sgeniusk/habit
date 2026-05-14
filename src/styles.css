@@ -311,6 +311,13 @@ p {
   background: #fff1b8;
 }
 
+.record-thumbnail {
+  width: 100%;
+  height: 100%;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
 .icon-button {
   cursor: pointer;
 }
@@ -353,6 +360,12 @@ p {
 .photo-drop.is-saved {
   border-color: var(--gold);
   background: #fff8d7;
+}
+
+.photo-drop.has-image {
+  padding: 10px;
+  border-style: solid;
+  background: #ffffff;
 }
 
 .category-grid {
@@ -610,6 +623,96 @@ p {
   border-radius: 999px;
   background: #fff7cf;
   transform: rotate(-7deg);
+}
+
+.snap-preview.has-image::before,
+.snap-preview.has-image::after {
+  display: none;
+}
+
+.snap-image-frame {
+  position: relative;
+  width: 100%;
+  min-height: 214px;
+  margin: 0;
+  overflow: hidden;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: #eff6ee;
+}
+
+.snap-image-frame img {
+  display: block;
+  width: 100%;
+  height: 214px;
+  object-fit: cover;
+}
+
+.snap-image-frame.filter-bright img {
+  filter: brightness(1.08) saturate(1.08);
+}
+
+.snap-image-frame.filter-film img {
+  filter: contrast(0.92) saturate(0.82) sepia(0.24);
+}
+
+.snap-image-frame.filter-focus img {
+  filter: contrast(1.12) saturate(0.96);
+}
+
+.snap-image-frame.filter-dawn img {
+  filter: brightness(0.93) saturate(0.88) hue-rotate(12deg);
+}
+
+.snap-image-frame.filter-protein img {
+  filter: saturate(1.16) contrast(1.04);
+}
+
+.snap-image-frame figcaption {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.filter-badge,
+.sticker-badge {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--ink);
+  box-shadow: 0 8px 18px rgba(28, 39, 51, 0.14);
+  font-weight: 900;
+}
+
+.filter-badge {
+  left: 12px;
+  bottom: 12px;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #fff8d7;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.sticker-badge {
+  right: 14px;
+  top: 14px;
+  min-width: 58px;
+  min-height: 42px;
+  padding: 0 10px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 15px;
+  transform: rotate(5deg);
+}
+
+.snap-error {
+  color: #b23a30;
+  font-size: 12px;
+  font-weight: 900;
 }
 
 .filter-strip,

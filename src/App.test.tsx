@@ -36,6 +36,25 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByRole("button", { name: "꾸며서 올리기" })).toBeInTheDocument();
   });
 
+  it("previews the selected snap image with the active filter and sticker", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "스냅" }));
+    await user.click(screen.getByRole("button", { name: "필름" }));
+    await user.click(screen.getByRole("button", { name: "🏃 러닝" }));
+    await user.upload(
+      screen.getByLabelText("사진 선택"),
+      new File(["snap"], "running-route.png", { type: "image/png" })
+    );
+
+    const preview = await screen.findByRole("img", { name: "running-route.png 미리보기" });
+
+    expect(preview).toHaveAttribute("src", expect.stringContaining("data:image/png;base64"));
+    expect(screen.getByText("필름 필터")).toBeInTheDocument();
+    expect(screen.getByLabelText("선택 스티커 🏃 러닝")).toBeInTheDocument();
+  });
+
   it("saves a decorated snap with the selected filter and sticker", async () => {
     const user = userEvent.setup();
     render(<App />);
@@ -51,6 +70,23 @@ describe("Persona Habit prototype", () => {
 
     expect(screen.getByText("야외 · 퇴근 후 3km 러닝")).toBeInTheDocument();
     expect(screen.getByText("필름 · 🏃 러닝")).toBeInTheDocument();
+  });
+
+  it("keeps the uploaded image on the latest saved snap", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "스냅" }));
+    await user.upload(
+      screen.getByLabelText("사진 선택"),
+      new File(["meal"], "lunch-bowl.png", { type: "image/png" })
+    );
+    await screen.findByRole("img", { name: "lunch-bowl.png 미리보기" });
+    await user.click(screen.getByRole("button", { name: "식단" }));
+    await user.click(screen.getByRole("button", { name: "꾸며서 올리기" }));
+    await user.click(screen.getByRole("button", { name: "오늘" }));
+
+    expect(screen.getByRole("img", { name: "식단 스냅 저장 이미지" })).toBeInTheDocument();
   });
 
   it("opens the Home view with persona activities and decoration", async () => {
