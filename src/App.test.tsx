@@ -36,6 +36,23 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByRole("button", { name: "꾸며서 올리기" })).toBeInTheDocument();
   });
 
+  it("saves a decorated snap with the selected filter and sticker", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "스냅" }));
+    await user.click(screen.getByRole("button", { name: "필름" }));
+    await user.click(screen.getByRole("button", { name: "🏃 러닝" }));
+    await user.click(screen.getByRole("button", { name: "운동" }));
+    await user.click(screen.getByRole("button", { name: "야외" }));
+    await user.type(screen.getByPlaceholderText("예: 맑아서 조금 더 걸었다"), "퇴근 후 3km 러닝");
+    await user.click(screen.getByRole("button", { name: "꾸며서 올리기" }));
+    await user.click(screen.getByRole("button", { name: "오늘" }));
+
+    expect(screen.getByText("야외 · 퇴근 후 3km 러닝")).toBeInTheDocument();
+    expect(screen.getByText("필름 · 🏃 러닝")).toBeInTheDocument();
+  });
+
   it("opens the Home view with persona activities and decoration", async () => {
     const user = userEvent.setup();
     render(<App />);

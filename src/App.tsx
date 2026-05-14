@@ -40,6 +40,8 @@ export default function App() {
   const [records, setRecords] = useState(initialRecords);
   const [selectedCategory, setSelectedCategory] = useState<HabitCategory>("study");
   const [selectedPlace, setSelectedPlace] = useState<PlaceType>("library");
+  const [selectedFilter, setSelectedFilter] = useState(filterOptions[0]);
+  const [selectedSticker, setSelectedSticker] = useState(stickerOptions[0]);
   const [memo, setMemo] = useState("");
   const [photoName, setPhotoName] = useState("스냅을 찍어보세요");
   const [savedPulse, setSavedPulse] = useState(false);
@@ -54,6 +56,8 @@ export default function App() {
       category: selectedCategory,
       placeType: selectedPlace,
       memo: memo || photoName,
+      filter: selectedFilter,
+      sticker: selectedSticker,
       createdAt: new Date().toISOString()
     };
 
@@ -79,11 +83,15 @@ export default function App() {
           <SnapView
             selectedCategory={selectedCategory}
             selectedPlace={selectedPlace}
+            selectedFilter={selectedFilter}
+            selectedSticker={selectedSticker}
             memo={memo}
             photoName={photoName}
             savedPulse={savedPulse}
             onCategoryChange={setSelectedCategory}
             onPlaceChange={setSelectedPlace}
+            onFilterChange={setSelectedFilter}
+            onStickerChange={setSelectedSticker}
             onMemoChange={setMemo}
             onPhotoNameChange={setPhotoName}
             onSave={saveRecord}
@@ -224,22 +232,30 @@ function TodayView({
 function SnapView({
   selectedCategory,
   selectedPlace,
+  selectedFilter,
+  selectedSticker,
   memo,
   photoName,
   savedPulse,
   onCategoryChange,
   onPlaceChange,
+  onFilterChange,
+  onStickerChange,
   onMemoChange,
   onPhotoNameChange,
   onSave
 }: {
   selectedCategory: HabitCategory;
   selectedPlace: PlaceType;
+  selectedFilter: string;
+  selectedSticker: string;
   memo: string;
   photoName: string;
   savedPulse: boolean;
   onCategoryChange: (category: HabitCategory) => void;
   onPlaceChange: (place: PlaceType) => void;
+  onFilterChange: (filter: string) => void;
+  onStickerChange: (sticker: string) => void;
   onMemoChange: (memo: string) => void;
   onPhotoNameChange: (name: string) => void;
   onSave: () => void;
@@ -275,8 +291,13 @@ function SnapView({
       <section className="choice-section" aria-labelledby="filter-title">
         <h2 id="filter-title">필터</h2>
         <div className="filter-strip">
-          {filterOptions.map((filter, index) => (
-            <button key={filter} type="button" className={index === 0 ? "is-selected" : ""}>
+          {filterOptions.map((filter) => (
+            <button
+              key={filter}
+              type="button"
+              className={selectedFilter === filter ? "is-selected" : ""}
+              onClick={() => onFilterChange(filter)}
+            >
               {filter}
             </button>
           ))}
@@ -287,7 +308,12 @@ function SnapView({
         <h2 id="sticker-title">스티커</h2>
         <div className="sticker-strip">
           {stickerOptions.map((sticker) => (
-            <button key={sticker} type="button">
+            <button
+              key={sticker}
+              type="button"
+              className={selectedSticker === sticker ? "is-selected" : ""}
+              onClick={() => onStickerChange(sticker)}
+            >
               {sticker}
             </button>
           ))}
@@ -529,6 +555,11 @@ function RecordRow({ record }: { record: SnapRecord }) {
           {getPlaceLabel(record.placeType)}
           {record.memo ? ` · ${record.memo}` : ""}
         </p>
+        {record.filter || record.sticker ? (
+          <small className="record-decoration">
+            {[record.filter, record.sticker].filter(Boolean).join(" · ")}
+          </small>
+        ) : null}
       </div>
       <span>+120xp</span>
     </article>

@@ -279,6 +279,14 @@ p {
   font-weight: 900;
 }
 
+.record-decoration {
+  display: inline-flex;
+  margin-top: 5px;
+  color: #6d6044;
+  font-size: 12px;
+  font-weight: 900;
+}
+
 .record-icon,
 .room-icon,
 .icon-button {
@@ -626,7 +634,8 @@ p {
   cursor: pointer;
 }
 
-.filter-strip button.is-selected {
+.filter-strip button.is-selected,
+.sticker-strip button.is-selected {
   border-color: var(--ink);
   background: #fff4bf;
   box-shadow: inset 0 0 0 2px var(--ink);
