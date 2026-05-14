@@ -117,6 +117,32 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByText("노트 책상")).toBeInTheDocument();
   });
 
+  it("applies room and outfit decoration selections to the active Home persona", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "집" }));
+
+    const roomDecor = screen.getByRole("region", { name: "방 꾸미기" });
+    const outfitDecor = screen.getByRole("region", { name: "페르소나 꾸미기" });
+
+    await user.click(within(roomDecor).getByRole("button", { name: "낮은 서가" }));
+    await user.click(within(outfitDecor).getByRole("button", { name: "바람막이" }));
+
+    const activePersona = screen.getByRole("region", { name: "새벽 학습자" });
+
+    expect(within(activePersona).getByText("방 · 낮은 서가")).toBeInTheDocument();
+    expect(within(activePersona).getByText("의상 · 바람막이")).toBeInTheDocument();
+    expect(within(roomDecor).getByRole("button", { name: "낮은 서가" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    expect(within(outfitDecor).getByRole("button", { name: "바람막이" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+  });
+
   it("updates the Home persona activity from the latest snap category", async () => {
     const user = userEvent.setup();
     render(<App />);

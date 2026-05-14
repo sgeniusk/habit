@@ -8,7 +8,13 @@ import {
 } from "./data/personaCatalog";
 import { initialRecords } from "./data/sampleRecords";
 import { buildPersonaSummaries, findHiddenHabitInsights } from "./lib/personaEngine";
-import type { HabitCategory, PlaceType, SnapRecord, TabId } from "./types/habit";
+import type {
+  HabitCategory,
+  PersonaDecorSelection,
+  PlaceType,
+  SnapRecord,
+  TabId
+} from "./types/habit";
 import { HomeView } from "./views/HomeView";
 import { MeetView } from "./views/MeetView";
 import { ReportView } from "./views/ReportView";
@@ -18,6 +24,15 @@ import { TodayView } from "./views/TodayView";
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>("today");
   const [records, setRecords] = useState(initialRecords);
+  const [decorSelections, setDecorSelections] = useState<Record<string, PersonaDecorSelection>>(
+    () =>
+      Object.fromEntries(
+        personaCatalog.map((persona) => [
+          persona.id,
+          { roomItem: persona.roomItem, outfit: persona.outfit }
+        ])
+      )
+  );
   const [selectedCategory, setSelectedCategory] = useState<HabitCategory>("study");
   const [selectedPlace, setSelectedPlace] = useState<PlaceType>("library");
   const [selectedFilter, setSelectedFilter] = useState(filterOptions[0]);
@@ -34,6 +49,10 @@ export default function App() {
     () => findPersonaByCategory(records[0]?.category ?? "study"),
     [records]
   );
+  const activeDecor = decorSelections[activeHomePersona.id] ?? {
+    roomItem: activeHomePersona.roomItem,
+    outfit: activeHomePersona.outfit
+  };
   const todayCount = Math.min(3, records.length - initialRecords.length + 1);
 
   function saveRecord() {
@@ -88,6 +107,23 @@ export default function App() {
     reader.readAsDataURL(file);
   }
 
+  function updateActiveDecor(nextDecor: Partial<PersonaDecorSelection>) {
+    setDecorSelections((current) => {
+      const currentDecor = current[activeHomePersona.id] ?? {
+        roomItem: activeHomePersona.roomItem,
+        outfit: activeHomePersona.outfit
+      };
+
+      return {
+        ...current,
+        [activeHomePersona.id]: {
+          ...currentDecor,
+          ...nextDecor
+        }
+      };
+    });
+  }
+
   return (
     <div className="app-shell">
       <main className="app-main">
@@ -124,6 +160,10 @@ export default function App() {
             personas={personaCatalog}
             personaSummaries={personas}
             activePersona={activeHomePersona}
+            selectedRoomItem={activeDecor.roomItem}
+            selectedOutfitItem={activeDecor.outfit}
+            onRoomItemChange={(roomItem) => updateActiveDecor({ roomItem })}
+            onOutfitItemChange={(outfit) => updateActiveDecor({ outfit })}
           />
         )}
         {activeTab === "meet" && <MeetView />}

@@ -7,11 +7,19 @@ import type { PersonaCard } from "../types/habit";
 export function HomeView({
   personas,
   personaSummaries,
-  activePersona
+  activePersona,
+  selectedRoomItem,
+  selectedOutfitItem,
+  onRoomItemChange,
+  onOutfitItemChange
 }: {
   personas: PersonaCard[];
   personaSummaries: PersonaSummary[];
   activePersona: PersonaCard;
+  selectedRoomItem: string;
+  selectedOutfitItem: string;
+  onRoomItemChange: (item: string) => void;
+  onOutfitItemChange: (item: string) => void;
 }) {
   const activeSummary = personaSummaries.find(
     (summary) => summary.archetype === activePersona.category
@@ -41,6 +49,8 @@ export function HomeView({
           <span className="room-window" />
           <span className="room-rug" />
           <span className="room-desk" />
+          <span className="room-selected-prop">{selectedRoomItem}</span>
+          <span className="outfit-selected-prop">{selectedOutfitItem}</span>
           <PersonaAvatar tone={activePersona.tone} accessory={activePersona.accessory} />
         </div>
         <div className="activity-panel">
@@ -76,6 +86,10 @@ export function HomeView({
               )}
             </div>
           </div>
+          <div className="decor-applied-row" aria-label="적용 중인 꾸미기">
+            <span>방 · {selectedRoomItem}</span>
+            <span>의상 · {selectedOutfitItem}</span>
+          </div>
         </div>
       </section>
 
@@ -87,7 +101,15 @@ export function HomeView({
           </div>
           <div className="item-row">
             {roomItems.map((item) => (
-              <small key={item}>{item}</small>
+              <button
+                key={item}
+                type="button"
+                className={selectedRoomItem === item ? "decor-option is-selected" : "decor-option"}
+                aria-pressed={selectedRoomItem === item}
+                onClick={() => onRoomItemChange(item)}
+              >
+                {item}
+              </button>
             ))}
           </div>
         </section>
@@ -98,7 +120,17 @@ export function HomeView({
           </div>
           <div className="item-row">
             {outfitItems.map((item) => (
-              <small key={item}>{item}</small>
+              <button
+                key={item}
+                type="button"
+                className={
+                  selectedOutfitItem === item ? "decor-option is-selected" : "decor-option"
+                }
+                aria-pressed={selectedOutfitItem === item}
+                onClick={() => onOutfitItemChange(item)}
+              >
+                {item}
+              </button>
             ))}
           </div>
         </section>

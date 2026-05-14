@@ -500,6 +500,23 @@ p {
   color: #6c4a00;
 }
 
+.decor-option {
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: #fff3d1;
+  color: #6c4a00;
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.decor-option.is-selected {
+  border-color: var(--ink);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 2px var(--gold);
+}
+
 .room-hero {
   grid-template-columns: 1fr 116px;
   background:
@@ -775,7 +792,9 @@ p {
 
 .room-window,
 .room-rug,
-.room-desk {
+.room-desk,
+.room-selected-prop,
+.outfit-selected-prop {
   position: absolute;
   display: block;
 }
@@ -809,6 +828,32 @@ p {
   border: 3px solid var(--ink);
   border-radius: 8px 8px 4px 4px;
   background: #fff4bf;
+}
+
+.room-selected-prop,
+.outfit-selected-prop {
+  z-index: 4;
+  max-width: 112px;
+  padding: 5px 8px;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 950;
+  line-height: 1.1;
+  box-shadow: 0 8px 0 rgba(28, 39, 51, 0.08);
+}
+
+.room-selected-prop {
+  left: 24px;
+  bottom: 108px;
+}
+
+.outfit-selected-prop {
+  right: 20px;
+  bottom: 34px;
+  background: #e4ebff;
 }
 
 .activity-panel {
@@ -864,6 +909,22 @@ p {
 
 .reward-unlocks .item-row {
   margin-top: 4px;
+}
+
+.decor-applied-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.decor-applied-row span {
+  padding: 7px 9px;
+  border: 1px solid rgba(84, 119, 210, 0.28);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 900;
 }
 
 .decor-grid {

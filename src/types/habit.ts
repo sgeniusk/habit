@@ -43,3 +43,8 @@ export type PersonaCard = {
   roomItem: string;
   outfit: string;
 };
+
+export type PersonaDecorSelection = {
+  roomItem: string;
+  outfit: string;
+};
