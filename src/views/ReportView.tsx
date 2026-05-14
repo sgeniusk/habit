@@ -23,6 +23,9 @@ export function ReportView({
 }) {
   const [reportMode, setReportMode] = useState<ReportMode>("weekly");
   const [memoryFilter, setMemoryFilter] = useState<MemoryFilter>({ type: "all", value: "전체" });
+  const [softenedInsights, setSoftenedInsights] = useState<string[]>([]);
+  const [hiddenInsights, setHiddenInsights] = useState<string[]>([]);
+  const [insightFeedbackMessage, setInsightFeedbackMessage] = useState("");
   const weeklyRecords = useMemo(() => getRecentRecords(records, 7), [records]);
   const weeklyInsights = useMemo(() => findHiddenHabitInsights(weeklyRecords), [weeklyRecords]);
   const memoryCurations = useMemo(() => buildMemoryCurations(records), [records]);
@@ -35,6 +38,9 @@ export function ReportView({
     [memoryCurations, memoryFilter]
   );
   const activeInsights = weeklyInsights.length > 0 ? weeklyInsights : insights;
+  const visibleInsights = activeInsights.filter(
+    (insight) => !hiddenInsights.includes(insight.title)
+  );
 
   return (
     <section className="screen report-screen" aria-labelledby="report-title">
@@ -71,21 +77,68 @@ export function ReportView({
           <div className="report-summary">
             <MetricTile label="주간 스냅" value={`${weeklyRecords.length}`} tone="leaf" />
             <MetricTile label="대표 성장" value={`Lv.${personas[0]?.level ?? 1}`} tone="coral" />
-            <MetricTile label="숨은 패턴" value={`${activeInsights.length}`} tone="blue" />
+            <MetricTile label="숨은 패턴" value={`${visibleInsights.length}`} tone="blue" />
           </div>
 
           <section className="insight-list" aria-labelledby="ai-habit-title">
             <h2 id="ai-habit-title">AI가 발견한 숨은 습관</h2>
-            {activeInsights.map((insight) => (
-              <article className="insight-card" key={insight.title}>
-                <div>
-                  <h3>{insight.title}</h3>
-                  <span>{insight.confidence}</span>
-                </div>
-                <p>{insight.body}</p>
-                <strong>{insight.recommendation}</strong>
-              </article>
-            ))}
+            {insightFeedbackMessage ? (
+              <p className="insight-feedback-message" role="status">
+                {insightFeedbackMessage}
+              </p>
+            ) : null}
+            {hiddenInsights.length > 0 ? (
+              <div className="hidden-insight-panel">
+                <strong>숨긴 인사이트 {hiddenInsights.length}개</strong>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setHiddenInsights([]);
+                    setInsightFeedbackMessage("숨긴 인사이트를 다시 보여줄게요");
+                  }}
+                >
+                  숨긴 인사이트 다시 보기
+                </button>
+              </div>
+            ) : null}
+            {visibleInsights.map((insight) => {
+              const isSoftened = softenedInsights.includes(insight.title);
+
+              return (
+                <article className="insight-card" key={insight.title} aria-label={insight.title}>
+                  <div>
+                    <h3>{insight.title}</h3>
+                    <span>{insight.confidence}</span>
+                  </div>
+                  <p>{isSoftened ? softenInsightBody(insight.body) : insight.body}</p>
+                  <strong>{insight.recommendation}</strong>
+                  <div className="insight-action-row">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSoftenedInsights((current) =>
+                          current.includes(insight.title) ? current : [...current, insight.title]
+                        );
+                        setInsightFeedbackMessage("조금 더 부드럽게 볼게요");
+                      }}
+                    >
+                      문구 순하게
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setHiddenInsights((current) =>
+                          current.includes(insight.title) ? current : [...current, insight.title]
+                        );
+                        setInsightFeedbackMessage("이런 분석은 덜 보여줄게요");
+                      }}
+                    >
+                      관심 없음
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
           </section>
         </>
       ) : (
@@ -165,6 +218,12 @@ export function ReportView({
       )}
     </section>
   );
+}
+
+function softenInsightBody(body: string) {
+  return `가능성으로 보면, ${body
+    .replace("타입일 가능성이 큽니다.", "타입일 수도 있어요.")
+    .replace("같이 있어야 오래 갑니다.", "같이 있으면 더 오래 갈 수 있어요.")}`;
 }
 
 function isActiveFilter(filter: MemoryFilter, type: MemoryFilter["type"], value: string) {

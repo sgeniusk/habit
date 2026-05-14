@@ -30,6 +30,10 @@ describe("Persona Habit prototype", () => {
     const user = userEvent.setup();
     render(<App />);
 
+    await user.click(screen.getByRole("button", { name: "다시 확인" }));
+
+    expect(await screen.findByText("날씨 동기화 완료")).toBeInTheDocument();
+
     await user.click(screen.getByRole("button", { name: "권한 거부 미리보기" }));
 
     expect(screen.getByText("위치 권한이 꺼져 있어요")).toBeInTheDocument();
@@ -261,6 +265,41 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByText("Lv.2 · 100xp")).toBeInTheDocument();
   });
 
+  it("opens an invite route as an accept screen", async () => {
+    const user = userEvent.setup();
+    window.history.pushState({}, "", "/invite/running-meet-88");
+
+    render(<App />);
+
+    expect(screen.getByText("초대 링크로 들어왔어요")).toBeInTheDocument();
+    expect(screen.getByText("성수천 러닝 모임 초대")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "초대 수락하고 시작하기" }));
+
+    expect(screen.getByText("친구 1명 참여 대기")).toBeInTheDocument();
+    expect(screen.getByText("초대 손님 저장됨")).toBeInTheDocument();
+    expect(screen.getByText("첫 러닝 스냅 미션")).toBeInTheDocument();
+  });
+
+  it("keeps the meet room state after remounting the app", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "모임" }));
+    await user.click(screen.getByRole("button", { name: "러닝 친구 초대하기" }));
+    await user.click(screen.getByRole("button", { name: "초대 수락 미리보기" }));
+    await user.click(screen.getByRole("button", { name: "+60xp 완료하기" }));
+
+    unmount();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "모임" }));
+
+    expect(screen.getByText("미션 완료")).toBeInTheDocument();
+    expect(screen.getByText("공동 러닝 페르소나")).toBeInTheDocument();
+    expect(screen.getByText("Lv.2 · 100xp")).toBeInTheDocument();
+  });
+
   it("opens the report view from the tab bar", async () => {
     const user = userEvent.setup();
     render(<App />);
@@ -269,6 +308,29 @@ describe("Persona Habit prototype", () => {
 
     expect(screen.getByText("7일 생활 리포트")).toBeInTheDocument();
     expect(screen.getByText("AI가 발견한 숨은 습관")).toBeInTheDocument();
+  });
+
+  it("lets the user soften or hide AI habit insights", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "리포트" }));
+
+    const insight = screen.getByRole("article", { name: "도서관에서 집중이 반복돼요" });
+
+    await user.click(within(insight).getByRole("button", { name: "문구 순하게" }));
+
+    expect(screen.getByText("조금 더 부드럽게 볼게요")).toBeInTheDocument();
+    expect(within(insight).getByText(/가능성으로 보면/)).toBeInTheDocument();
+
+    await user.click(within(insight).getByRole("button", { name: "관심 없음" }));
+
+    expect(screen.getByText("숨긴 인사이트 1개")).toBeInTheDocument();
+    expect(screen.queryByRole("article", { name: "도서관에서 집중이 반복돼요" })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "숨긴 인사이트 다시 보기" }));
+
+    expect(screen.getByRole("article", { name: "도서관에서 집중이 반복돼요" })).toBeInTheDocument();
   });
 
   it("opens AI-curated old memories inside the report view", async () => {

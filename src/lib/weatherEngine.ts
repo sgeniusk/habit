@@ -1,6 +1,6 @@
 import type { JournalContext } from "./journalEngine";
 
-export type WeatherPermissionState = "granted" | "denied" | "error";
+export type WeatherPermissionState = "granted" | "denied" | "error" | "loading";
 
 export type WeatherSnapshot = {
   condition: JournalContext["condition"];
@@ -23,6 +23,16 @@ export type WeatherAdapter = {
   loadCurrentContext: () => Promise<WeatherSnapshot>;
 };
 
+export type WeatherCoordinates = {
+  latitude: number;
+  longitude: number;
+};
+
+export type DeviceWeatherProvider = {
+  getPosition: () => Promise<WeatherCoordinates>;
+  getWeather: (coordinates: WeatherCoordinates) => Promise<WeatherSnapshot>;
+};
+
 export const fallbackWeatherSnapshot: WeatherSnapshot = {
   condition: "맑음",
   temperatureC: 18,
@@ -38,10 +48,30 @@ export const demoWeatherAdapter: WeatherAdapter = {
   }
 };
 
+export function createDeviceWeatherAdapter(provider: DeviceWeatherProvider): WeatherAdapter {
+  return {
+    async loadCurrentContext() {
+      const coordinates = await provider.getPosition();
+
+      return provider.getWeather(coordinates);
+    }
+  };
+}
+
 export function buildWeatherCardState(
   permission: WeatherPermissionState,
   snapshot: WeatherSnapshot
 ): WeatherCardState {
+  if (permission === "loading") {
+    return {
+      title: "날씨 확인 중",
+      locationLabel: "기기 위치 확인",
+      detail: "위치 권한과 날씨 제공자를 차례로 확인하고 있어요",
+      helperText: "기기 위치와 날씨를 맞추고 있어요",
+      actionLabel: "확인 중"
+    };
+  }
+
   if (permission === "denied") {
     return {
       title: "위치 권한이 꺼져 있어요",

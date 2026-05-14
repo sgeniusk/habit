@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildWeatherCardState,
   buildWeatherJournalContext,
+  createDeviceWeatherAdapter,
   demoWeatherAdapter,
   fallbackWeatherSnapshot
 } from "./weatherEngine";
@@ -25,6 +26,12 @@ describe("weatherEngine", () => {
       locationLabel: "최근 맥락 사용",
       helperText: "연결이 돌아오면 다시 현재 날씨를 확인해요"
     });
+
+    expect(buildWeatherCardState("loading", fallbackWeatherSnapshot)).toMatchObject({
+      title: "날씨 확인 중",
+      locationLabel: "기기 위치 확인",
+      helperText: "기기 위치와 날씨를 맞추고 있어요"
+    });
   });
 
   it("exposes a weather adapter boundary and turns snapshots into journal context", async () => {
@@ -37,6 +44,31 @@ describe("weatherEngine", () => {
       humidity: 42,
       location: "서울 성수동",
       distanceFromHomeKm: 4.2
+    });
+  });
+
+  it("loads weather snapshots through a swappable device provider", async () => {
+    const adapter = createDeviceWeatherAdapter({
+      async getPosition() {
+        return { latitude: 37.5446, longitude: 127.0557 };
+      },
+      async getWeather() {
+        return {
+          condition: "흐림",
+          temperatureC: 21,
+          humidity: 63,
+          location: "서울 성수동",
+          distanceFromHomeKm: 2.8,
+          source: "device"
+        };
+      }
+    });
+
+    await expect(adapter.loadCurrentContext()).resolves.toMatchObject({
+      condition: "흐림",
+      temperatureC: 21,
+      humidity: 63,
+      source: "device"
     });
   });
 });

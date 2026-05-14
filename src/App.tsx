@@ -22,7 +22,9 @@ import { SnapView } from "./views/SnapView";
 import { TodayView } from "./views/TodayView";
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<TabId>("today");
+  const initialRoute = getInitialRoute();
+  const [activeTab, setActiveTab] = useState<TabId>(initialRoute.activeTab);
+  const [inviteToken, setInviteToken] = useState(initialRoute.inviteToken);
   const [records, setRecords] = useState(initialRecords);
   const [decorSelections, setDecorSelections] = useState<Record<string, PersonaDecorSelection>>(
     () =>
@@ -166,7 +168,7 @@ export default function App() {
             onOutfitItemChange={(outfit) => updateActiveDecor({ outfit })}
           />
         )}
-        {activeTab === "meet" && <MeetView records={records} />}
+        {activeTab === "meet" && <MeetView records={records} inviteToken={inviteToken} />}
         {activeTab === "report" && (
           <ReportView records={records} personas={personas} insights={insights} />
         )}
@@ -180,7 +182,13 @@ export default function App() {
               key={tab.id}
               type="button"
               className={activeTab === tab.id ? "tab-button is-active" : "tab-button"}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id);
+
+                if (tab.id !== "meet") {
+                  setInviteToken("");
+                }
+              }}
               aria-label={tab.label}
             >
               <Icon size={20} aria-hidden="true" />
@@ -191,4 +199,20 @@ export default function App() {
       </nav>
     </div>
   );
+}
+
+function getInitialRoute(): { activeTab: TabId; inviteToken: string } {
+  const inviteMatch = window.location.pathname.match(/^\/invite\/([^/]+)$/);
+
+  if (inviteMatch) {
+    return {
+      activeTab: "meet",
+      inviteToken: decodeURIComponent(inviteMatch[1])
+    };
+  }
+
+  return {
+    activeTab: "today",
+    inviteToken: ""
+  };
 }

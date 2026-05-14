@@ -29,7 +29,9 @@ import { findHiddenHabitInsights } from "../lib/personaEngine";
 import {
   buildWeatherCardState,
   buildWeatherJournalContext,
+  demoWeatherAdapter,
   fallbackWeatherSnapshot,
+  type WeatherAdapter,
   type WeatherPermissionState,
   type WeatherSnapshot
 } from "../lib/weatherEngine";
@@ -39,12 +41,14 @@ export function TodayView({
   records,
   insights,
   todayCount,
-  onSnap
+  onSnap,
+  weatherAdapter = demoWeatherAdapter
 }: {
   records: SnapRecord[];
   insights: ReturnType<typeof findHiddenHabitInsights>;
   todayCount: number;
   onSnap: () => void;
+  weatherAdapter?: WeatherAdapter;
 }) {
   const featuredPersona = personaCatalog[0];
   const [journalMode, setJournalMode] = useState<JournalMode>("ai");
@@ -52,6 +56,7 @@ export function TodayView({
   const [journalDrafts, setJournalDrafts] = useState<JournalDraft[]>([]);
   const [weatherPermission, setWeatherPermission] = useState<WeatherPermissionState>("granted");
   const [weatherSnapshot, setWeatherSnapshot] = useState<WeatherSnapshot>(fallbackWeatherSnapshot);
+  const [weatherSyncMessage, setWeatherSyncMessage] = useState("");
   const weatherCard = buildWeatherCardState(weatherPermission, weatherSnapshot);
   const journalContext = buildWeatherJournalContext(weatherSnapshot);
   const personaOpening =
@@ -59,17 +64,27 @@ export function TodayView({
       ? buildJournalOpening(journalContext)
       : "네 문장 그대로 남겨둘게. 오늘의 목소리를 먼저 믿어보자.";
 
-  function grantWeatherPermission() {
-    setWeatherSnapshot(fallbackWeatherSnapshot);
-    setWeatherPermission("granted");
+  async function grantWeatherPermission() {
+    setWeatherPermission("loading");
+    setWeatherSyncMessage("");
+
+    try {
+      setWeatherSnapshot(await weatherAdapter.loadCurrentContext());
+      setWeatherPermission("granted");
+      setWeatherSyncMessage("날씨 동기화 완료");
+    } catch {
+      setWeatherPermission("error");
+    }
   }
 
   function denyWeatherPermission() {
     setWeatherPermission("denied");
+    setWeatherSyncMessage("");
   }
 
   function showWeatherFailure() {
     setWeatherPermission("error");
+    setWeatherSyncMessage("");
   }
 
   function saveJournalDraft() {
@@ -138,6 +153,9 @@ export function TodayView({
             실패 상태 보기
           </button>
         </div>
+        {weatherSyncMessage ? (
+          <strong className="weather-sync-status">{weatherSyncMessage}</strong>
+        ) : null}
       </section>
 
       <div className="hero-band outdoor-hero">

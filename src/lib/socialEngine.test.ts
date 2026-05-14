@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   acceptMeetInvite,
   buildMeetInvite,
+  buildMeetSessionFromInviteToken,
   buildMeetSuggestions,
   completeMeetFirstSnapMission,
   createMeetSession,
@@ -76,6 +77,16 @@ describe("buildMeetInvite", () => {
 });
 
 describe("meet session", () => {
+  it("builds an invite acceptance session from a route token", () => {
+    const session = buildMeetSessionFromInviteToken("running-meet-88", runningRecords);
+
+    expect(session?.invite).toMatchObject({
+      roomTitle: "성수천 러닝 모임",
+      inviteUrl: "https://persona-habit.app/invite/running-meet-88"
+    });
+    expect(session?.firstSnapMission.title).toBe("첫 러닝 스냅 미션");
+  });
+
   it("stores invite acceptors and converts first snaps into group persona XP", () => {
     const suggestion = buildMeetSuggestions(runningRecords)[0];
     const invite = buildMeetInvite(suggestion);

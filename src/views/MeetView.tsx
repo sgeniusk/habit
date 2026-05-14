@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Activity,
   Apple,
@@ -17,22 +17,40 @@ import { RoomRow } from "../components/RoomRow";
 import {
   acceptMeetInvite,
   buildMeetInvite,
+  buildMeetSessionFromInviteToken,
   buildMeetSuggestions,
   completeMeetFirstSnapMission,
   createMeetSession,
   type MeetSession
 } from "../lib/socialEngine";
+import { loadMeetSession, saveMeetSession } from "../lib/persistence";
 import type { SnapRecord } from "../types/habit";
 
-export function MeetView({ records }: { records: SnapRecord[] }) {
+export function MeetView({
+  records,
+  inviteToken = ""
+}: {
+  records: SnapRecord[];
+  inviteToken?: string;
+}) {
   const suggestions = buildMeetSuggestions(records);
   const topSuggestion = suggestions[0];
-  const [meetSession, setMeetSession] = useState<MeetSession | null>(null);
+  const routeInviteSession = useMemo(
+    () => (inviteToken ? buildMeetSessionFromInviteToken(inviteToken, records) : null),
+    [inviteToken, records]
+  );
+  const [meetSession, setMeetSession] = useState<MeetSession | null>(() => loadMeetSession());
   const [shareStatus, setShareStatus] = useState("");
   const waitingMember = meetSession?.members.find(
     (member) => member.status === "waiting-first-snap"
   );
   const contributedMember = meetSession?.members.find((member) => member.status === "contributed");
+
+  useEffect(() => {
+    if (meetSession) {
+      saveMeetSession(meetSession);
+    }
+  }, [meetSession]);
 
   function createInvite() {
     setMeetSession(createMeetSession(buildMeetInvite(topSuggestion)));
@@ -72,6 +90,19 @@ export function MeetView({ records }: { records: SnapRecord[] }) {
       currentSession
         ? completeMeetFirstSnapMission(currentSession, "preview-runner")
         : currentSession
+    );
+  }
+
+  function acceptRouteInvite() {
+    if (!routeInviteSession) {
+      return;
+    }
+
+    setMeetSession(
+      acceptMeetInvite(routeInviteSession, {
+        id: "route-guest",
+        name: "초대 손님"
+      })
     );
   }
 
@@ -116,6 +147,23 @@ export function MeetView({ records }: { records: SnapRecord[] }) {
           {topSuggestion.cta}
         </button>
       </section>
+
+      {!meetSession && routeInviteSession ? (
+        <section className="invite-accept-card" aria-labelledby="invite-accept-title">
+          <div>
+            <p className="eyebrow">Invite Link</p>
+            <h2 id="invite-accept-title">초대 링크로 들어왔어요</h2>
+          </div>
+          <strong>{routeInviteSession.invite.roomTitle} 초대</strong>
+          <p>
+            첫 생활 스냅을 남기면 공동 페르소나가 바로 자라요. 초대를 수락하면 모임 대기실에
+            들어갑니다.
+          </p>
+          <button type="button" onClick={acceptRouteInvite}>
+            초대 수락하고 시작하기
+          </button>
+        </section>
+      ) : null}
 
       {meetSession ? (
         <section className="meet-invite-card" aria-labelledby="meet-invite-title">

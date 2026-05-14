@@ -137,6 +137,18 @@ export function buildMeetInvite(suggestion: MeetSuggestion): MeetInvite {
   };
 }
 
+export function buildMeetSessionFromInviteToken(
+  inviteToken: string,
+  records: MeetSignalRecord[]
+): MeetSession | null {
+  const normalizedToken = inviteToken.replace(/^\/?invite\//, "");
+  const suggestion = buildMeetSuggestions(records).find(
+    (meetSuggestion) => `${meetSuggestion.id}-${meetSuggestion.matchScore}` === normalizedToken
+  );
+
+  return suggestion ? createMeetSession(buildMeetInvite(suggestion)) : null;
+}
+
 export function createMeetSession(invite: MeetInvite): MeetSession {
   return {
     invite,

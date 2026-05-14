@@ -303,6 +303,7 @@ p {
 
 .meet-suggestion-card,
 .meet-invite-card,
+.invite-accept-card,
 .memory-section {
   display: grid;
   gap: 13px;
@@ -378,6 +379,29 @@ p {
   background:
     linear-gradient(135deg, rgba(204, 239, 214, 0.88), rgba(255, 255, 255, 0.9)),
     repeating-linear-gradient(120deg, rgba(47, 157, 101, 0.08) 0 10px, transparent 10px 20px);
+}
+
+.invite-accept-card {
+  border-color: rgba(239, 111, 99, 0.34);
+  background:
+    linear-gradient(135deg, rgba(255, 215, 205, 0.88), rgba(255, 255, 255, 0.92)),
+    repeating-linear-gradient(120deg, rgba(239, 111, 99, 0.08) 0 10px, transparent 10px 20px);
+}
+
+.invite-accept-card > strong {
+  color: var(--ink);
+  font-size: 17px;
+}
+
+.invite-accept-card button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--coral);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 950;
+  cursor: pointer;
 }
 
 .invite-status-row,
@@ -820,6 +844,16 @@ p {
   border-color: var(--ink);
   background: var(--ink);
   color: #ffffff;
+}
+
+.weather-sync-status {
+  justify-self: start;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: #e4ebff;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 950;
 }
 
 .weather-icon {
@@ -1350,6 +1384,58 @@ p {
   color: var(--ink);
   font-size: 14px;
   line-height: 1.45;
+}
+
+.insight-feedback-message,
+.hidden-insight-panel {
+  padding: 12px 13px;
+  border: 1px solid rgba(84, 119, 210, 0.28);
+  border-radius: 8px;
+  background: #f5f8ff;
+  color: var(--ink);
+  font-weight: 850;
+}
+
+.hidden-insight-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #ffffff;
+}
+
+.hidden-insight-panel strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.hidden-insight-panel button,
+.insight-action-row button {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(84, 119, 210, 0.32);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.insight-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.insight-action-row button:first-child {
+  border-color: rgba(47, 157, 101, 0.34);
+  background: #f3fbf4;
+}
+
+.insight-action-row button:last-child {
+  border-color: rgba(239, 111, 99, 0.3);
+  background: #fff7f4;
 }
 
 .report-mode-switch {
