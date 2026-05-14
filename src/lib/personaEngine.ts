@@ -1,4 +1,5 @@
-import type { HabitCategory, PlaceType, SnapRecord } from "../types/habit";
+import { getCategoryLabelForLocale, getPlaceLabelForLocale } from "./i18n";
+import type { HabitCategory, Locale, PlaceType, SnapRecord } from "../types/habit";
 
 export type VerificationRecord = SnapRecord;
 
@@ -19,27 +20,6 @@ export type HabitInsight = {
   body: string;
   recommendation: string;
   confidence: "높음" | "보통" | "낮음";
-};
-
-const categoryLabels: Record<HabitCategory, string> = {
-  study: "공부",
-  meal: "식단",
-  exercise: "운동",
-  reading: "독서",
-  cleaning: "정리",
-  selfcare: "셀프케어",
-  hobby: "취미"
-};
-
-const placeLabels: Record<PlaceType, string> = {
-  home: "집",
-  library: "도서관",
-  school: "학교",
-  cafe: "카페",
-  gym: "헬스장",
-  restaurant: "식당",
-  outdoors: "야외",
-  other: "기타"
 };
 
 const personaNames: Record<HabitCategory, string> = {
@@ -72,12 +52,12 @@ const unlockedItems: Record<HabitCategory, string[]> = {
   hobby: ["작업 앞치마", "컬러 팔레트", "레코드 선반"]
 };
 
-export function getCategoryLabel(category: HabitCategory) {
-  return categoryLabels[category];
+export function getCategoryLabel(category: HabitCategory, locale: Locale = "ko") {
+  return getCategoryLabelForLocale(category, locale);
 }
 
-export function getPlaceLabel(placeType: PlaceType) {
-  return placeLabels[placeType];
+export function getPlaceLabel(placeType: PlaceType, locale: Locale = "ko") {
+  return getPlaceLabelForLocale(placeType, locale);
 }
 
 export function buildPersonaSummaries(records: VerificationRecord[]): PersonaSummary[] {

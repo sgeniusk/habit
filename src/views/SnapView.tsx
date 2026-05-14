@@ -6,17 +6,24 @@ import {
   placeOptions,
   stickerOptions
 } from "../data/personaCatalog";
+import {
+  formatTimeProofLabel,
+  getCategoryLabelForLocale,
+  getPlaceLabelForLocale,
+  t,
+  type TranslationKey
+} from "../lib/i18n";
 import { buildPersonaIdentity } from "../lib/personaIdentity";
-import { getPlaceLabel } from "../lib/personaEngine";
-import type { HabitCategory, PlaceType, ProofStampId } from "../types/habit";
+import type { HabitCategory, Locale, PlaceType, ProofStampId } from "../types/habit";
 
-const proofStampOptions: { id: ProofStampId; label: string }[] = [
-  { id: "time", label: "시간 도장" },
-  { id: "count", label: "횟수 도장" },
-  { id: "persona", label: "페르소나 도장" }
+const proofStampOptions: { id: ProofStampId; labelKey: TranslationKey }[] = [
+  { id: "time", labelKey: "proof.time" },
+  { id: "count", labelKey: "proof.count" },
+  { id: "persona", labelKey: "proof.persona" }
 ];
 
 export function SnapView({
+  locale,
   selectedCategory,
   selectedPlace,
   selectedFilter,
@@ -42,6 +49,7 @@ export function SnapView({
   onPhotoSelect,
   onSave
 }: {
+  locale: Locale;
   selectedCategory: HabitCategory;
   selectedPlace: PlaceType;
   selectedFilter: string;
@@ -86,7 +94,7 @@ export function SnapView({
       <div className="top-strip">
         <div>
           <p className="eyebrow">Snap</p>
-          <h1 id="snap-title">오늘의 한 컷</h1>
+          <h1 id="snap-title">{t(locale, "snap.title")}</h1>
         </div>
       </div>
 
@@ -114,7 +122,9 @@ export function SnapView({
                 {selectedSticker}
               </span>
               {selectedProofStamps.includes("time") ? (
-                <span className="proof-badge time">{snapTimeLabel} 인증</span>
+                <span className="proof-badge time">
+                  {formatTimeProofLabel(locale, snapTimeLabel)}
+                </span>
               ) : null}
               {selectedProofStamps.includes("count") ? (
                 <span className="proof-badge count">{snapCountLabel}</span>
@@ -136,8 +146,8 @@ export function SnapView({
         ) : (
           <>
             <ImagePlus size={30} aria-hidden="true" />
-            <strong>{photoName}</strong>
-            <span>찍고 꾸미면 페르소나의 하루에 바로 붙어요</span>
+            <strong>{photoName || t(locale, "snap.emptyPhoto")}</strong>
+            <span>{t(locale, "snap.photoHelp")}</span>
           </>
         )}
         {photoError ? (
@@ -148,7 +158,7 @@ export function SnapView({
       </label>
 
       <section className="choice-section" aria-labelledby="filter-title">
-        <h2 id="filter-title">필터</h2>
+        <h2 id="filter-title">{t(locale, "snap.filter")}</h2>
         <div className="filter-strip">
           {filterOptions.map((filter) => (
             <button
@@ -164,7 +174,7 @@ export function SnapView({
       </section>
 
       <section className="choice-section" aria-labelledby="sticker-title">
-        <h2 id="sticker-title">스티커</h2>
+        <h2 id="sticker-title">{t(locale, "snap.sticker")}</h2>
         <div className="sticker-strip">
           {stickerOptions.map((sticker) => (
             <button
@@ -180,7 +190,7 @@ export function SnapView({
       </section>
 
       <section className="choice-section" aria-labelledby="proof-stamp-title">
-        <h2 id="proof-stamp-title">인증 도장</h2>
+        <h2 id="proof-stamp-title">{t(locale, "snap.proofStamp")}</h2>
         <div className="proof-stamp-strip">
           {proofStampOptions.map((stamp) => (
             <button
@@ -190,14 +200,14 @@ export function SnapView({
               aria-pressed={selectedProofStamps.includes(stamp.id)}
               onClick={() => onProofStampToggle(stamp.id)}
             >
-              {stamp.label}
+              {t(locale, stamp.labelKey)}
             </button>
           ))}
         </div>
       </section>
 
       <section className="choice-section" aria-labelledby="category-title">
-        <h2 id="category-title">어떤 순간인가요?</h2>
+        <h2 id="category-title">{t(locale, "snap.category")}</h2>
         <div className="category-grid">
           {categoryOptions.map((option) => {
             const Icon = option.icon;
@@ -213,7 +223,7 @@ export function SnapView({
                 onClick={() => onCategoryChange(option.id)}
               >
                 <Icon size={18} aria-hidden="true" />
-                <span>{option.label}</span>
+                <span>{getCategoryLabelForLocale(option.id, locale)}</span>
               </button>
             );
           })}
@@ -221,7 +231,7 @@ export function SnapView({
       </section>
 
       <section className="choice-section" aria-labelledby="place-title">
-        <h2 id="place-title">어디에서 남겼나요?</h2>
+        <h2 id="place-title">{t(locale, "snap.place")}</h2>
         <div className="place-scroller">
           {placeOptions.map((place) => (
             <button
@@ -230,24 +240,24 @@ export function SnapView({
               className={selectedPlace === place ? "place-chip is-selected" : "place-chip"}
               onClick={() => onPlaceChange(place)}
             >
-              {getPlaceLabel(place)}
+              {getPlaceLabelForLocale(place, locale)}
             </button>
           ))}
         </div>
       </section>
 
       <label className="memo-field">
-        <span>한 줄 감정</span>
+        <span>{t(locale, "snap.memo")}</span>
         <input
           value={memo}
           onChange={(event) => onMemoChange(event.target.value)}
-          placeholder="예: 맑아서 조금 더 걸었다"
+          placeholder={t(locale, "snap.memoPlaceholder")}
         />
       </label>
 
       <button type="button" className="save-button" onClick={onSave}>
         <Sparkles size={20} aria-hidden="true" />
-        <span>꾸며서 올리기</span>
+        <span>{t(locale, "snap.save")}</span>
       </button>
     </section>
   );

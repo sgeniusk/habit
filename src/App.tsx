@@ -8,6 +8,14 @@ import {
 } from "./data/personaCatalog";
 import { initialRecords } from "./data/sampleRecords";
 import {
+  defaultLocale,
+  formatSnapCountLabel,
+  getTabLabel,
+  localeOptions,
+  normalizeLocale,
+  t
+} from "./lib/i18n";
+import {
   loadSnapRecords,
   loadUserPreferences,
   saveSnapRecords,
@@ -17,6 +25,7 @@ import { defaultPersonaNicknames } from "./lib/personaIdentity";
 import { buildPersonaSummaries, findHiddenHabitInsights } from "./lib/personaEngine";
 import type {
   HabitCategory,
+  Locale,
   PersonaDecorSelection,
   PlaceType,
   ProofStampId,
@@ -40,7 +49,8 @@ const defaultDecorSelections = Object.fromEntries(
 const defaultUserPreferences: UserPreferenceState = {
   decorSelections: defaultDecorSelections,
   personaNicknames: defaultPersonaNicknames,
-  selectedProofStamps: ["time", "count", "persona"]
+  selectedProofStamps: ["time", "count", "persona"],
+  locale: defaultLocale
 };
 
 export default function App() {
@@ -56,10 +66,11 @@ export default function App() {
   const [selectedFilter, setSelectedFilter] = useState(filterOptions[0]);
   const [selectedSticker, setSelectedSticker] = useState(stickerOptions[0]);
   const [memo, setMemo] = useState("");
-  const [photoName, setPhotoName] = useState("스냅을 찍어보세요");
+  const [photoName, setPhotoName] = useState("");
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState("");
   const [photoError, setPhotoError] = useState("");
   const [savedPulse, setSavedPulse] = useState(false);
+  const locale = normalizeLocale(userPreferences.locale);
   const decorSelections = userPreferences.decorSelections;
   const selectedProofStamps = userPreferences.selectedProofStamps;
   const personaNicknames = {
@@ -79,16 +90,20 @@ export default function App() {
     outfit: activeHomePersona.outfit
   };
   const todayCount = Math.min(3, records.length - initialRecords.length + 1);
-  const nextSnapCountLabel = `오늘 ${todayCount}회차`;
   const snapTimeLabel = new Intl.DateTimeFormat("ko-KR", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false
   }).format(new Date());
+  const nextSnapCountLabel = formatSnapCountLabel(locale, todayCount);
 
   useEffect(() => {
     saveSnapRecords(records);
   }, [records]);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   useEffect(() => {
     saveUserPreferences(userPreferences);
@@ -99,7 +114,7 @@ export default function App() {
       id: `record-${Date.now()}`,
       category: selectedCategory,
       placeType: selectedPlace,
-      memo: memo || photoName,
+      memo: memo || photoName || t(locale, "snap.emptyPhoto"),
       filter: selectedFilter,
       sticker: selectedSticker,
       imageUrl: photoPreviewUrl || undefined,
@@ -109,7 +124,7 @@ export default function App() {
 
     setRecords((current) => [nextRecord, ...current]);
     setMemo("");
-    setPhotoName("새 스냅 저장됨");
+    setPhotoName(t(locale, "snap.savedPhoto"));
     setPhotoPreviewUrl("");
     setPhotoError("");
     setSavedPulse(true);
@@ -123,8 +138,8 @@ export default function App() {
 
     if (!file.type.startsWith("image/")) {
       setPhotoPreviewUrl("");
-      setPhotoName("이미지를 다시 선택해 주세요");
-      setPhotoError("이미지 파일만 선택할 수 있어요.");
+      setPhotoName("");
+      setPhotoError(t(locale, "snap.imageOnlyError"));
       return;
     }
 
@@ -135,12 +150,12 @@ export default function App() {
         setPhotoError("");
       } else {
         setPhotoPreviewUrl("");
-        setPhotoError("이미지를 불러오지 못했어요.");
+        setPhotoError(t(locale, "snap.imageLoadError"));
       }
     };
     reader.onerror = () => {
       setPhotoPreviewUrl("");
-      setPhotoError("이미지를 불러오지 못했어요.");
+      setPhotoError(t(locale, "snap.imageLoadError"));
     };
 
     setPhotoName(file.name);
@@ -186,11 +201,34 @@ export default function App() {
     }));
   }
 
+  function updateLocale(nextLocale: Locale) {
+    setUserPreferences((current) => ({
+      ...current,
+      locale: nextLocale
+    }));
+  }
+
   return (
     <div className="app-shell">
+      <div className="app-toolbar" aria-label={t(locale, "language.label")}>
+        {localeOptions.map((option) => (
+          <button
+            key={option.id}
+            type="button"
+            className={locale === option.id ? "locale-button is-selected" : "locale-button"}
+            aria-label={option.label}
+            aria-pressed={locale === option.id}
+            onClick={() => updateLocale(option.id)}
+          >
+            <span>{option.shortLabel}</span>
+            <strong>{option.label}</strong>
+          </button>
+        ))}
+      </div>
       <main className="app-main">
         {activeTab === "today" && (
           <TodayView
+            locale={locale}
             records={records}
             insights={insights}
             todayCount={todayCount}
@@ -199,6 +237,7 @@ export default function App() {
         )}
         {activeTab === "snap" && (
           <SnapView
+            locale={locale}
             selectedCategory={selectedCategory}
             selectedPlace={selectedPlace}
             selectedFilter={selectedFilter}
@@ -246,9 +285,10 @@ export default function App() {
         )}
       </main>
 
-      <nav className="tab-bar" aria-label="주요 화면">
+      <nav className="tab-bar" aria-label={t(locale, "nav.main")}>
         {tabs.map((tab) => {
           const Icon = tab.icon;
+          const label = getTabLabel(tab.id, locale);
           return (
             <button
               key={tab.id}
@@ -261,10 +301,10 @@ export default function App() {
                   setInviteToken("");
                 }
               }}
-              aria-label={tab.label}
+              aria-label={label}
             >
               <Icon size={20} aria-hidden="true" />
-              <span>{tab.label}</span>
+              <span>{label}</span>
             </button>
           );
         })}

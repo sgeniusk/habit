@@ -1,5 +1,7 @@
 export type TabId = "today" | "snap" | "home" | "meet" | "report";
 
+export type Locale = "ko" | "en";
+
 export type ProofStampId = "time" | "count" | "persona";
 
 export type HabitCategory =
@@ -56,4 +58,5 @@ export type UserPreferenceState = {
   decorSelections: Record<string, PersonaDecorSelection>;
   personaNicknames: Partial<Record<HabitCategory, string>>;
   selectedProofStamps: ProofStampId[];
+  locale: Locale;
 };

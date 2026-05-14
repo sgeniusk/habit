@@ -7,7 +7,8 @@ import {
   saveInsightFeedback,
   saveMeetSuggestionFeedback,
   saveSnapRecords,
-  saveUserPreferences
+  saveUserPreferences,
+  USER_PREFERENCES_STORAGE_KEY
 } from "./persistence";
 import type { MeetSuggestionFeedback } from "./socialEngine";
 import type { SnapRecord, UserPreferenceState } from "../types/habit";
@@ -99,7 +100,8 @@ describe("persistence", () => {
         selfcare: "숨숨",
         hobby: "쏙쏙"
       },
-      selectedProofStamps: ["time", "persona"]
+      selectedProofStamps: ["time", "persona"],
+      locale: "en"
     };
 
     saveUserPreferences(preferences, storage);
@@ -109,10 +111,53 @@ describe("persistence", () => {
         {
           decorSelections: {},
           personaNicknames: {},
-          selectedProofStamps: []
+          selectedProofStamps: [],
+          locale: "ko"
         },
         storage
       )
     ).toEqual(preferences);
+  });
+
+  it("fills missing preference fields from alpha defaults", () => {
+    const storage = createMemoryStorage();
+
+    storage.setItem(
+      USER_PREFERENCES_STORAGE_KEY,
+      JSON.stringify({
+        selectedProofStamps: ["persona"]
+      })
+    );
+
+    expect(
+      loadUserPreferences(
+        {
+          decorSelections: {
+            "dawn-learner": {
+              roomItem: "원목 책상",
+              outfit: "집중 후드"
+            }
+          },
+          personaNicknames: {
+            study: "곰곰"
+          },
+          selectedProofStamps: ["time", "count", "persona"],
+          locale: "ko"
+        },
+        storage
+      )
+    ).toEqual({
+      decorSelections: {
+        "dawn-learner": {
+          roomItem: "원목 책상",
+          outfit: "집중 후드"
+        }
+      },
+      personaNicknames: {
+        study: "곰곰"
+      },
+      selectedProofStamps: ["persona"],
+      locale: "ko"
+    });
   });
 });

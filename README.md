@@ -20,6 +20,7 @@
 - CSS layered character animation
 - Interactive snap decoration and latest-snap persona home reaction
 - Local alpha persistence for snap records, persona nicknames, decor, and proof stamps
+- Korean-first i18n foundation with persisted language preference
 
 ## Local Run
 
@@ -51,6 +52,7 @@ npm run ci
 - PRD: `docs/superpowers/specs/2026-05-13-persona-habit-prd.md`
 - PRD Korean: `docs/superpowers/specs/2026-05-13-persona-habit-prd-ko.md`
 - Alpha report: `docs/alpha/persona-habit-alpha-report.md`
+- i18n plan: `docs/i18n/persona-habit-i18n-plan.md`
 - Roadmap: `docs/roadmap/persona-habit-roadmap.md`
 - Agent org chart: `docs/agents/persona-habit-agent-org-chart.md`
 - Native readiness: `docs/native/expo-readiness-plan.md`

@@ -302,6 +302,36 @@ describe("Persona Habit prototype", () => {
     );
   });
 
+  it("switches core app chrome to English and keeps the locale after remounting", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "English" }));
+
+    expect(document.documentElement).toHaveAttribute("lang", "en");
+    expect(screen.getByRole("heading", { name: "Today's record", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Today" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Snap" })).toBeInTheDocument();
+
+    await user.click(
+      within(screen.getByRole("navigation", { name: "Main screens" })).getByRole("button", {
+        name: "Snap"
+      })
+    );
+
+    expect(screen.getByRole("heading", { name: "Today's snap", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Study" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Library" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Time stamp" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Post with style" })).toBeInTheDocument();
+
+    unmount();
+    render(<App />);
+
+    expect(document.documentElement).toHaveAttribute("lang", "en");
+    expect(screen.getByRole("button", { name: "Today" })).toBeInTheDocument();
+  });
+
   it("updates the Home persona activity from the latest snap category", async () => {
     const user = userEvent.setup();
     render(<App />);

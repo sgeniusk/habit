@@ -25,6 +25,7 @@ import {
   type JournalDraft,
   type JournalMode
 } from "../lib/journalEngine";
+import { t } from "../lib/i18n";
 import { findHiddenHabitInsights } from "../lib/personaEngine";
 import {
   buildWeatherCardState,
@@ -35,17 +36,19 @@ import {
   type WeatherPermissionState,
   type WeatherSnapshot
 } from "../lib/weatherEngine";
-import type { SnapRecord } from "../types/habit";
+import type { Locale, SnapRecord } from "../types/habit";
 
 const defaultWeatherAdapter = createAutoWeatherAdapter();
 
 export function TodayView({
+  locale,
   records,
   insights,
   todayCount,
   onSnap,
   weatherAdapter = defaultWeatherAdapter
 }: {
+  locale: Locale;
   records: SnapRecord[];
   insights: ReturnType<typeof findHiddenHabitInsights>;
   todayCount: number;
@@ -112,7 +115,7 @@ export function TodayView({
       <div className="top-strip">
         <div>
           <p className="eyebrow">Today</p>
-          <h1 id="today-title">오늘의 기록</h1>
+          <h1 id="today-title">{t(locale, "today.title")}</h1>
         </div>
         <div className="streak-badge">
           <Check size={18} aria-hidden="true" />
@@ -174,7 +177,7 @@ export function TodayView({
 
       <button type="button" className="capture-cta" onClick={onSnap}>
         <Camera size={22} aria-hidden="true" />
-        <span>오늘의 한 컷 남기기</span>
+        <span>{t(locale, "today.captureCta")}</span>
         <ChevronRight size={20} aria-hidden="true" />
       </button>
 
@@ -277,7 +280,7 @@ export function TodayView({
         <h2 id="timeline-title">오늘 남긴 기록</h2>
         <div className="record-list">
           {records.slice(0, 4).map((record) => (
-            <RecordRow key={record.id} record={record} />
+            <RecordRow key={record.id} record={record} locale={locale} />
           ))}
         </div>
       </section>

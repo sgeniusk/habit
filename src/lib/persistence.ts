@@ -81,7 +81,28 @@ export function loadUserPreferences(
   fallbackPreferences: UserPreferenceState,
   storage: StorageLike = window.localStorage
 ) {
-  return loadJson<UserPreferenceState>(USER_PREFERENCES_STORAGE_KEY, fallbackPreferences, storage);
+  const storedPreferences = loadJson<Partial<UserPreferenceState>>(
+    USER_PREFERENCES_STORAGE_KEY,
+    fallbackPreferences,
+    storage
+  );
+
+  return {
+    decorSelections: {
+      ...fallbackPreferences.decorSelections,
+      ...(storedPreferences.decorSelections ?? {})
+    },
+    personaNicknames: {
+      ...fallbackPreferences.personaNicknames,
+      ...(storedPreferences.personaNicknames ?? {})
+    },
+    selectedProofStamps:
+      storedPreferences.selectedProofStamps ?? fallbackPreferences.selectedProofStamps,
+    locale:
+      storedPreferences.locale === "ko" || storedPreferences.locale === "en"
+        ? storedPreferences.locale
+        : fallbackPreferences.locale
+  };
 }
 
 export function saveUserPreferences(
