@@ -102,6 +102,21 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByText("새벽 학습자")).toBeInTheDocument();
   });
 
+  it("shows record-based XP and unlocked rewards on Home", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "집" }));
+
+    const activePersona = screen.getByRole("region", { name: "새벽 학습자" });
+
+    expect(within(activePersona).getByText("Lv.3 · 240xp")).toBeInTheDocument();
+    expect(within(activePersona).getByText("다음 레벨까지 60xp")).toBeInTheDocument();
+    expect(screen.getByText("해금된 보상")).toBeInTheDocument();
+    expect(screen.getByText("스탠드")).toBeInTheDocument();
+    expect(screen.getByText("노트 책상")).toBeInTheDocument();
+  });
+
   it("updates the Home persona activity from the latest snap category", async () => {
     const user = userEvent.setup();
     render(<App />);

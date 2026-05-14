@@ -120,7 +120,11 @@ export default function App() {
           />
         )}
         {activeTab === "home" && (
-          <HomeView personas={personaCatalog} activePersona={activeHomePersona} />
+          <HomeView
+            personas={personaCatalog}
+            personaSummaries={personas}
+            activePersona={activeHomePersona}
+          />
         )}
         {activeTab === "meet" && <MeetView />}
         {activeTab === "report" && (

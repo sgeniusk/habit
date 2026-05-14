@@ -32,6 +32,7 @@ export type SnapRecord = {
 
 export type PersonaCard = {
   id: string;
+  category: HabitCategory;
   name: string;
   activity: string;
   place: string;

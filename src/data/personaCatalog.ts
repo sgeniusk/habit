@@ -55,6 +55,7 @@ export const tabs: TabOption[] = [
 export const personaCatalog: PersonaCard[] = [
   {
     id: "dawn-learner",
+    category: "study",
     name: "새벽 학습자",
     activity: "창가 책상에서 오늘의 오답을 정리하는 중",
     place: "집 · 조용한 책상",
@@ -67,6 +68,7 @@ export const personaCatalog: PersonaCard[] = [
   },
   {
     id: "routine-runner",
+    category: "exercise",
     name: "루틴 러너",
     activity: "러닝화를 말리고 스트레칭을 하는 중",
     place: "야외 · 성수천",
@@ -79,6 +81,7 @@ export const personaCatalog: PersonaCard[] = [
   },
   {
     id: "clean-meal",
+    category: "meal",
     name: "클린식단러",
     activity: "내일 도시락 재료를 고르는 중",
     place: "집 · 작은 주방",
@@ -91,6 +94,7 @@ export const personaCatalog: PersonaCard[] = [
   },
   {
     id: "page-collector",
+    category: "reading",
     name: "페이지 수집가",
     activity: "카페 구석에서 책갈피를 옮기는 중",
     place: "카페 · 창가 자리",
@@ -103,6 +107,7 @@ export const personaCatalog: PersonaCard[] = [
   },
   {
     id: "reset-maker",
+    category: "cleaning",
     name: "방정리 장인",
     activity: "책상 위 물건을 색깔별로 정리하는 중",
     place: "집 · 정리된 방",
@@ -115,6 +120,7 @@ export const personaCatalog: PersonaCard[] = [
   },
   {
     id: "healthy-exam",
+    category: "selfcare",
     name: "건강관리형 수험생",
     activity: "문제집 옆에 물컵과 러닝화를 두는 중",
     place: "집 · 복합 루틴존",
