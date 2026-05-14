@@ -337,6 +337,63 @@ p {
   gap: 8px;
 }
 
+.meet-feedback-status,
+.hidden-meet-panel {
+  padding: 12px 13px;
+  border: 1px solid rgba(84, 119, 210, 0.28);
+  border-radius: 8px;
+  background: #f5f8ff;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.hidden-meet-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #ffffff;
+}
+
+.hidden-meet-panel strong {
+  font-size: 14px;
+}
+
+.hidden-meet-panel button,
+.suggestion-feedback-row button {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid rgba(84, 119, 210, 0.3);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.suggestion-feedback-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.suggestion-feedback-row button:first-child {
+  border-color: rgba(240, 191, 59, 0.48);
+  background: #fff7cf;
+}
+
+.suggestion-feedback-row button:nth-child(2) {
+  border-color: rgba(47, 157, 101, 0.3);
+  background: #f3fbf4;
+}
+
+.suggestion-feedback-row button:last-child {
+  border-color: rgba(239, 111, 99, 0.3);
+  background: #fff7f4;
+}
+
 .suggestion-signal-row span,
 .suggestion-signal-row strong {
   display: inline-flex;

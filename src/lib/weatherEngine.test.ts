@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   buildWeatherCardState,
   buildWeatherJournalContext,
+  createAutoWeatherAdapter,
+  createBrowserWeatherProvider,
   createDeviceWeatherAdapter,
   demoWeatherAdapter,
   fallbackWeatherSnapshot
@@ -69,6 +71,64 @@ describe("weatherEngine", () => {
       temperatureC: 21,
       humidity: 63,
       source: "device"
+    });
+  });
+
+  it("loads current weather from browser geolocation and an Open-Meteo style response", async () => {
+    const provider = createBrowserWeatherProvider({
+      geolocation: {
+        getCurrentPosition(success) {
+          success({
+            coords: {
+              latitude: 37.5446,
+              longitude: 127.0557
+            }
+          } as GeolocationPosition);
+        }
+      },
+      fetcher: async (url) => {
+        expect(url).toContain("https://api.open-meteo.com/v1/forecast");
+        expect(url).toContain("current=temperature_2m%2Crelative_humidity_2m%2Cweather_code");
+
+        return {
+          ok: true,
+          async json() {
+            return {
+              current: {
+                temperature_2m: 22.4,
+                relative_humidity_2m: 64,
+                weather_code: 61
+              }
+            };
+          }
+        };
+      },
+      homeCoordinates: { latitude: 37.5446, longitude: 127.0557 },
+      locationLabel: "현재 위치"
+    });
+
+    const coordinates = await provider.getPosition();
+    const snapshot = await provider.getWeather(coordinates);
+
+    expect(snapshot).toMatchObject({
+      condition: "비",
+      temperatureC: 22,
+      humidity: 64,
+      location: "현재 위치",
+      distanceFromHomeKm: 0,
+      source: "device"
+    });
+  });
+
+  it("falls back to the demo adapter when browser weather APIs are unavailable", async () => {
+    const adapter = createAutoWeatherAdapter({
+      geolocation: undefined,
+      fetcher: undefined
+    });
+
+    await expect(adapter.loadCurrentContext()).resolves.toMatchObject({
+      location: "서울 성수동",
+      source: "demo"
     });
   });
 });

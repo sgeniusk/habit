@@ -16,14 +16,22 @@ import { PersonaAvatar } from "../components/PersonaAvatar";
 import { RoomRow } from "../components/RoomRow";
 import {
   acceptMeetInvite,
+  applyMeetSuggestionFeedback,
   buildMeetInvite,
   buildMeetSessionFromInviteToken,
   buildMeetSuggestions,
   completeMeetFirstSnapMission,
   createMeetSession,
+  upsertMeetSuggestionFeedback,
+  type MeetSuggestionFeedbackAction,
   type MeetSession
 } from "../lib/socialEngine";
-import { loadMeetSession, saveMeetSession } from "../lib/persistence";
+import {
+  loadMeetSession,
+  loadMeetSuggestionFeedback,
+  saveMeetSession,
+  saveMeetSuggestionFeedback
+} from "../lib/persistence";
 import type { SnapRecord } from "../types/habit";
 
 export function MeetView({
@@ -33,14 +41,23 @@ export function MeetView({
   records: SnapRecord[];
   inviteToken?: string;
 }) {
-  const suggestions = buildMeetSuggestions(records);
+  const baseSuggestions = useMemo(() => buildMeetSuggestions(records), [records]);
+  const [suggestionFeedback, setSuggestionFeedback] = useState(() => loadMeetSuggestionFeedback());
+  const suggestions = useMemo(
+    () => applyMeetSuggestionFeedback(baseSuggestions, suggestionFeedback),
+    [baseSuggestions, suggestionFeedback]
+  );
   const topSuggestion = suggestions[0];
+  const hiddenSuggestionCount = suggestionFeedback.filter(
+    (feedback) => feedback.action === "hidden"
+  ).length;
   const routeInviteSession = useMemo(
     () => (inviteToken ? buildMeetSessionFromInviteToken(inviteToken, records) : null),
     [inviteToken, records]
   );
   const [meetSession, setMeetSession] = useState<MeetSession | null>(() => loadMeetSession());
   const [shareStatus, setShareStatus] = useState("");
+  const [suggestionStatus, setSuggestionStatus] = useState("");
   const waitingMember = meetSession?.members.find(
     (member) => member.status === "waiting-first-snap"
   );
@@ -52,7 +69,15 @@ export function MeetView({
     }
   }, [meetSession]);
 
+  useEffect(() => {
+    saveMeetSuggestionFeedback(suggestionFeedback);
+  }, [suggestionFeedback]);
+
   function createInvite() {
+    if (!topSuggestion) {
+      return;
+    }
+
     setMeetSession(createMeetSession(buildMeetInvite(topSuggestion)));
     setShareStatus("");
   }
@@ -76,6 +101,10 @@ export function MeetView({
 
   function previewInviteAccept() {
     setMeetSession((currentSession) => {
+      if (!topSuggestion) {
+        return currentSession;
+      }
+
       const session = currentSession ?? createMeetSession(buildMeetInvite(topSuggestion));
 
       return acceptMeetInvite(session, {
@@ -106,6 +135,22 @@ export function MeetView({
     );
   }
 
+  function tuneSuggestionFeedback(action: MeetSuggestionFeedbackAction) {
+    if (!topSuggestion) {
+      return;
+    }
+
+    setSuggestionFeedback((current) =>
+      upsertMeetSuggestionFeedback(current, topSuggestion.id, action)
+    );
+    setSuggestionStatus(buildSuggestionFeedbackMessage(topSuggestion.title, action));
+  }
+
+  function restoreHiddenSuggestions() {
+    setSuggestionFeedback([]);
+    setSuggestionStatus("숨긴 추천을 다시 볼게요");
+  }
+
   return (
     <section className="screen rooms-screen" aria-labelledby="meet-title">
       <div className="top-strip">
@@ -127,26 +172,66 @@ export function MeetView({
         <PersonaAvatar tone="blue" accessory="group" />
       </article>
 
-      <section className="meet-suggestion-card" aria-labelledby="meet-suggestion-title">
-        <div className="suggestion-heading">
-          <span className="suggestion-icon">
-            <Sparkles size={18} aria-hidden="true" />
-          </span>
+      {suggestionStatus ? (
+        <p className="meet-feedback-status" role="status">
+          {suggestionStatus}
+        </p>
+      ) : null}
+
+      {hiddenSuggestionCount > 0 ? (
+        <div className="hidden-meet-panel">
+          <strong>숨긴 모임 추천 {hiddenSuggestionCount}개</strong>
+          <button type="button" onClick={restoreHiddenSuggestions}>
+            숨긴 추천 다시 보기
+          </button>
+        </div>
+      ) : null}
+
+      {topSuggestion ? (
+        <article
+          className="meet-suggestion-card"
+          aria-labelledby="meet-suggestion-title"
+          aria-label={topSuggestion.title}
+        >
+          <div className="suggestion-heading">
+            <span className="suggestion-icon">
+              <Sparkles size={18} aria-hidden="true" />
+            </span>
+            <div>
+              <p className="eyebrow">AI 모임 제안</p>
+              <h2 id="meet-suggestion-title">{topSuggestion.title}</h2>
+            </div>
+          </div>
+          <p>{topSuggestion.reason}</p>
+          <div className="suggestion-signal-row">
+            <span>{topSuggestion.signalLabel}</span>
+            <strong>{topSuggestion.matchScore}% 맞음</strong>
+          </div>
+          <div className="suggestion-feedback-row" aria-label="모임 추천 피드백">
+            <button type="button" onClick={() => tuneSuggestionFeedback("pinned")}>
+              추천 고정
+            </button>
+            <button type="button" onClick={() => tuneSuggestionFeedback("later")}>
+              나중에 보기
+            </button>
+            <button type="button" onClick={() => tuneSuggestionFeedback("hidden")}>
+              관심 없음
+            </button>
+          </div>
+          <button type="button" className="invite-suggestion-button" onClick={createInvite}>
+            <UserPlus size={18} aria-hidden="true" />
+            {topSuggestion.cta}
+          </button>
+        </article>
+      ) : (
+        <section className="meet-suggestion-card" aria-labelledby="hidden-all-meet-title">
           <div>
             <p className="eyebrow">AI 모임 제안</p>
-            <h2 id="meet-suggestion-title">{topSuggestion.title}</h2>
+            <h2 id="hidden-all-meet-title">추천을 모두 숨겼어요</h2>
           </div>
-        </div>
-        <p>{topSuggestion.reason}</p>
-        <div className="suggestion-signal-row">
-          <span>{topSuggestion.signalLabel}</span>
-          <strong>{topSuggestion.matchScore}% 맞음</strong>
-        </div>
-        <button type="button" className="invite-suggestion-button" onClick={createInvite}>
-          <UserPlus size={18} aria-hidden="true" />
-          {topSuggestion.cta}
-        </button>
-      </section>
+          <p>지금은 모임 제안을 쉬고, 생활 스냅이 더 쌓이면 다시 열어볼 수 있어요.</p>
+        </section>
+      )}
 
       {!meetSession && routeInviteSession ? (
         <section className="invite-accept-card" aria-labelledby="invite-accept-title">
@@ -251,4 +336,16 @@ export function MeetView({
       </div>
     </section>
   );
+}
+
+function buildSuggestionFeedbackMessage(title: string, action: MeetSuggestionFeedbackAction) {
+  if (action === "pinned") {
+    return `${title}을 고정했어요`;
+  }
+
+  if (action === "later") {
+    return `${title}은 나중에 다시 볼게요`;
+  }
+
+  return `${title}은 덜 보여줄게요`;
 }

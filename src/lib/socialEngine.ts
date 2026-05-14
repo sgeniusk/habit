@@ -12,6 +12,14 @@ export type MeetSuggestion = {
   cta: string;
 };
 
+export type MeetSuggestionFeedbackAction = "hidden" | "later" | "pinned";
+
+export type MeetSuggestionFeedback = {
+  suggestionId: string;
+  action: MeetSuggestionFeedbackAction;
+  updatedAt: string;
+};
+
 export type MeetInvite = {
   status: "초대 링크 생성됨";
   suggestionId: string;
@@ -112,6 +120,56 @@ export function buildMeetSuggestions(records: MeetSignalRecord[]): MeetSuggestio
   }
 
   return suggestions.sort((a, b) => b.matchScore - a.matchScore);
+}
+
+export function applyMeetSuggestionFeedback(
+  suggestions: MeetSuggestion[],
+  feedback: MeetSuggestionFeedback[]
+) {
+  const latestFeedback = new Map(
+    feedback.map((feedbackItem) => [feedbackItem.suggestionId, feedbackItem])
+  );
+
+  return suggestions
+    .filter((suggestion) => latestFeedback.get(suggestion.id)?.action !== "hidden")
+    .sort((a, b) => {
+      const aAction = latestFeedback.get(a.id)?.action;
+      const bAction = latestFeedback.get(b.id)?.action;
+
+      if (aAction === "pinned" && bAction !== "pinned") {
+        return -1;
+      }
+
+      if (bAction === "pinned" && aAction !== "pinned") {
+        return 1;
+      }
+
+      if (aAction === "later" && bAction !== "later") {
+        return 1;
+      }
+
+      if (bAction === "later" && aAction !== "later") {
+        return -1;
+      }
+
+      return b.matchScore - a.matchScore;
+    });
+}
+
+export function upsertMeetSuggestionFeedback(
+  feedback: MeetSuggestionFeedback[],
+  suggestionId: string,
+  action: MeetSuggestionFeedbackAction,
+  updatedAt = new Date().toISOString()
+): MeetSuggestionFeedback[] {
+  return [
+    ...feedback.filter((feedbackItem) => feedbackItem.suggestionId !== suggestionId),
+    {
+      suggestionId,
+      action,
+      updatedAt
+    }
+  ];
 }
 
 function isRunningRecord(record: MeetSignalRecord) {

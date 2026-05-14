@@ -29,7 +29,7 @@ import { findHiddenHabitInsights } from "../lib/personaEngine";
 import {
   buildWeatherCardState,
   buildWeatherJournalContext,
-  demoWeatherAdapter,
+  createAutoWeatherAdapter,
   fallbackWeatherSnapshot,
   type WeatherAdapter,
   type WeatherPermissionState,
@@ -37,12 +37,14 @@ import {
 } from "../lib/weatherEngine";
 import type { SnapRecord } from "../types/habit";
 
+const defaultWeatherAdapter = createAutoWeatherAdapter();
+
 export function TodayView({
   records,
   insights,
   todayCount,
   onSnap,
-  weatherAdapter = demoWeatherAdapter
+  weatherAdapter = defaultWeatherAdapter
 }: {
   records: SnapRecord[];
   insights: ReturnType<typeof findHiddenHabitInsights>;

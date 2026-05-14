@@ -230,6 +230,31 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByRole("button", { name: "러닝 친구 초대하기" })).toBeInTheDocument();
   });
 
+  it("lets the user tune meet recommendation feedback", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "모임" }));
+
+    const runningSuggestion = screen.getByRole("article", { name: "성수천 러닝 모임 추천" });
+
+    await user.click(within(runningSuggestion).getByRole("button", { name: "관심 없음" }));
+
+    expect(screen.getByText("숨긴 모임 추천 1개")).toBeInTheDocument();
+    expect(screen.queryByRole("article", { name: "성수천 러닝 모임 추천" })).toBeNull();
+    expect(screen.getByRole("article", { name: "도서관 9시 클럽 추천" })).toBeInTheDocument();
+
+    const studySuggestion = screen.getByRole("article", { name: "도서관 9시 클럽 추천" });
+
+    await user.click(within(studySuggestion).getByRole("button", { name: "추천 고정" }));
+
+    expect(screen.getByText("도서관 9시 클럽 추천을 고정했어요")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "숨긴 추천 다시 보기" }));
+
+    expect(screen.getByRole("article", { name: "성수천 러닝 모임 추천" })).toBeInTheDocument();
+  });
+
   it("creates a meet invite link and previews an accepted invite", async () => {
     const user = userEvent.setup();
     render(<App />);
@@ -331,6 +356,25 @@ describe("Persona Habit prototype", () => {
     await user.click(screen.getByRole("button", { name: "숨긴 인사이트 다시 보기" }));
 
     expect(screen.getByRole("article", { name: "도서관에서 집중이 반복돼요" })).toBeInTheDocument();
+  });
+
+  it("keeps hidden AI habit insights after remounting the app", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "리포트" }));
+
+    const insight = screen.getByRole("article", { name: "도서관에서 집중이 반복돼요" });
+
+    await user.click(within(insight).getByRole("button", { name: "관심 없음" }));
+
+    unmount();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "리포트" }));
+
+    expect(screen.getByText("숨긴 인사이트 1개")).toBeInTheDocument();
+    expect(screen.queryByRole("article", { name: "도서관에서 집중이 반복돼요" })).toBeNull();
   });
 
   it("opens AI-curated old memories inside the report view", async () => {

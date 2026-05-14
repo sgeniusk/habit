@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Archive, CalendarDays } from "lucide-react";
 import { MetricTile } from "../components/MetricTile";
 import {
@@ -7,6 +7,7 @@ import {
   filterMemoryCurations,
   type MemoryFilter
 } from "../lib/memoryEngine";
+import { loadInsightFeedback, saveInsightFeedback } from "../lib/persistence";
 import { buildPersonaSummaries, findHiddenHabitInsights } from "../lib/personaEngine";
 import type { SnapRecord } from "../types/habit";
 
@@ -23,9 +24,10 @@ export function ReportView({
 }) {
   const [reportMode, setReportMode] = useState<ReportMode>("weekly");
   const [memoryFilter, setMemoryFilter] = useState<MemoryFilter>({ type: "all", value: "전체" });
-  const [softenedInsights, setSoftenedInsights] = useState<string[]>([]);
-  const [hiddenInsights, setHiddenInsights] = useState<string[]>([]);
+  const [insightFeedback, setInsightFeedback] = useState(() => loadInsightFeedback());
   const [insightFeedbackMessage, setInsightFeedbackMessage] = useState("");
+  const softenedInsights = insightFeedback.softenedInsightTitles;
+  const hiddenInsights = insightFeedback.hiddenInsightTitles;
   const weeklyRecords = useMemo(() => getRecentRecords(records, 7), [records]);
   const weeklyInsights = useMemo(() => findHiddenHabitInsights(weeklyRecords), [weeklyRecords]);
   const memoryCurations = useMemo(() => buildMemoryCurations(records), [records]);
@@ -41,6 +43,10 @@ export function ReportView({
   const visibleInsights = activeInsights.filter(
     (insight) => !hiddenInsights.includes(insight.title)
   );
+
+  useEffect(() => {
+    saveInsightFeedback(insightFeedback);
+  }, [insightFeedback]);
 
   return (
     <section className="screen report-screen" aria-labelledby="report-title">
@@ -93,7 +99,10 @@ export function ReportView({
                 <button
                   type="button"
                   onClick={() => {
-                    setHiddenInsights([]);
+                    setInsightFeedback((current) => ({
+                      ...current,
+                      hiddenInsightTitles: []
+                    }));
                     setInsightFeedbackMessage("숨긴 인사이트를 다시 보여줄게요");
                   }}
                 >
@@ -116,9 +125,14 @@ export function ReportView({
                     <button
                       type="button"
                       onClick={() => {
-                        setSoftenedInsights((current) =>
-                          current.includes(insight.title) ? current : [...current, insight.title]
-                        );
+                        setInsightFeedback((current) => ({
+                          ...current,
+                          softenedInsightTitles: current.softenedInsightTitles.includes(
+                            insight.title
+                          )
+                            ? current.softenedInsightTitles
+                            : [...current.softenedInsightTitles, insight.title]
+                        }));
                         setInsightFeedbackMessage("조금 더 부드럽게 볼게요");
                       }}
                     >
@@ -127,9 +141,12 @@ export function ReportView({
                     <button
                       type="button"
                       onClick={() => {
-                        setHiddenInsights((current) =>
-                          current.includes(insight.title) ? current : [...current, insight.title]
-                        );
+                        setInsightFeedback((current) => ({
+                          ...current,
+                          hiddenInsightTitles: current.hiddenInsightTitles.includes(insight.title)
+                            ? current.hiddenInsightTitles
+                            : [...current.hiddenInsightTitles, insight.title]
+                        }));
                         setInsightFeedbackMessage("이런 분석은 덜 보여줄게요");
                       }}
                     >

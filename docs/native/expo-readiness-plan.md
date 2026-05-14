@@ -24,10 +24,10 @@ packages/
 
 - `personaEngine`: XP, 레벨, 페르소나 요약, 숨은 습관 인사이트
 - `journalEngine`: 한 줄 일기 정리 규칙, 페르소나 응답 톤
-- `weatherEngine`: 날씨 카드 상태, 권한 상태, 어댑터 인터페이스
-- `socialEngine`: 모임 추천, 초대 링크 토큰, 공동 페르소나 XP, 첫 미션
+- `weatherEngine`: 날씨 카드 상태, 권한 상태, 브라우저/Open-Meteo 어댑터 인터페이스
+- `socialEngine`: 모임 추천, 추천 피드백, 초대 링크 토큰, 공동 페르소나 XP, 첫 미션
 - `memoryEngine`: 오래된 기억 큐레이션, 월별/장소별/페르소나별 필터
-- `persistence`: 웹 localStorage와 네이티브 SecureStore/AsyncStorage를 감싸는 저장소 인터페이스
+- `persistence`: 웹 localStorage와 네이티브 SecureStore/AsyncStorage를 감싸는 저장소 인터페이스, 모임/인사이트 피드백 상태
 
 ## 네이티브 권한 정책
 
@@ -45,6 +45,7 @@ packages/
 위치:
 
 - 날씨, 지역, 집에서 떨어진 거리, 장소 패턴 분석에 쓴다.
+- 웹 프로토타입은 브라우저 위치 API와 Open-Meteo 형식의 현재 날씨 응답을 먼저 연결했다.
 - 정확한 좌표는 서버 전송 전 사용 목적을 분리한다.
 - 거부 시 “지역 없이 기록” 상태를 기본 지원한다.
 

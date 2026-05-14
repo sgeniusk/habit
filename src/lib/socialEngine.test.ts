@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
   acceptMeetInvite,
+  applyMeetSuggestionFeedback,
   buildMeetInvite,
   buildMeetSessionFromInviteToken,
   buildMeetSuggestions,
   completeMeetFirstSnapMission,
   createMeetSession,
+  upsertMeetSuggestionFeedback,
   type MeetSignalRecord
 } from "./socialEngine";
 
@@ -58,6 +60,44 @@ describe("buildMeetSuggestions", () => {
 
     expect(suggestions[0].title).toBe("도서관 9시 클럽 추천");
     expect(suggestions[0].signalLabel).toBe("도서관 공부 2회");
+  });
+
+  it("applies hidden, pinned, and later feedback to meet suggestions", () => {
+    const suggestions = buildMeetSuggestions([
+      ...runningRecords,
+      {
+        id: "study-1",
+        category: "study",
+        placeType: "library",
+        createdAt: "2026-05-10T09:00:00.000+09:00"
+      },
+      {
+        id: "study-2",
+        category: "study",
+        placeType: "library",
+        createdAt: "2026-05-11T09:00:00.000+09:00"
+      }
+    ]);
+
+    const tunedSuggestions = applyMeetSuggestionFeedback(
+      suggestions,
+      upsertMeetSuggestionFeedback(
+        upsertMeetSuggestionFeedback([], "running-meet", "later", "2026-05-14T10:00:00.000Z"),
+        "library-study-meet",
+        "pinned",
+        "2026-05-14T10:01:00.000Z"
+      )
+    );
+
+    expect(tunedSuggestions[0].id).toBe("library-study-meet");
+    expect(tunedSuggestions[tunedSuggestions.length - 1]?.id).toBe("running-meet");
+
+    const visibleSuggestions = applyMeetSuggestionFeedback(
+      suggestions,
+      upsertMeetSuggestionFeedback([], "running-meet", "hidden", "2026-05-14T10:02:00.000Z")
+    );
+
+    expect(visibleSuggestions.map((suggestion) => suggestion.id)).not.toContain("running-meet");
   });
 });
 
