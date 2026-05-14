@@ -4,25 +4,75 @@ import {
   Apple,
   BookOpen,
   CheckCircle2,
+  Clipboard,
   Link,
+  Share2,
   Sparkles,
+  Trophy,
   UserPlus,
   Users
 } from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { RoomRow } from "../components/RoomRow";
-import { buildMeetInvite, buildMeetSuggestions, type MeetInvite } from "../lib/socialEngine";
+import {
+  acceptMeetInvite,
+  buildMeetInvite,
+  buildMeetSuggestions,
+  completeMeetFirstSnapMission,
+  createMeetSession,
+  type MeetSession
+} from "../lib/socialEngine";
 import type { SnapRecord } from "../types/habit";
 
 export function MeetView({ records }: { records: SnapRecord[] }) {
   const suggestions = buildMeetSuggestions(records);
   const topSuggestion = suggestions[0];
-  const [invite, setInvite] = useState<MeetInvite | null>(null);
-  const [hasAcceptedPreview, setHasAcceptedPreview] = useState(false);
+  const [meetSession, setMeetSession] = useState<MeetSession | null>(null);
+  const [shareStatus, setShareStatus] = useState("");
+  const waitingMember = meetSession?.members.find(
+    (member) => member.status === "waiting-first-snap"
+  );
+  const contributedMember = meetSession?.members.find((member) => member.status === "contributed");
 
   function createInvite() {
-    setInvite(buildMeetInvite(topSuggestion));
-    setHasAcceptedPreview(false);
+    setMeetSession(createMeetSession(buildMeetInvite(topSuggestion)));
+    setShareStatus("");
+  }
+
+  async function copyInviteLink() {
+    if (!meetSession) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard?.writeText?.(meetSession.invite.inviteUrl);
+      setShareStatus("링크 복사됨");
+    } catch {
+      setShareStatus("링크를 길게 눌러 복사해요");
+    }
+  }
+
+  function prepareShareMessage() {
+    setShareStatus("공유 문구 준비됨");
+  }
+
+  function previewInviteAccept() {
+    setMeetSession((currentSession) => {
+      const session = currentSession ?? createMeetSession(buildMeetInvite(topSuggestion));
+
+      return acceptMeetInvite(session, {
+        id: "preview-runner",
+        name: session.invite.previewMemberName
+      });
+    });
+  }
+
+  function completeFirstSnapMission() {
+    setMeetSession((currentSession) =>
+      currentSession
+        ? completeMeetFirstSnapMission(currentSession, "preview-runner")
+        : currentSession
+    );
   }
 
   return (
@@ -67,32 +117,79 @@ export function MeetView({ records }: { records: SnapRecord[] }) {
         </button>
       </section>
 
-      {invite ? (
+      {meetSession ? (
         <section className="meet-invite-card" aria-labelledby="meet-invite-title">
           <div className="invite-status-row">
             <span>
               <Link size={15} aria-hidden="true" />
-              {hasAcceptedPreview ? "친구 1명 참여 대기" : invite.status}
+              {waitingMember
+                ? "친구 1명 참여 대기"
+                : contributedMember
+                  ? "미션 완료"
+                  : meetSession.invite.status}
             </span>
-            {hasAcceptedPreview ? <strong>+{invite.sharedXp} 공동 XP</strong> : null}
+            {waitingMember ? <strong>+{meetSession.invite.sharedXp} 공동 XP</strong> : null}
           </div>
           <div>
             <p className="eyebrow">Invite Room</p>
-            <h2 id="meet-invite-title">{invite.roomTitle} 대기실</h2>
+            <h2 id="meet-invite-title">{meetSession.invite.roomTitle} 대기실</h2>
           </div>
-          <p>{invite.description}</p>
-          <code>{invite.inviteUrl}</code>
-          {hasAcceptedPreview ? (
-            <div className="invite-member-row">
-              <CheckCircle2 size={18} aria-hidden="true" />
-              <span>{invite.previewMemberName}가 첫 스냅을 준비 중이에요.</span>
-            </div>
+          <p>{meetSession.invite.description}</p>
+          <code>{meetSession.invite.inviteUrl}</code>
+          <div className="invite-action-row">
+            <button type="button" onClick={copyInviteLink}>
+              <Clipboard size={16} aria-hidden="true" />
+              초대 링크 복사
+            </button>
+            <button type="button" onClick={prepareShareMessage}>
+              <Share2 size={16} aria-hidden="true" />
+              공유 문구 만들기
+            </button>
+          </div>
+          {shareStatus ? <strong className="invite-share-status">{shareStatus}</strong> : null}
+          {waitingMember || contributedMember ? (
+            <>
+              <div className="invite-member-row">
+                <CheckCircle2 size={18} aria-hidden="true" />
+                <span>{(waitingMember ?? contributedMember)?.name} 저장됨</span>
+              </div>
+              <section className="group-persona-card" aria-label="공동 페르소나 성장">
+                <div>
+                  <Trophy size={18} aria-hidden="true" />
+                  <div>
+                    <h3>{meetSession.groupPersona.name}</h3>
+                    <span>
+                      Lv.{meetSession.groupPersona.level} · {meetSession.groupPersona.xp}xp
+                    </span>
+                  </div>
+                </div>
+                <p>{meetSession.groupPersona.mood}</p>
+                <div className="progress-track" aria-label="공동 페르소나 진행률">
+                  <span style={{ width: `${Math.max(meetSession.groupPersona.progress, 8)}%` }} />
+                </div>
+              </section>
+              <section
+                className="first-snap-mission"
+                aria-label={meetSession.firstSnapMission.title}
+              >
+                <div>
+                  <strong>{meetSession.firstSnapMission.title}</strong>
+                  <span>
+                    {meetSession.firstSnapMission.status === "completed"
+                      ? "첫 스냅 완료"
+                      : "대기 중"}
+                  </span>
+                </div>
+                <p>{meetSession.firstSnapMission.description}</p>
+                {meetSession.firstSnapMission.status === "waiting" ? (
+                  <button type="button" onClick={completeFirstSnapMission}>
+                    +{meetSession.firstSnapMission.rewardXp}xp 완료하기
+                  </button>
+                ) : null}
+              </section>
+            </>
           ) : (
-            <button
-              type="button"
-              className="accept-preview-button"
-              onClick={() => setHasAcceptedPreview(true)}
-            >
+            <button type="button" className="accept-preview-button" onClick={previewInviteAccept}>
               초대 수락 미리보기
             </button>
           )}

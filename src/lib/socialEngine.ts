@@ -14,11 +14,41 @@ export type MeetSuggestion = {
 
 export type MeetInvite = {
   status: "초대 링크 생성됨";
+  suggestionId: string;
+  category: HabitCategory;
   roomTitle: string;
   inviteUrl: string;
   description: string;
   previewMemberName: string;
   sharedXp: number;
+};
+
+export type MeetMember = {
+  id: string;
+  name: string;
+  status: "waiting-first-snap" | "contributed";
+};
+
+export type MeetFirstSnapMission = {
+  title: string;
+  description: string;
+  rewardXp: number;
+  status: "waiting" | "completed";
+};
+
+export type MeetGroupPersona = {
+  name: string;
+  xp: number;
+  level: number;
+  mood: string;
+  progress: number;
+};
+
+export type MeetSession = {
+  invite: MeetInvite;
+  members: MeetMember[];
+  firstSnapMission: MeetFirstSnapMission;
+  groupPersona: MeetGroupPersona;
 };
 
 export function buildMeetSuggestions(records: MeetSignalRecord[]): MeetSuggestion[] {
@@ -97,11 +127,77 @@ export function buildMeetInvite(suggestion: MeetSuggestion): MeetInvite {
 
   return {
     status: "초대 링크 생성됨",
+    suggestionId: suggestion.id,
+    category: suggestion.category,
     roomTitle,
     inviteUrl: `https://persona-habit.app/invite/${suggestion.id}-${suggestion.matchScore}`,
     description: "친구가 링크를 열면 모임 대기실로 들어오고, 첫 스냅을 남기면 공동 XP가 쌓여요.",
     previewMemberName: buildPreviewMemberName(suggestion.category),
     sharedXp: 40
+  };
+}
+
+export function createMeetSession(invite: MeetInvite): MeetSession {
+  return {
+    invite,
+    members: [],
+    firstSnapMission: {
+      title: buildFirstSnapMissionTitle(invite.category),
+      description: `${invite.roomTitle}에 들어온 친구가 첫 생활 스냅을 남기면 공동 페르소나가 바로 성장해요.`,
+      rewardXp: 60,
+      status: "waiting"
+    },
+    groupPersona: buildGroupPersona(invite.category, 0, "아직 첫 스냅을 기다리고 있어요")
+  };
+}
+
+export function acceptMeetInvite(session: MeetSession, member: Omit<MeetMember, "status">) {
+  if (session.members.some((existingMember) => existingMember.id === member.id)) {
+    return session;
+  }
+
+  const members: MeetMember[] = [
+    ...session.members,
+    {
+      ...member,
+      status: "waiting-first-snap"
+    }
+  ];
+  const nextXp = session.groupPersona.xp + session.invite.sharedXp;
+
+  return {
+    ...session,
+    members,
+    groupPersona: buildGroupPersona(
+      session.invite.category,
+      nextXp,
+      "새 친구가 들어와 첫 스냅을 준비하고 있어요"
+    )
+  };
+}
+
+export function completeMeetFirstSnapMission(session: MeetSession, memberId: string) {
+  if (session.firstSnapMission.status === "completed") {
+    return session;
+  }
+
+  const members = session.members.map((member) =>
+    member.id === memberId ? { ...member, status: "contributed" as const } : member
+  );
+  const nextXp = session.groupPersona.xp + session.firstSnapMission.rewardXp;
+
+  return {
+    ...session,
+    members,
+    firstSnapMission: {
+      ...session.firstSnapMission,
+      status: "completed" as const
+    },
+    groupPersona: buildGroupPersona(
+      session.invite.category,
+      nextXp,
+      "첫 스냅을 같이 남기며 활력이 올라왔어요"
+    )
   };
 }
 
@@ -119,4 +215,46 @@ function buildPreviewMemberName(category: HabitCategory) {
   }
 
   return "루틴 메이트";
+}
+
+function buildFirstSnapMissionTitle(category: HabitCategory) {
+  if (category === "exercise") {
+    return "첫 러닝 스냅 미션";
+  }
+
+  if (category === "study") {
+    return "첫 공부 스냅 미션";
+  }
+
+  if (category === "meal") {
+    return "첫 식단 스냅 미션";
+  }
+
+  return "첫 생활 스냅 미션";
+}
+
+function buildGroupPersona(category: HabitCategory, xp: number, mood: string): MeetGroupPersona {
+  return {
+    name: `공동 ${getGroupPersonaLabel(category)} 페르소나`,
+    xp,
+    level: Math.floor(xp / 100) + 1,
+    mood,
+    progress: xp % 100
+  };
+}
+
+function getGroupPersonaLabel(category: HabitCategory) {
+  if (category === "exercise") {
+    return "러닝";
+  }
+
+  if (category === "study") {
+    return "공부";
+  }
+
+  if (category === "meal") {
+    return "식단";
+  }
+
+  return "루틴";
 }

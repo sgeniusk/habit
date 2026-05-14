@@ -1,7 +1,12 @@
 import { useMemo, useState } from "react";
 import { Archive, CalendarDays } from "lucide-react";
 import { MetricTile } from "../components/MetricTile";
-import { buildMemoryCurations } from "../lib/memoryEngine";
+import {
+  buildMemoryCurations,
+  buildMemoryFilterOptions,
+  filterMemoryCurations,
+  type MemoryFilter
+} from "../lib/memoryEngine";
 import { buildPersonaSummaries, findHiddenHabitInsights } from "../lib/personaEngine";
 import type { SnapRecord } from "../types/habit";
 
@@ -17,9 +22,18 @@ export function ReportView({
   insights: ReturnType<typeof findHiddenHabitInsights>;
 }) {
   const [reportMode, setReportMode] = useState<ReportMode>("weekly");
+  const [memoryFilter, setMemoryFilter] = useState<MemoryFilter>({ type: "all", value: "전체" });
   const weeklyRecords = useMemo(() => getRecentRecords(records, 7), [records]);
   const weeklyInsights = useMemo(() => findHiddenHabitInsights(weeklyRecords), [weeklyRecords]);
   const memoryCurations = useMemo(() => buildMemoryCurations(records), [records]);
+  const memoryFilterOptions = useMemo(
+    () => buildMemoryFilterOptions(memoryCurations),
+    [memoryCurations]
+  );
+  const filteredMemories = useMemo(
+    () => filterMemoryCurations(memoryCurations, memoryFilter),
+    [memoryCurations, memoryFilter]
+  );
   const activeInsights = weeklyInsights.length > 0 ? weeklyInsights : insights;
 
   return (
@@ -81,8 +95,57 @@ export function ReportView({
             <h2 id="memory-title">기억 더듬기</h2>
           </div>
           <p>오래된 스냅을 AI가 다시 꺼내서, 지금의 페르소나가 어디서 시작됐는지 묻습니다.</p>
+          <div className="memory-filter-panel" aria-label="기억 필터">
+            <div>
+              <h3>기억 필터</h3>
+              <span>필터: {formatMemoryFilterLabel(memoryFilter)}</span>
+            </div>
+            <div className="memory-filter-row">
+              <button
+                type="button"
+                className={memoryFilter.type === "all" ? "is-selected" : ""}
+                aria-pressed={memoryFilter.type === "all"}
+                onClick={() => setMemoryFilter({ type: "all", value: "전체" })}
+              >
+                전체
+              </button>
+              {memoryFilterOptions.months.map((month) => (
+                <button
+                  type="button"
+                  key={`month-${month}`}
+                  className={isActiveFilter(memoryFilter, "month", month) ? "is-selected" : ""}
+                  aria-pressed={isActiveFilter(memoryFilter, "month", month)}
+                  onClick={() => setMemoryFilter({ type: "month", value: month })}
+                >
+                  월 · {month}
+                </button>
+              ))}
+              {memoryFilterOptions.places.map((place) => (
+                <button
+                  type="button"
+                  key={`place-${place}`}
+                  className={isActiveFilter(memoryFilter, "place", place) ? "is-selected" : ""}
+                  aria-pressed={isActiveFilter(memoryFilter, "place", place)}
+                  onClick={() => setMemoryFilter({ type: "place", value: place })}
+                >
+                  장소 · {place}
+                </button>
+              ))}
+              {memoryFilterOptions.personas.map((persona) => (
+                <button
+                  type="button"
+                  key={`persona-${persona}`}
+                  className={isActiveFilter(memoryFilter, "persona", persona) ? "is-selected" : ""}
+                  aria-pressed={isActiveFilter(memoryFilter, "persona", persona)}
+                  onClick={() => setMemoryFilter({ type: "persona", value: persona })}
+                >
+                  페르소나 · {persona}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="memory-list">
-            {memoryCurations.map((memory) => (
+            {filteredMemories.map((memory) => (
               <article className="memory-card" key={memory.id}>
                 <div>
                   <span>{memory.period}</span>
@@ -102,6 +165,26 @@ export function ReportView({
       )}
     </section>
   );
+}
+
+function isActiveFilter(filter: MemoryFilter, type: MemoryFilter["type"], value: string) {
+  return filter.type === type && filter.value === value;
+}
+
+function formatMemoryFilterLabel(filter: MemoryFilter) {
+  if (filter.type === "all") {
+    return "전체";
+  }
+
+  if (filter.type === "month") {
+    return `월 · ${filter.value}`;
+  }
+
+  if (filter.type === "place") {
+    return `장소 · ${filter.value}`;
+  }
+
+  return `페르소나 · ${filter.value}`;
 }
 
 function getRecentRecords(records: SnapRecord[], days: number) {

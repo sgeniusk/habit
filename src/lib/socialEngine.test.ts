@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { buildMeetInvite, buildMeetSuggestions, type MeetSignalRecord } from "./socialEngine";
+import {
+  acceptMeetInvite,
+  buildMeetInvite,
+  buildMeetSuggestions,
+  completeMeetFirstSnapMission,
+  createMeetSession,
+  type MeetSignalRecord
+} from "./socialEngine";
 
 const runningRecords: MeetSignalRecord[] = [
   {
@@ -65,5 +72,41 @@ describe("buildMeetInvite", () => {
       previewMemberName: "예비 러너"
     });
     expect(invite.description).toContain("친구가 링크를 열면");
+  });
+});
+
+describe("meet session", () => {
+  it("stores invite acceptors and converts first snaps into group persona XP", () => {
+    const suggestion = buildMeetSuggestions(runningRecords)[0];
+    const invite = buildMeetInvite(suggestion);
+    const waitingSession = acceptMeetInvite(createMeetSession(invite), {
+      id: "friend-runner",
+      name: "예비 러너"
+    });
+
+    expect(waitingSession.members).toContainEqual({
+      id: "friend-runner",
+      name: "예비 러너",
+      status: "waiting-first-snap"
+    });
+    expect(waitingSession.groupPersona).toMatchObject({
+      name: "공동 러닝 페르소나",
+      xp: 40,
+      level: 1
+    });
+    expect(waitingSession.firstSnapMission.status).toBe("waiting");
+
+    const completedSession = completeMeetFirstSnapMission(waitingSession, "friend-runner");
+
+    expect(completedSession.members[0]).toMatchObject({
+      id: "friend-runner",
+      status: "contributed"
+    });
+    expect(completedSession.groupPersona).toMatchObject({
+      xp: 100,
+      level: 2,
+      mood: "첫 스냅을 같이 남기며 활력이 올라왔어요"
+    });
+    expect(completedSession.firstSnapMission.status).toBe("completed");
   });
 });

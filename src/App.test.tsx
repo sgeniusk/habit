@@ -19,9 +19,30 @@ describe("Persona Habit prototype", () => {
 
     expect(screen.getByText("서울 성수동")).toBeInTheDocument();
     expect(screen.getByText("18도 · 산책하기 좋은 맑음")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "권한 거부 미리보기" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "실패 상태 보기" })).toBeInTheDocument();
     expect(screen.getByText("오늘 기록 방식")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "AI랑 같이쓰기" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "혼자 기록하기" })).toBeInTheDocument();
+  });
+
+  it("previews location weather permission and failure states on Today", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "권한 거부 미리보기" }));
+
+    expect(screen.getByText("위치 권한이 꺼져 있어요")).toBeInTheDocument();
+    expect(screen.getByText("지역 없이 기록")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "다시 허용" }));
+
+    expect(screen.getByText("18도 · 산책하기 좋은 맑음")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "실패 상태 보기" }));
+
+    expect(screen.getByText("날씨를 불러오지 못했어요")).toBeInTheDocument();
+    expect(screen.getByText("최근 맥락 사용")).toBeInTheDocument();
   });
 
   it("opens a persona one-line journal and organizes a casual note", async () => {
@@ -218,10 +239,26 @@ describe("Persona Habit prototype", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("성수천 러닝 모임 대기실")).toBeInTheDocument();
 
+    await user.click(screen.getByRole("button", { name: "초대 링크 복사" }));
+
+    expect(screen.getByText("링크 복사됨")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "공유 문구 만들기" }));
+
+    expect(screen.getByText("공유 문구 준비됨")).toBeInTheDocument();
+
     await user.click(screen.getByRole("button", { name: "초대 수락 미리보기" }));
 
     expect(screen.getByText("친구 1명 참여 대기")).toBeInTheDocument();
     expect(screen.getByText("+40 공동 XP")).toBeInTheDocument();
+    expect(screen.getByText("예비 러너 저장됨")).toBeInTheDocument();
+    expect(screen.getByText("첫 러닝 스냅 미션")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "+60xp 완료하기" }));
+
+    expect(screen.getByText("첫 스냅 완료")).toBeInTheDocument();
+    expect(screen.getByText("공동 러닝 페르소나")).toBeInTheDocument();
+    expect(screen.getByText("Lv.2 · 100xp")).toBeInTheDocument();
   });
 
   it("opens the report view from the tab bar", async () => {
@@ -244,6 +281,24 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByText("기억 더듬기")).toBeInTheDocument();
     expect(screen.getByText("오래전의 러닝 감각")).toBeInTheDocument();
     expect(screen.getByText("2026년 4월")).toBeInTheDocument();
+  });
+
+  it("filters old memories by month, place, and persona", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "리포트" }));
+    await user.click(screen.getByRole("button", { name: "오래된 기억" }));
+
+    expect(screen.getByText("기억 필터")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "월 · 2026년 4월" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "장소 · 야외" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "페르소나 · 운동" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "장소 · 야외" }));
+
+    expect(screen.getByText("장소 · 야외")).toBeInTheDocument();
+    expect(screen.getByText("오래전의 러닝 감각")).toBeInTheDocument();
   });
 
   it("renders a living animated persona instead of a static image", () => {

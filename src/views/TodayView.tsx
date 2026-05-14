@@ -3,10 +3,13 @@ import {
   Camera,
   Check,
   ChevronRight,
+  CloudAlert,
   Droplets,
+  LocateFixed,
   MapPin,
   MessageCircle,
   PenLine,
+  RefreshCw,
   Route,
   Send,
   Sun,
@@ -19,11 +22,17 @@ import { personaCatalog } from "../data/personaCatalog";
 import {
   buildJournalDraft,
   buildJournalOpening,
-  todayJournalContext,
   type JournalDraft,
   type JournalMode
 } from "../lib/journalEngine";
 import { findHiddenHabitInsights } from "../lib/personaEngine";
+import {
+  buildWeatherCardState,
+  buildWeatherJournalContext,
+  fallbackWeatherSnapshot,
+  type WeatherPermissionState,
+  type WeatherSnapshot
+} from "../lib/weatherEngine";
 import type { SnapRecord } from "../types/habit";
 
 export function TodayView({
@@ -41,10 +50,27 @@ export function TodayView({
   const [journalMode, setJournalMode] = useState<JournalMode>("ai");
   const [journalLine, setJournalLine] = useState("");
   const [journalDrafts, setJournalDrafts] = useState<JournalDraft[]>([]);
+  const [weatherPermission, setWeatherPermission] = useState<WeatherPermissionState>("granted");
+  const [weatherSnapshot, setWeatherSnapshot] = useState<WeatherSnapshot>(fallbackWeatherSnapshot);
+  const weatherCard = buildWeatherCardState(weatherPermission, weatherSnapshot);
+  const journalContext = buildWeatherJournalContext(weatherSnapshot);
   const personaOpening =
     journalMode === "ai"
-      ? buildJournalOpening(todayJournalContext)
+      ? buildJournalOpening(journalContext)
       : "네 문장 그대로 남겨둘게. 오늘의 목소리를 먼저 믿어보자.";
+
+  function grantWeatherPermission() {
+    setWeatherSnapshot(fallbackWeatherSnapshot);
+    setWeatherPermission("granted");
+  }
+
+  function denyWeatherPermission() {
+    setWeatherPermission("denied");
+  }
+
+  function showWeatherFailure() {
+    setWeatherPermission("error");
+  }
 
   function saveJournalDraft() {
     const trimmedLine = journalLine.trim();
@@ -57,7 +83,7 @@ export function TodayView({
       buildJournalDraft({
         text: trimmedLine,
         mode: journalMode,
-        context: todayJournalContext
+        context: journalContext
       }),
       ...current
     ]);
@@ -80,17 +106,38 @@ export function TodayView({
       <section className="weather-card" aria-label="오늘 날씨와 지역">
         <div>
           <span className="weather-icon">
-            <Sun size={22} aria-hidden="true" />
+            {weatherPermission === "error" ? (
+              <CloudAlert size={22} aria-hidden="true" />
+            ) : (
+              <Sun size={22} aria-hidden="true" />
+            )}
           </span>
           <div>
-            <strong>18도 · 산책하기 좋은 맑음</strong>
+            <strong>{weatherCard.title}</strong>
             <p>
               <MapPin size={14} aria-hidden="true" />
-              서울 성수동
+              {weatherCard.locationLabel}
             </p>
           </div>
         </div>
-        <small>현재 위치 기준</small>
+        <p className="weather-detail">{weatherCard.detail}</p>
+        <small>{weatherCard.helperText}</small>
+        <div className="weather-action-row">
+          <button type="button" onClick={grantWeatherPermission}>
+            {weatherPermission === "granted" ? (
+              <RefreshCw size={15} aria-hidden="true" />
+            ) : (
+              <LocateFixed size={15} aria-hidden="true" />
+            )}
+            {weatherCard.actionLabel}
+          </button>
+          <button type="button" onClick={denyWeatherPermission}>
+            권한 거부 미리보기
+          </button>
+          <button type="button" onClick={showWeatherFailure}>
+            실패 상태 보기
+          </button>
+        </div>
       </section>
 
       <div className="hero-band outdoor-hero">
@@ -139,11 +186,11 @@ export function TodayView({
         <div className="journal-context-row" aria-label="오늘 일기 맥락">
           <span>
             <Droplets size={15} aria-hidden="true" />
-            습도 {todayJournalContext.humidity}%
+            습도 {journalContext.humidity}%
           </span>
           <span>
             <Route size={15} aria-hidden="true" />
-            집에서 {todayJournalContext.distanceFromHomeKm}km
+            집에서 {journalContext.distanceFromHomeKm}km
           </span>
         </div>
         <div className="journal-dialogue">

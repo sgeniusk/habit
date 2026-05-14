@@ -427,6 +427,91 @@ p {
   font-weight: 850;
 }
 
+.invite-action-row,
+.weather-action-row,
+.memory-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.invite-action-row button,
+.weather-action-row button,
+.first-snap-mission button,
+.memory-filter-row button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid rgba(28, 39, 51, 0.14);
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.invite-share-status {
+  justify-self: start;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: #fff4bf;
+  color: #6c4a00;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.group-persona-card,
+.first-snap-mission,
+.memory-filter-panel {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(47, 157, 101, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.group-persona-card > div:first-child,
+.first-snap-mission > div,
+.memory-filter-panel > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.group-persona-card > div:first-child {
+  justify-content: flex-start;
+}
+
+.group-persona-card h3,
+.memory-filter-panel h3 {
+  font-size: 14px;
+}
+
+.group-persona-card span,
+.first-snap-mission span,
+.memory-filter-panel span {
+  color: #6d6044;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.first-snap-mission strong {
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.first-snap-mission button {
+  border: 0;
+  background: var(--leaf);
+  color: #ffffff;
+}
+
 .accept-preview-button {
   min-height: 42px;
   border: 1px solid rgba(47, 157, 101, 0.34);
@@ -717,6 +802,24 @@ p {
   color: #7a6120;
   font-size: 12px;
   font-weight: 850;
+}
+
+.weather-detail {
+  display: block;
+  margin-top: 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(240, 191, 59, 0.32);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.weather-action-row button:first-child {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #ffffff;
 }
 
 .weather-icon {
@@ -1288,6 +1391,12 @@ p {
   color: var(--ink);
   font-size: 14px;
   line-height: 1.45;
+}
+
+.memory-filter-row button.is-selected {
+  border-color: var(--ink);
+  background: #fff4bf;
+  box-shadow: inset 0 0 0 2px rgba(28, 39, 51, 0.12);
 }
 
 .persona-avatar {
