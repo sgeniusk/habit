@@ -1,4 +1,4 @@
-import type { HabitCategory, Locale, PlaceType, TabId } from "../types/habit";
+import type { HabitCategory, Locale, PersonaStampPosition, PlaceType, TabId } from "../types/habit";
 
 export const defaultLocale: Locale = "ko";
 export const supportedLocales = ["ko", "en"] as const;
@@ -35,6 +35,11 @@ export type TranslationKey =
   | "proof.time"
   | "proof.count"
   | "proof.persona"
+  | "stampPosition.title"
+  | "stampPosition.topLeft"
+  | "stampPosition.topRight"
+  | "stampPosition.bottomLeft"
+  | "stampPosition.bottomRight"
   | "category.study"
   | "category.meal"
   | "category.exercise"
@@ -79,6 +84,11 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "proof.time": "시간 도장",
     "proof.count": "횟수 도장",
     "proof.persona": "페르소나 도장",
+    "stampPosition.title": "도장 위치",
+    "stampPosition.topLeft": "왼쪽 위",
+    "stampPosition.topRight": "오른쪽 위",
+    "stampPosition.bottomLeft": "왼쪽 아래",
+    "stampPosition.bottomRight": "오른쪽 아래",
     "category.study": "공부",
     "category.meal": "식단",
     "category.exercise": "운동",
@@ -122,6 +132,11 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "proof.time": "Time stamp",
     "proof.count": "Count stamp",
     "proof.persona": "Persona stamp",
+    "stampPosition.title": "Stamp position",
+    "stampPosition.topLeft": "Top left",
+    "stampPosition.topRight": "Top right",
+    "stampPosition.bottomLeft": "Bottom left",
+    "stampPosition.bottomRight": "Bottom right",
     "category.study": "Study",
     "category.meal": "Meal",
     "category.exercise": "Exercise",
@@ -169,6 +184,13 @@ const placeLabelKeys: Record<PlaceType, TranslationKey> = {
   other: "place.other"
 };
 
+const personaStampPositionLabelKeys: Record<PersonaStampPosition, TranslationKey> = {
+  "top-left": "stampPosition.topLeft",
+  "top-right": "stampPosition.topRight",
+  "bottom-left": "stampPosition.bottomLeft",
+  "bottom-right": "stampPosition.bottomRight"
+};
+
 export function normalizeLocale(locale: unknown): Locale {
   return locale === "en" || locale === "ko" ? locale : defaultLocale;
 }
@@ -187,6 +209,10 @@ export function getCategoryLabelForLocale(category: HabitCategory, locale: Local
 
 export function getPlaceLabelForLocale(placeType: PlaceType, locale: Locale) {
   return t(locale, placeLabelKeys[placeType]);
+}
+
+export function getPersonaStampPositionLabel(position: PersonaStampPosition, locale: Locale) {
+  return t(locale, personaStampPositionLabelKeys[position]);
 }
 
 export function formatSnapCountLabel(locale: Locale, count: number) {

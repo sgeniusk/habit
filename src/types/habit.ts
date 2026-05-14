@@ -4,6 +4,8 @@ export type Locale = "ko" | "en";
 
 export type ProofStampId = "time" | "count" | "persona";
 
+export type PersonaStampPosition = "top-left" | "top-right" | "bottom-left" | "bottom-right";
+
 export type HabitCategory =
   | "study"
   | "meal"
@@ -58,5 +60,6 @@ export type UserPreferenceState = {
   decorSelections: Record<string, PersonaDecorSelection>;
   personaNicknames: Partial<Record<HabitCategory, string>>;
   selectedProofStamps: ProofStampId[];
+  personaStampPosition: PersonaStampPosition;
   locale: Locale;
 };

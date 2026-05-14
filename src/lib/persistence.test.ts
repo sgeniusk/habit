@@ -101,6 +101,7 @@ describe("persistence", () => {
         hobby: "쏙쏙"
       },
       selectedProofStamps: ["time", "persona"],
+      personaStampPosition: "top-left",
       locale: "en"
     };
 
@@ -112,6 +113,7 @@ describe("persistence", () => {
           decorSelections: {},
           personaNicknames: {},
           selectedProofStamps: [],
+          personaStampPosition: "bottom-right",
           locale: "ko"
         },
         storage
@@ -142,6 +144,7 @@ describe("persistence", () => {
             study: "곰곰"
           },
           selectedProofStamps: ["time", "count", "persona"],
+          personaStampPosition: "bottom-right",
           locale: "ko"
         },
         storage
@@ -157,6 +160,7 @@ describe("persistence", () => {
         study: "곰곰"
       },
       selectedProofStamps: ["persona"],
+      personaStampPosition: "bottom-right",
       locale: "ko"
     });
   });

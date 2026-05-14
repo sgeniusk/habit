@@ -245,6 +245,7 @@ describe("Persona Habit prototype", () => {
 
     await user.click(within(getTabBar()).getByRole("button", { name: "스냅" }));
     await user.click(screen.getByRole("button", { name: "횟수 도장" }));
+    await user.click(screen.getByRole("button", { name: "왼쪽 위" }));
     await user.click(screen.getByRole("button", { name: "필름" }));
     await user.click(screen.getByRole("button", { name: "📚 공부" }));
     await user.upload(
@@ -300,6 +301,7 @@ describe("Persona Habit prototype", () => {
       "aria-pressed",
       "true"
     );
+    expect(screen.getByRole("button", { name: "왼쪽 위" })).toHaveAttribute("aria-pressed", "true");
   });
 
   it("switches core app chrome to English and keeps the locale after remounting", async () => {
@@ -323,6 +325,7 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByRole("button", { name: "Study" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Library" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Time stamp" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Bottom right" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Post with style" })).toBeInTheDocument();
 
     unmount();

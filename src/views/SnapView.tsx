@@ -9,17 +9,31 @@ import {
 import {
   formatTimeProofLabel,
   getCategoryLabelForLocale,
+  getPersonaStampPositionLabel,
   getPlaceLabelForLocale,
   t,
   type TranslationKey
 } from "../lib/i18n";
 import { buildPersonaIdentity } from "../lib/personaIdentity";
-import type { HabitCategory, Locale, PlaceType, ProofStampId } from "../types/habit";
+import type {
+  HabitCategory,
+  Locale,
+  PersonaStampPosition,
+  PlaceType,
+  ProofStampId
+} from "../types/habit";
 
 const proofStampOptions: { id: ProofStampId; labelKey: TranslationKey }[] = [
   { id: "time", labelKey: "proof.time" },
   { id: "count", labelKey: "proof.count" },
   { id: "persona", labelKey: "proof.persona" }
+];
+
+const personaStampPositions: PersonaStampPosition[] = [
+  "top-left",
+  "top-right",
+  "bottom-left",
+  "bottom-right"
 ];
 
 export function SnapView({
@@ -29,6 +43,7 @@ export function SnapView({
   selectedFilter,
   selectedSticker,
   selectedProofStamps,
+  personaStampPosition,
   snapTimeLabel,
   snapCountLabel,
   personaNickname,
@@ -45,6 +60,7 @@ export function SnapView({
   onFilterChange,
   onStickerChange,
   onProofStampToggle,
+  onPersonaStampPositionChange,
   onMemoChange,
   onPhotoSelect,
   onSave
@@ -55,6 +71,7 @@ export function SnapView({
   selectedFilter: string;
   selectedSticker: string;
   selectedProofStamps: ProofStampId[];
+  personaStampPosition: PersonaStampPosition;
   snapTimeLabel: string;
   snapCountLabel: string;
   personaNickname: string;
@@ -71,6 +88,7 @@ export function SnapView({
   onFilterChange: (filter: string) => void;
   onStickerChange: (sticker: string) => void;
   onProofStampToggle: (stampId: ProofStampId) => void;
+  onPersonaStampPositionChange: (position: PersonaStampPosition) => void;
   onMemoChange: (memo: string) => void;
   onPhotoSelect: (file?: File) => void;
   onSave: () => void;
@@ -131,7 +149,7 @@ export function SnapView({
               ) : null}
               {selectedProofStamps.includes("persona") ? (
                 <div
-                  className="persona-proof-stamp"
+                  className={`persona-proof-stamp position-${personaStampPosition}`}
                   aria-label={`페르소나 도장 ${personaIdentity.displayName}`}
                 >
                   <div className="mini-persona-wrap">
@@ -187,6 +205,24 @@ export function SnapView({
             </button>
           ))}
         </div>
+        {selectedProofStamps.includes("persona") ? (
+          <div className="stamp-position-panel" aria-label={t(locale, "stampPosition.title")}>
+            <strong>{t(locale, "stampPosition.title")}</strong>
+            <div className="stamp-position-grid">
+              {personaStampPositions.map((position) => (
+                <button
+                  key={position}
+                  type="button"
+                  className={personaStampPosition === position ? "is-selected" : ""}
+                  aria-pressed={personaStampPosition === position}
+                  onClick={() => onPersonaStampPositionChange(position)}
+                >
+                  {getPersonaStampPositionLabel(position, locale)}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </section>
 
       <section className="choice-section" aria-labelledby="proof-stamp-title">

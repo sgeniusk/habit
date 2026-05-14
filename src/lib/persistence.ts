@@ -98,6 +98,9 @@ export function loadUserPreferences(
     },
     selectedProofStamps:
       storedPreferences.selectedProofStamps ?? fallbackPreferences.selectedProofStamps,
+    personaStampPosition: isPersonaStampPosition(storedPreferences.personaStampPosition)
+      ? storedPreferences.personaStampPosition
+      : fallbackPreferences.personaStampPosition,
     locale:
       storedPreferences.locale === "ko" || storedPreferences.locale === "en"
         ? storedPreferences.locale
@@ -125,4 +128,15 @@ function loadJson<T>(key: string, fallback: T, storage: StorageLike): T {
     storage.removeItem(key);
     return fallback;
   }
+}
+
+function isPersonaStampPosition(
+  value: unknown
+): value is UserPreferenceState["personaStampPosition"] {
+  return (
+    value === "top-left" ||
+    value === "top-right" ||
+    value === "bottom-left" ||
+    value === "bottom-right"
+  );
 }

@@ -27,6 +27,7 @@ import type {
   HabitCategory,
   Locale,
   PersonaDecorSelection,
+  PersonaStampPosition,
   PlaceType,
   ProofStampId,
   SnapRecord,
@@ -50,6 +51,7 @@ const defaultUserPreferences: UserPreferenceState = {
   decorSelections: defaultDecorSelections,
   personaNicknames: defaultPersonaNicknames,
   selectedProofStamps: ["time", "count", "persona"],
+  personaStampPosition: "bottom-right",
   locale: defaultLocale
 };
 
@@ -73,6 +75,7 @@ export default function App() {
   const locale = normalizeLocale(userPreferences.locale);
   const decorSelections = userPreferences.decorSelections;
   const selectedProofStamps = userPreferences.selectedProofStamps;
+  const personaStampPosition = userPreferences.personaStampPosition;
   const personaNicknames = {
     ...defaultPersonaNicknames,
     ...userPreferences.personaNicknames
@@ -201,6 +204,13 @@ export default function App() {
     }));
   }
 
+  function updatePersonaStampPosition(nextPosition: PersonaStampPosition) {
+    setUserPreferences((current) => ({
+      ...current,
+      personaStampPosition: nextPosition
+    }));
+  }
+
   function updateLocale(nextLocale: Locale) {
     setUserPreferences((current) => ({
       ...current,
@@ -243,6 +253,7 @@ export default function App() {
             selectedFilter={selectedFilter}
             selectedSticker={selectedSticker}
             selectedProofStamps={selectedProofStamps}
+            personaStampPosition={personaStampPosition}
             snapTimeLabel={snapTimeLabel}
             snapCountLabel={nextSnapCountLabel}
             personaNickname={personaNicknames[selectedCategory]}
@@ -259,6 +270,7 @@ export default function App() {
             onFilterChange={setSelectedFilter}
             onStickerChange={setSelectedSticker}
             onProofStampToggle={toggleProofStamp}
+            onPersonaStampPositionChange={updatePersonaStampPosition}
             onMemoChange={setMemo}
             onPhotoSelect={handlePhotoSelect}
             onSave={saveRecord}

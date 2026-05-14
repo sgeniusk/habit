@@ -3,6 +3,7 @@ import {
   defaultLocale,
   formatSnapCountLabel,
   getCategoryLabelForLocale,
+  getPersonaStampPositionLabel,
   getPlaceLabelForLocale,
   getTabLabel,
   normalizeLocale,
@@ -21,6 +22,7 @@ describe("i18n", () => {
     expect(getTabLabel("snap", "en")).toBe("Snap");
     expect(getCategoryLabelForLocale("study", "en")).toBe("Study");
     expect(getPlaceLabelForLocale("library", "en")).toBe("Library");
+    expect(getPersonaStampPositionLabel("top-left", "en")).toBe("Top left");
     expect(formatSnapCountLabel("en", 2)).toBe("Today #2");
   });
 
