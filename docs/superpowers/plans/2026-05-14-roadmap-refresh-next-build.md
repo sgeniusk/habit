@@ -260,7 +260,7 @@
   - Roadmap: `docs/roadmap/persona-habit-roadmap.md`
   ```
 
-- [ ] **Step 3: Run full local harness**
+- [x] **Step 3: Run full local harness**
 
   Run:
 
@@ -270,7 +270,7 @@
 
   Expected: lint, format, tests, build, and audit pass. If local audit cannot reach the npm registry because of sandbox network limits, run `npm run lint`, `npm run format:check`, `npm run test:run`, and `npm run build`, then rely on GitHub Actions for the networked audit.
 
-- [ ] **Step 4: Commit and push**
+- [x] **Step 4: Commit and push**
 
   ```bash
   git add README.md docs/roadmap/persona-habit-roadmap.md
@@ -284,6 +284,6 @@
 - [x] `npm run lint`
 - [x] `npm run test:run`
 - [x] `npm run build`
-- [ ] `npm run ci` or GitHub Actions CI for networked audit
+- [x] `npm run ci` or GitHub Actions CI for networked audit
 - [x] Browser check `http://127.0.0.1:5176/`
-- [ ] Vercel production deployment status
+- [x] Vercel production deployment status
