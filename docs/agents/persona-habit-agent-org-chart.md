@@ -4,40 +4,13 @@
 
 Persona Habit은 아이디어, UX, 캐릭터, AI 분석, 모바일 구현, 소셜 기능이 동시에 자라는 제품이다. 이 조직도는 제작 에이전트들이 각자 무엇을 책임지고, 어떤 산출물을 하네스가 검증해야 하는지 정리한다.
 
-시각 조직도: [persona-habit-agent-org-chart.html](./persona-habit-agent-org-chart.html)
+## 조직도 이미지
 
-## 조직도 요약
+![Persona Habit 제작 에이전트 조직도](./assets/persona-habit-agent-org-chart-gpt-image-2.png)
 
-```mermaid
-flowchart TB
-  founder["Founder / 사용자<br/>비전, 우선순위, 최종 승인"]
-  orchestrator["Orchestrator Agent<br/>작업 분해, 일정, 충돌 조정"]
-  harness["Harness Gate<br/>PRD, UX, 테스트, 빌드, 배포 검문"]
+생성 방식: `gpt-image-2` 기반 이미지 생성 결과물을 프로젝트 문서 에셋으로 저장했다.
 
-  founder --> orchestrator
-  orchestrator <--> harness
-
-  orchestrator --> product["제품 전략실"]
-  orchestrator --> experience["경험 디자인실"]
-  orchestrator --> platform["구현 플랫폼실"]
-  orchestrator --> intelligence["AI·데이터실"]
-  orchestrator --> growth["소셜·출시실"]
-
-  product --> productDetail["Product Detail Agent"]
-  product --> benchmark["Benchmark Agent"]
-
-  experience --> uxFlow["UX Flow Agent"]
-  experience --> designSystem["Design System Agent"]
-
-  platform --> frontend["Frontend Agent"]
-  platform --> mobile["Mobile Agent"]
-
-  intelligence --> aiHabit["AI Habit Agent"]
-  intelligence --> dataBackend["Data & Backend Agent"]
-
-  growth --> socialLoop["Social Loop Agent"]
-  growth --> qaRelease["QA & Release Agent"]
-```
+보조 HTML 버전: [persona-habit-agent-org-chart.html](./persona-habit-agent-org-chart.html)
 
 ## 역할과 산출물
 

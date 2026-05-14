@@ -13,7 +13,8 @@ Use this skill to turn an agent system into a readable, presentation-ready organ
 2. Identify the top-level owner, orchestration layer, harness gates, and specialist agents.
 3. Group specialists into 3-5 departments so the chart remains compact.
 4. Create a visual artifact and a written document:
-   - Visual: polished HTML first, using the template pattern in `assets/org-chart-template.html`.
+   - Primary visual: generated PNG image using `gpt-image-2` when available.
+   - Fallback/editable visual: polished HTML using the template pattern in `assets/org-chart-template.html`.
    - Written doc: Markdown under `docs/agents/` with responsibilities, inputs, outputs, and harness checks.
 5. Keep the diagram portrait or square when possible. Avoid long horizontal Mermaid chains.
 6. Include a short “Operating Rhythm” section that explains how work moves from request to implementation to verification.
@@ -49,19 +50,20 @@ Adapt names to the project, but cover these responsibilities:
 Create files with predictable names:
 
 - `docs/agents/<project>-agent-org-chart.md`
+- `docs/agents/assets/<project>-agent-org-chart-gpt-image-2.png`
 - `docs/agents/<project>-agent-org-chart.html`
 
 The Markdown doc should include:
 
 - Purpose
-- Organization chart link
-- Mermaid fallback using `flowchart TB`
+- The generated PNG embedded as the main organization chart
+- HTML fallback link
 - Role table
 - Harness gates
 - Operating rhythm
 - Next build queue
 
-The HTML doc should be self-contained, responsive, and visually polished. It may use inline CSS and no external assets.
+The PNG should be treated as the main presentation graphic. The HTML doc should be self-contained, responsive, and visually polished as a non-generated fallback. Avoid using Mermaid as the main organization chart because it tends to sprawl horizontally.
 
 ## Validation
 
