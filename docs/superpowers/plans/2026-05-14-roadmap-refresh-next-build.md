@@ -40,13 +40,13 @@
 - Modify: `src/App.tsx`
 - Test: `src/lib/personaEngine.test.ts`, `src/App.test.tsx`
 
-- [ ] **Step 1: Write type import tests by running current test suite**
+- [x] **Step 1: Write type import tests by running current test suite**
 
   Run: `npm run test:run`
 
   Expected: current tests pass before the refactor starts.
 
-- [ ] **Step 2: Create `src/types/habit.ts`**
+- [x] **Step 2: Create `src/types/habit.ts`**
 
   Move these exported types out of `src/lib/personaEngine.ts`:
 
@@ -82,7 +82,7 @@
   };
   ```
 
-- [ ] **Step 3: Preserve backwards compatibility temporarily**
+- [x] **Step 3: Preserve backwards compatibility temporarily**
 
   In `src/lib/personaEngine.ts`, import `SnapRecord` and export a temporary alias:
 
@@ -92,7 +92,7 @@
 
   This lets the refactor stay small while app and tests move over.
 
-- [ ] **Step 4: Move `initialRecords` into `src/data/sampleRecords.ts`**
+- [x] **Step 4: Move `initialRecords` into `src/data/sampleRecords.ts`**
 
   Export:
 
@@ -100,7 +100,7 @@
   export const initialRecords: SnapRecord[] = [...]
   ```
 
-- [ ] **Step 5: Move display catalog data into `src/data/personaCatalog.ts`**
+- [x] **Step 5: Move display catalog data into `src/data/personaCatalog.ts`**
 
   Export:
   - `personaCatalog`
@@ -111,11 +111,11 @@
   - `categoryOptions`
   - `placeOptions`
 
-- [ ] **Step 6: Update imports in `src/App.tsx`**
+- [x] **Step 6: Update imports in `src/App.tsx`**
 
   Remove inline sample and catalog constants from `App.tsx`. Import them from `src/data/*` and shared types from `src/types/habit`.
 
-- [ ] **Step 7: Run tests and commit**
+- [x] **Step 7: Run tests and commit**
 
   Run:
 
@@ -142,11 +142,11 @@
 - Modify: `src/styles.css`
 - Modify: `src/types/habit.ts`
 
-- [ ] **Step 1: Write failing tests for selected filter and sticker**
+- [x] **Step 1: Write failing tests for selected filter and sticker**
 
   Add a test that opens `스냅`, clicks `필름`, clicks `🏃 러닝`, enters a memo, clicks `꾸며서 올리기`, and expects the new record to appear with the chosen category/place/memo context.
 
-- [ ] **Step 2: Add selected snap decoration state**
+- [x] **Step 2: Add selected snap decoration state**
 
   In `App`, add state:
 
@@ -155,7 +155,7 @@
   const [selectedSticker, setSelectedSticker] = useState(stickerOptions[0]);
   ```
 
-- [ ] **Step 3: Store filter and sticker on new records**
+- [x] **Step 3: Store filter and sticker on new records**
 
   Extend `saveRecord()` so the new `SnapRecord` includes:
 
@@ -164,21 +164,21 @@
   sticker: selectedSticker
   ```
 
-- [ ] **Step 4: Show selected states in Snap view**
+- [x] **Step 4: Show selected states in Snap view**
 
   Pass selected filter/sticker props into `SnapView`. Buttons should set state and use `is-selected` when active.
 
-- [ ] **Step 5: Show filter/sticker in `RecordRow`**
+- [x] **Step 5: Show filter/sticker in `RecordRow`**
 
   Add small metadata text such as `필름 · 🏃 러닝` when a record has decoration data.
 
-- [ ] **Step 6: Run focused tests**
+- [x] **Step 6: Run focused tests**
 
   Run: `npm test -- --run src/App.test.tsx`
 
   Expected: new Snap loop test passes.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
   ```bash
   git add src
@@ -194,11 +194,11 @@
 - Modify: `src/App.test.tsx`
 - Modify: `src/lib/personaEngine.ts`
 
-- [ ] **Step 1: Add a failing Home reaction test**
+- [x] **Step 1: Add a failing Home reaction test**
 
   Add a test that saves an 운동 스냅, opens `집`, and expects `루틴 러너` or a runner activity to become visible as the active home state.
 
-- [ ] **Step 2: Add category-to-persona selection helper**
+- [x] **Step 2: Add category-to-persona selection helper**
 
   Add a pure helper in `personaCatalog.ts`:
 
@@ -214,7 +214,7 @@
   - `cleaning` -> `방정리 장인`
   - `selfcare` -> `건강관리형 수험생` for now
 
-- [ ] **Step 3: Choose active home persona from latest record**
+- [x] **Step 3: Choose active home persona from latest record**
 
   In `App`, derive:
 
@@ -224,17 +224,17 @@
 
   Pass it to `HomeView`.
 
-- [ ] **Step 4: Keep catalog visible**
+- [x] **Step 4: Keep catalog visible**
 
   `HomeView` should still show all owned personas, but the stage and activity panel should use `activeHomePersona`.
 
-- [ ] **Step 5: Run focused tests**
+- [x] **Step 5: Run focused tests**
 
   Run: `npm test -- --run src/App.test.tsx`
 
   Expected: Home reaction test passes.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
   ```bash
   git add src
@@ -248,11 +248,11 @@
 - Modify: `docs/roadmap/persona-habit-roadmap.md`
 - Modify: `README.md`
 
-- [ ] **Step 1: Update roadmap completed items**
+- [x] **Step 1: Update roadmap completed items**
 
   Mark Phase 0 as complete if data boundaries are split and tests pass.
 
-- [ ] **Step 2: Add roadmap link to README**
+- [x] **Step 2: Add roadmap link to README**
 
   Under Product Docs, add:
 
@@ -280,10 +280,10 @@
 
 ## Verification Checklist
 
-- [ ] `npm run format:check`
-- [ ] `npm run lint`
-- [ ] `npm run test:run`
-- [ ] `npm run build`
+- [x] `npm run format:check`
+- [x] `npm run lint`
+- [x] `npm run test:run`
+- [x] `npm run build`
 - [ ] `npm run ci` or GitHub Actions CI for networked audit
-- [ ] Browser check `http://127.0.0.1:5173/`
+- [x] Browser check `http://127.0.0.1:5176/`
 - [ ] Vercel production deployment status

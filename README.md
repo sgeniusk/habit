@@ -18,6 +18,7 @@
 - TypeScript
 - Vitest
 - CSS layered character animation
+- Interactive snap decoration and latest-snap persona home reaction
 
 ## Local Run
 
