@@ -35,4 +35,15 @@ describe("personaIdentity", () => {
       "곰곰아. 이번에는 공부를 많이 했네. 척척박사 페르소나로 업글됐어."
     );
   });
+
+  it("can switch persona dialogue into a calmer tone", () => {
+    expect(
+      buildPersonaCompanionLine({
+        category: "study",
+        nickname: "곰곰",
+        level: 3,
+        voiceMode: "calm"
+      })
+    ).toBe("곰곰아, 공부 리듬이 안정적으로 쌓이고 있어. 척척박사 페르소나까지 흐름이 좋아.");
+  });
 });

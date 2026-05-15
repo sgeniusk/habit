@@ -68,4 +68,21 @@ describe("findHiddenHabitInsights", () => {
     expect(insights.map((insight) => insight.title)).toContain("도서관에서 집중이 반복돼요");
     expect(insights.map((insight) => insight.title)).toContain("밤 루틴을 살펴볼 시간");
   });
+
+  it("explains the evidence behind each hidden habit insight", () => {
+    const insights = findHiddenHabitInsights(records);
+
+    expect(insights).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          title: "도서관에서 집중이 반복돼요",
+          evidence: "공부 스냅 2개가 도서관에서 반복됐어요."
+        }),
+        expect.objectContaining({
+          title: "생활 스냅이 페르소나로 쌓이고 있어요",
+          evidence: "최근 스냅 4개에 공부, 식단, 운동 3가지 생활 축이 함께 있어요."
+        })
+      ])
+    );
+  });
 });

@@ -1,4 +1,4 @@
-import type { HabitCategory } from "../types/habit";
+import type { HabitCategory, PersonaVoiceMode } from "../types/habit";
 import { getCategoryLabel } from "./personaEngine";
 
 export type PersonaIdentity = {
@@ -52,14 +52,24 @@ export function buildPersonaIdentity({
 export function buildPersonaCompanionLine({
   category,
   nickname,
-  level
+  level,
+  voiceMode = "cute"
 }: {
   category: HabitCategory;
   nickname: string;
   level: number;
+  voiceMode?: PersonaVoiceMode;
 }) {
   const vocativeName = formatPersonaVocative(nickname);
   const categoryLabel = getCategoryLabel(category);
+
+  if (voiceMode === "calm") {
+    if (category === "study" && level >= 3) {
+      return `${vocativeName}, 공부 리듬이 안정적으로 쌓이고 있어. 척척박사 페르소나까지 흐름이 좋아.`;
+    }
+
+    return `${vocativeName}, ${categoryLabel} 스냅이 차분히 쌓이고 있어. 다음 변화를 볼 만큼 흐름이 이어지고 있어.`;
+  }
 
   if (category === "study" && level >= 3) {
     return `${vocativeName}. 이번에는 ${categoryLabel}를 많이 했네. 척척박사 페르소나로 업글됐어.`;

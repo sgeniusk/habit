@@ -1,4 +1,13 @@
-import { BarChart3, Download, Home, ImagePlus, Sparkles, Users } from "lucide-react";
+import {
+  BarChart3,
+  Camera,
+  Download,
+  Home,
+  ImagePlus,
+  Sparkles,
+  UserPlus,
+  Users
+} from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import {
   categoryOptions,
@@ -70,7 +79,9 @@ export function SnapView({
   onSave,
   onSavedHome,
   onSavedReport,
-  onSavedMeet
+  onSavedMeet,
+  onShareMeet,
+  onShareMission
 }: {
   locale: Locale;
   selectedCategory: HabitCategory;
@@ -106,6 +117,8 @@ export function SnapView({
   onSavedHome: () => void;
   onSavedReport: () => void;
   onSavedMeet: () => void;
+  onShareMeet: () => void;
+  onShareMission: () => void;
 }) {
   const personaIdentity = buildPersonaIdentity({
     category: personaCategory,
@@ -120,6 +133,7 @@ export function SnapView({
   ]
     .filter(Boolean)
     .join(" ");
+  const showShareNextSteps = !shareError && shareStatus === t(locale, "snap.shareReady");
 
   return (
     <section className="screen capture-screen" aria-labelledby="snap-title">
@@ -323,6 +337,26 @@ export function SnapView({
       <small className={shareError ? "share-image-help is-error" : "share-image-help"}>
         {shareError || shareStatus || t(locale, "snap.shareHelp")}
       </small>
+
+      {showShareNextSteps && (
+        <section className="share-next-card" aria-labelledby="share-next-title">
+          <div>
+            <p className="eyebrow">Social loop</p>
+            <h2 id="share-next-title">{t(locale, "snap.shareNext.title")}</h2>
+            <p>{t(locale, "snap.shareNext.body")}</p>
+          </div>
+          <div className="share-next-actions">
+            <button type="button" onClick={onShareMeet}>
+              <UserPlus size={18} aria-hidden="true" />
+              <span>{t(locale, "snap.shareNext.meet")}</span>
+            </button>
+            <button type="button" onClick={onShareMission}>
+              <Camera size={18} aria-hidden="true" />
+              <span>{t(locale, "snap.shareNext.mission")}</span>
+            </button>
+          </div>
+        </section>
+      )}
 
       {showSaveFeedback && (
         <section className="save-feedback-card" aria-labelledby="save-feedback-title">

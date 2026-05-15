@@ -26,6 +26,7 @@ describe("i18n", () => {
     expect(getPersonaStampPositionLabel("top-left", "en")).toBe("Top left");
     expect(t("en", "snap.shareImage")).toBe("Save share image");
     expect(t("en", "snap.saveFeedback.home")).toBe("View Home");
+    expect(t("en", "snap.shareNext.meet")).toBe("Create meet invite");
     expect(t("en", "today.onboarding.dialogTitle")).toBe("First 30-second guide");
     expect(t("en", "today.onboarding.next")).toBe("Next");
     expect(t("en", "today.onboarding.title")).toBe("One snap starts the loop");

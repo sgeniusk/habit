@@ -1,9 +1,14 @@
-import { Shirt, Sofa } from "lucide-react";
+import { Shirt, SlidersHorizontal, Sofa } from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { outfitItems, roomItems } from "../data/personaCatalog";
 import { buildPersonaCompanionLine, buildPersonaIdentity } from "../lib/personaIdentity";
 import type { PersonaSummary } from "../lib/personaEngine";
-import type { PersonaCard } from "../types/habit";
+import type { PersonaCard, PersonaVoiceMode } from "../types/habit";
+
+const voiceModeOptions: { id: PersonaVoiceMode; label: string; description: string }[] = [
+  { id: "cute", label: "귀여운 톤", description: "장난스럽고 응원하는 말투" },
+  { id: "calm", label: "차분한 톤", description: "담백하고 기록 중심 말투" }
+];
 
 export function HomeView({
   personas,
@@ -12,9 +17,11 @@ export function HomeView({
   selectedRoomItem,
   selectedOutfitItem,
   personaNickname,
+  personaVoiceMode,
   onRoomItemChange,
   onOutfitItemChange,
-  onPersonaNicknameChange
+  onPersonaNicknameChange,
+  onPersonaVoiceModeChange
 }: {
   personas: PersonaCard[];
   personaSummaries: PersonaSummary[];
@@ -22,9 +29,11 @@ export function HomeView({
   selectedRoomItem: string;
   selectedOutfitItem: string;
   personaNickname: string;
+  personaVoiceMode: PersonaVoiceMode;
   onRoomItemChange: (item: string) => void;
   onOutfitItemChange: (item: string) => void;
   onPersonaNicknameChange: (nickname: string) => void;
+  onPersonaVoiceModeChange: (mode: PersonaVoiceMode) => void;
 }) {
   const activeSummary = personaSummaries.find(
     (summary) => summary.archetype === activePersona.category
@@ -43,7 +52,8 @@ export function HomeView({
   const companionLine = buildPersonaCompanionLine({
     category: activePersona.category,
     nickname: personaNickname,
-    level: activeLevel
+    level: activeLevel,
+    voiceMode: personaVoiceMode
   });
 
   function getSummaryForPersona(persona: PersonaCard) {
@@ -162,6 +172,29 @@ export function HomeView({
                 onClick={() => onOutfitItemChange(item)}
               >
                 {item}
+              </button>
+            ))}
+          </div>
+        </section>
+        <section className="decor-card voice-card" aria-labelledby="persona-voice-title">
+          <div>
+            <SlidersHorizontal size={20} aria-hidden="true" />
+            <h2 id="persona-voice-title">말투/테마</h2>
+          </div>
+          <div className="voice-option-row">
+            {voiceModeOptions.map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                className={
+                  personaVoiceMode === option.id ? "voice-option is-selected" : "voice-option"
+                }
+                aria-label={option.label}
+                aria-pressed={personaVoiceMode === option.id}
+                onClick={() => onPersonaVoiceModeChange(option.id)}
+              >
+                <strong>{option.label}</strong>
+                <small>{option.description}</small>
               </button>
             ))}
           </div>

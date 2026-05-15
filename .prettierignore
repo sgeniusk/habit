@@ -3,4 +3,5 @@ dist/
 .vercel/
 package-lock.json
 *.tsbuildinfo
-
+.claude/
+.omc/

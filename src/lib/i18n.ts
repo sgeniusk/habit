@@ -53,6 +53,10 @@ export type TranslationKey =
   | "snap.shareReady"
   | "snap.shareNoPhoto"
   | "snap.shareError"
+  | "snap.shareNext.title"
+  | "snap.shareNext.body"
+  | "snap.shareNext.meet"
+  | "snap.shareNext.mission"
   | "snap.saveFeedback.title"
   | "snap.saveFeedback.body"
   | "snap.saveFeedback.home"
@@ -134,6 +138,10 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "snap.shareReady": "공유 이미지 저장됨",
     "snap.shareNoPhoto": "사진을 먼저 선택해 주세요.",
     "snap.shareError": "공유 이미지를 만들지 못했어요.",
+    "snap.shareNext.title": "공유 다음 행동",
+    "snap.shareNext.body": "저장한 이미지를 친구에게 보냈다면 모임이나 첫 미션으로 바로 이어가요.",
+    "snap.shareNext.meet": "모임 초대 만들기",
+    "snap.shareNext.mission": "첫 스냅 미션 보기",
     "snap.saveFeedback.title": "스냅 저장 완료",
     "snap.saveFeedback.body": "집, 모임, 리포트에 바로 반영됐어요.",
     "snap.saveFeedback.home": "집에서 보기",
@@ -214,6 +222,10 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "snap.shareReady": "Share image saved",
     "snap.shareNoPhoto": "Choose a photo first.",
     "snap.shareError": "Couldn't create the share image.",
+    "snap.shareNext.title": "Share next step",
+    "snap.shareNext.body": "After sending the image, continue into a room invite or first mission.",
+    "snap.shareNext.meet": "Create meet invite",
+    "snap.shareNext.mission": "View first snap mission",
     "snap.saveFeedback.title": "Snap saved",
     "snap.saveFeedback.body": "Home, Meet, and Report have been updated.",
     "snap.saveFeedback.home": "View Home",

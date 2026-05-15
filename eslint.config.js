@@ -6,7 +6,7 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["dist", "node_modules", ".vercel", "*.tsbuildinfo"]
+    ignores: ["dist", "node_modules", ".vercel", ".claude", ".omc", "*.tsbuildinfo"]
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

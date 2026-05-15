@@ -120,6 +120,10 @@ export function ReportView({
                     <span>{insight.confidence}</span>
                   </div>
                   <p>{isSoftened ? softenInsightBody(insight.body) : insight.body}</p>
+                  <p className="insight-evidence">
+                    <span>근거</span>
+                    {insight.evidence}
+                  </p>
                   <strong>{insight.recommendation}</strong>
                   <div className="insight-action-row">
                     <button

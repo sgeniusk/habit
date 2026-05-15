@@ -6,6 +6,8 @@ export type ProofStampId = "time" | "count" | "persona";
 
 export type PersonaStampPosition = "top-left" | "top-right" | "bottom-left" | "bottom-right";
 
+export type PersonaVoiceMode = "cute" | "calm";
+
 export type HabitCategory =
   | "study"
   | "meal"
@@ -61,5 +63,6 @@ export type UserPreferenceState = {
   personaNicknames: Partial<Record<HabitCategory, string>>;
   selectedProofStamps: ProofStampId[];
   personaStampPosition: PersonaStampPosition;
+  personaVoiceMode: PersonaVoiceMode;
   locale: Locale;
 };

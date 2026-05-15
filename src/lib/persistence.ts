@@ -113,6 +113,9 @@ export function loadUserPreferences(
     personaStampPosition: isPersonaStampPosition(storedPreferences.personaStampPosition)
       ? storedPreferences.personaStampPosition
       : fallbackPreferences.personaStampPosition,
+    personaVoiceMode: isPersonaVoiceMode(storedPreferences.personaVoiceMode)
+      ? storedPreferences.personaVoiceMode
+      : fallbackPreferences.personaVoiceMode,
     locale:
       storedPreferences.locale === "ko" || storedPreferences.locale === "en"
         ? storedPreferences.locale
@@ -151,4 +154,8 @@ function isPersonaStampPosition(
     value === "bottom-left" ||
     value === "bottom-right"
   );
+}
+
+function isPersonaVoiceMode(value: unknown): value is UserPreferenceState["personaVoiceMode"] {
+  return value === "cute" || value === "calm";
 }

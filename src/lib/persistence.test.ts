@@ -116,6 +116,7 @@ describe("persistence", () => {
       },
       selectedProofStamps: ["time", "persona"],
       personaStampPosition: "top-left",
+      personaVoiceMode: "calm",
       locale: "en"
     };
 
@@ -128,6 +129,7 @@ describe("persistence", () => {
           personaNicknames: {},
           selectedProofStamps: [],
           personaStampPosition: "bottom-right",
+          personaVoiceMode: "cute",
           locale: "ko"
         },
         storage
@@ -159,6 +161,7 @@ describe("persistence", () => {
           },
           selectedProofStamps: ["time", "count", "persona"],
           personaStampPosition: "bottom-right",
+          personaVoiceMode: "cute",
           locale: "ko"
         },
         storage
@@ -175,6 +178,7 @@ describe("persistence", () => {
       },
       selectedProofStamps: ["persona"],
       personaStampPosition: "bottom-right",
+      personaVoiceMode: "cute",
       locale: "ko"
     });
   });

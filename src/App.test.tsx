@@ -203,6 +203,7 @@ describe("Persona Habit prototype", () => {
 
     expect(screen.getByText("야외 · 퇴근 후 3km 러닝")).toBeInTheDocument();
     expect(screen.getByText("필름 · 🏃 러닝")).toBeInTheDocument();
+    expect(screen.getByText("시간 도장 · 횟수 도장 · 페르소나 도장")).toBeInTheDocument();
   });
 
   it("offers next-step shortcuts after saving a snap", async () => {
@@ -273,6 +274,42 @@ describe("Persona Habit prototype", () => {
 
     expect(
       screen.getByText("토리야. 이번에는 공부를 많이 했네. 척척박사 페르소나로 업글됐어.")
+    ).toBeInTheDocument();
+  });
+
+  it("lets the user switch persona voice tone and keeps it after remounting", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "집" }));
+
+    expect(screen.getByText("말투/테마")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "귀여운 톤" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+
+    await user.click(screen.getByRole("button", { name: "차분한 톤" }));
+
+    expect(
+      screen.getByText(
+        "곰곰아, 공부 리듬이 안정적으로 쌓이고 있어. 척척박사 페르소나까지 흐름이 좋아."
+      )
+    ).toBeInTheDocument();
+
+    unmount();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "집" }));
+
+    expect(screen.getByRole("button", { name: "차분한 톤" })).toHaveAttribute(
+      "aria-pressed",
+      "true"
+    );
+    expect(
+      screen.getByText(
+        "곰곰아, 공부 리듬이 안정적으로 쌓이고 있어. 척척박사 페르소나까지 흐름이 좋아."
+      )
     ).toBeInTheDocument();
   });
 
@@ -552,6 +589,9 @@ describe("Persona Habit prototype", () => {
 
     expect(screen.getByText("7일 생활 리포트")).toBeInTheDocument();
     expect(screen.getByText("AI가 발견한 숨은 습관")).toBeInTheDocument();
+    const insight = screen.getByRole("article", { name: "도서관에서 집중이 반복돼요" });
+    expect(within(insight).getByText("근거")).toBeInTheDocument();
+    expect(within(insight).getByText("공부 스냅 2개가 도서관에서 반복됐어요.")).toBeInTheDocument();
   });
 
   it("lets the user soften or hide AI habit insights", async () => {

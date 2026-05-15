@@ -31,6 +31,7 @@ import type {
   Locale,
   PersonaDecorSelection,
   PersonaStampPosition,
+  PersonaVoiceMode,
   PlaceType,
   ProofStampId,
   SnapRecord,
@@ -55,6 +56,7 @@ const defaultUserPreferences: UserPreferenceState = {
   personaNicknames: defaultPersonaNicknames,
   selectedProofStamps: ["time", "count", "persona"],
   personaStampPosition: "bottom-right",
+  personaVoiceMode: "cute",
   locale: defaultLocale
 };
 
@@ -83,6 +85,7 @@ export default function App() {
   const decorSelections = userPreferences.decorSelections;
   const selectedProofStamps = userPreferences.selectedProofStamps;
   const personaStampPosition = userPreferences.personaStampPosition;
+  const personaVoiceMode = userPreferences.personaVoiceMode;
   const personaNicknames = useMemo(
     () => ({
       ...defaultPersonaNicknames,
@@ -277,6 +280,13 @@ export default function App() {
     }));
   }
 
+  function updatePersonaVoiceMode(nextMode: PersonaVoiceMode) {
+    setUserPreferences((current) => ({
+      ...current,
+      personaVoiceMode: nextMode
+    }));
+  }
+
   function updateLocale(nextLocale: Locale) {
     setUserPreferences((current) => ({
       ...current,
@@ -363,6 +373,14 @@ export default function App() {
               setInviteToken("");
               setActiveTab("meet");
             }}
+            onShareMeet={() => {
+              setInviteToken("");
+              setActiveTab("meet");
+            }}
+            onShareMission={() => {
+              setInviteToken("");
+              setActiveTab("meet");
+            }}
           />
         )}
         {activeTab === "home" && (
@@ -373,11 +391,13 @@ export default function App() {
             selectedRoomItem={activeDecor.roomItem}
             selectedOutfitItem={activeDecor.outfit}
             personaNickname={personaNicknames[activeHomePersona.category]}
+            personaVoiceMode={personaVoiceMode}
             onRoomItemChange={(roomItem) => updateActiveDecor({ roomItem })}
             onOutfitItemChange={(outfit) => updateActiveDecor({ outfit })}
             onPersonaNicknameChange={(nickname) =>
               updatePersonaNickname(activeHomePersona.category, nickname)
             }
+            onPersonaVoiceModeChange={updatePersonaVoiceMode}
           />
         )}
         {activeTab === "meet" && <MeetView records={records} inviteToken={inviteToken} />}
