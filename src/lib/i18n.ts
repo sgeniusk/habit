@@ -1,4 +1,18 @@
-import type { HabitCategory, Locale, PersonaStampPosition, PlaceType, TabId } from "../types/habit";
+import type {
+  HabitCategory,
+  Locale,
+  LocalizedString,
+  PersonaStampPosition,
+  PlaceType,
+  TabId
+} from "../types/habit";
+
+export function localize(value: LocalizedString | string, locale: Locale): string {
+  if (typeof value === "string") {
+    return value;
+  }
+  return value[locale] ?? value.ko;
+}
 
 export const defaultLocale: Locale = "ko";
 export const supportedLocales = ["ko", "en"] as const;

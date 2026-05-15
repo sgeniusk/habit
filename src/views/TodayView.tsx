@@ -27,7 +27,7 @@ import {
   type JournalDraft,
   type JournalMode
 } from "../lib/journalEngine";
-import { t, type TranslationKey } from "../lib/i18n";
+import { localize, t, type TranslationKey } from "../lib/i18n";
 import { findHiddenHabitInsights } from "../lib/personaEngine";
 import {
   buildWeatherCardState,
@@ -84,8 +84,11 @@ export function TodayView({
   weatherAdapter?: WeatherAdapter;
 }) {
   const featuredPersona = findPersonaByCategory(records[0]?.category ?? "study");
+  const featuredName = localize(featuredPersona.name, locale);
+  const featuredActivity = localize(featuredPersona.activity, locale);
+  const featuredPlace = localize(featuredPersona.place, locale);
   const streakDays = countConsecutiveSnapDays(records);
-  const featuredPlaceLabel = featuredPersona.place.split("·")[0].trim() || featuredPersona.place;
+  const featuredPlaceLabel = featuredPlace.split("·")[0].trim() || featuredPlace;
   const featuredProgressPercent = Math.max(8, Math.min(98, (featuredPersona.level / 10) * 100));
   const meetContributionXp = records.length * 4;
   const [journalMode, setJournalMode] = useState<JournalMode>("ai");
@@ -279,8 +282,8 @@ export function TodayView({
         <PersonaAvatar tone={featuredPersona.tone} accessory={featuredPersona.accessory} />
         <div className="hero-copy">
           <span className="status-pill">{`대표 페르소나 · ${featuredPlaceLabel}`}</span>
-          <h2>{featuredPersona.name}</h2>
-          <p>{featuredPersona.activity}.</p>
+          <h2>{featuredName}</h2>
+          <p>{`${featuredActivity}.`}</p>
           <div className="progress-track" aria-label={`레벨 ${featuredPersona.level} 진행률`}>
             <span style={{ width: `${featuredProgressPercent}%` }} />
           </div>
@@ -335,7 +338,7 @@ export function TodayView({
           <div className="journal-bubble">
             <span>
               <MessageCircle size={15} aria-hidden="true" />
-              {featuredPersona.name}
+              {featuredName}
             </span>
             <p>{personaOpening}</p>
           </div>

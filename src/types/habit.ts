@@ -2,6 +2,11 @@ export type TabId = "today" | "snap" | "home" | "meet" | "report";
 
 export type Locale = "ko" | "en";
 
+export type LocalizedString = {
+  ko: string;
+  en: string;
+};
+
 export type ProofStampId = "time" | "count" | "persona";
 
 export type PersonaStampPosition = "top-left" | "top-right" | "bottom-left" | "bottom-right";
@@ -42,9 +47,9 @@ export type SnapRecord = {
 export type PersonaCard = {
   id: string;
   category: HabitCategory;
-  name: string;
-  activity: string;
-  place: string;
+  name: LocalizedString;
+  activity: LocalizedString;
+  place: LocalizedString;
   level: number;
   tone: "leaf" | "coral" | "blue";
   accessory: string;

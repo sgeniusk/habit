@@ -56,9 +56,12 @@ export const personaCatalog: PersonaCard[] = [
   {
     id: "dawn-learner",
     category: "study",
-    name: "새벽 학습자",
-    activity: "창가 책상에서 오늘의 오답을 정리하는 중",
-    place: "집 · 조용한 책상",
+    name: { ko: "새벽 학습자", en: "Dawn learner" },
+    activity: {
+      ko: "창가 책상에서 오늘의 오답을 정리하는 중",
+      en: "Sorting today's mistakes at the window desk"
+    },
+    place: { ko: "집 · 조용한 책상", en: "Home · quiet desk" },
     level: 7,
     tone: "leaf",
     accessory: "study",
@@ -69,9 +72,12 @@ export const personaCatalog: PersonaCard[] = [
   {
     id: "routine-runner",
     category: "exercise",
-    name: "루틴 러너",
-    activity: "러닝화를 말리고 스트레칭을 하는 중",
-    place: "야외 · 성수천",
+    name: { ko: "루틴 러너", en: "Routine runner" },
+    activity: {
+      ko: "러닝화를 말리고 스트레칭을 하는 중",
+      en: "Drying running shoes and stretching"
+    },
+    place: { ko: "야외 · 성수천", en: "Outdoors · Seongsucheon" },
     level: 5,
     tone: "blue",
     accessory: "exercise",
@@ -82,9 +88,12 @@ export const personaCatalog: PersonaCard[] = [
   {
     id: "clean-meal",
     category: "meal",
-    name: "클린식단러",
-    activity: "내일 도시락 재료를 고르는 중",
-    place: "집 · 작은 주방",
+    name: { ko: "클린식단러", en: "Clean meal keeper" },
+    activity: {
+      ko: "내일 도시락 재료를 고르는 중",
+      en: "Picking tomorrow's lunchbox ingredients"
+    },
+    place: { ko: "집 · 작은 주방", en: "Home · small kitchen" },
     level: 4,
     tone: "coral",
     accessory: "meal",
@@ -95,9 +104,12 @@ export const personaCatalog: PersonaCard[] = [
   {
     id: "page-collector",
     category: "reading",
-    name: "페이지 수집가",
-    activity: "카페 구석에서 책갈피를 옮기는 중",
-    place: "카페 · 창가 자리",
+    name: { ko: "페이지 수집가", en: "Page collector" },
+    activity: {
+      ko: "카페 구석에서 책갈피를 옮기는 중",
+      en: "Moving the bookmark in a cafe corner"
+    },
+    place: { ko: "카페 · 창가 자리", en: "Cafe · window seat" },
     level: 3,
     tone: "leaf",
     accessory: "reading",
@@ -108,9 +120,12 @@ export const personaCatalog: PersonaCard[] = [
   {
     id: "reset-maker",
     category: "cleaning",
-    name: "방정리 장인",
-    activity: "책상 위 물건을 색깔별로 정리하는 중",
-    place: "집 · 정리된 방",
+    name: { ko: "방정리 장인", en: "Room reset master" },
+    activity: {
+      ko: "책상 위 물건을 색깔별로 정리하는 중",
+      en: "Sorting desk items by color"
+    },
+    place: { ko: "집 · 정리된 방", en: "Home · tidy room" },
     level: 3,
     tone: "blue",
     accessory: "cleaning",
@@ -121,9 +136,12 @@ export const personaCatalog: PersonaCard[] = [
   {
     id: "healthy-exam",
     category: "selfcare",
-    name: "건강관리형 수험생",
-    activity: "문제집 옆에 물컵과 러닝화를 두는 중",
-    place: "집 · 복합 루틴존",
+    name: { ko: "건강관리형 수험생", en: "Balanced exam keeper" },
+    activity: {
+      ko: "문제집 옆에 물컵과 러닝화를 두는 중",
+      en: "Placing water and running shoes by the workbook"
+    },
+    place: { ko: "집 · 복합 루틴존", en: "Home · hybrid routine zone" },
     level: 6,
     tone: "coral",
     accessory: "group",

@@ -1,7 +1,7 @@
 import { Shirt, SlidersHorizontal, Sofa } from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { outfitItems, roomItems } from "../data/personaCatalog";
-import { t, type TranslationKey } from "../lib/i18n";
+import { localize, t, type TranslationKey } from "../lib/i18n";
 import { buildPersonaCompanionLine, buildPersonaIdentity } from "../lib/personaIdentity";
 import type { PersonaSummary } from "../lib/personaEngine";
 import type { Locale, PersonaCard, PersonaVoiceMode } from "../types/habit";
@@ -53,6 +53,8 @@ export function HomeView({
   const activeSummary = personaSummaries.find(
     (summary) => summary.archetype === activePersona.category
   );
+  const activeName = localize(activePersona.name, locale);
+  const activeActivity = localize(activePersona.activity, locale);
   const activeLevel = activeSummary?.level ?? 1;
   const activeXp = activeSummary?.xp ?? 0;
   const activeProgress = activeSummary?.progress ?? 0;
@@ -85,7 +87,7 @@ export function HomeView({
         <span className="deck-count">{`${personas.length}${t(locale, "home.deckCountUnit")}`}</span>
       </div>
 
-      <section className="home-stage" aria-label={activePersona.name}>
+      <section className="home-stage" aria-label={activeName}>
         <div className="room-scene">
           <span className="room-window" />
           <span className="room-rug" />
@@ -96,7 +98,7 @@ export function HomeView({
         </div>
         <div className="activity-panel">
           <p className="eyebrow">{t(locale, "home.activityEyebrow")}</p>
-          <h2 id="activity-title">{activePersona.name}</h2>
+          <h2 id="activity-title">{activeName}</h2>
           <strong className="nickname-title">{personaIdentity.displayName}</strong>
           <div className="persona-identity-row" aria-label={t(locale, "home.identityRowLabel")}>
             <span>{`${t(locale, "home.nicknameSubtitle")} · ${personaIdentity.displayName}`}</span>
@@ -112,10 +114,10 @@ export function HomeView({
             />
           </label>
           <p className="persona-talk">{companionLine}</p>
-          <p>{activePersona.activity}</p>
+          <p>{activeActivity}</p>
           <div
             className="reward-meter"
-            aria-label={`${activePersona.name} ${t(locale, "home.rewardAreaLabel")}`}
+            aria-label={`${activeName} ${t(locale, "home.rewardAreaLabel")}`}
           >
             <div>
               <strong>
@@ -125,7 +127,7 @@ export function HomeView({
             </div>
             <div
               className="progress-track"
-              aria-label={`${activePersona.name} ${t(locale, "home.progressAreaLabel")} ${activeProgress}%`}
+              aria-label={`${activeName} ${t(locale, "home.progressAreaLabel")} ${activeProgress}%`}
             >
               <span style={{ width: `${activeProgress}%` }} />
             </div>
@@ -238,8 +240,8 @@ export function HomeView({
                   <div className="persona-heading">
                     <h3>
                       {persona.id === activePersona.id
-                        ? `${t(locale, "home.featuredPrefix")} · ${persona.name}`
-                        : persona.name}
+                        ? `${t(locale, "home.featuredPrefix")} · ${localize(persona.name, locale)}`
+                        : localize(persona.name, locale)}
                     </h3>
                     <span>Lv.{level}</span>
                   </div>
