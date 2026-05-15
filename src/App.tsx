@@ -17,6 +17,7 @@ import {
 } from "./lib/i18n";
 import { getWebImagePickerAdapter, type ImagePickerAdapter } from "./lib/adapters/imagePicker";
 import { getWebShareAdapter, type ShareAdapter } from "./lib/adapters/share";
+import { getWebSnapRenderer, type SnapRenderer } from "./lib/adapters/snapRenderer";
 import {
   loadOnboardingDismissed,
   loadSnapRecords,
@@ -28,7 +29,6 @@ import {
 } from "./lib/persistence";
 import { buildPersonaIdentity, defaultPersonaNicknames } from "./lib/personaIdentity";
 import { buildPersonaSummaries, findHiddenHabitInsights } from "./lib/personaEngine";
-import { buildSnapExportFilename, createSnapExportBlob, downloadSnapBlob } from "./lib/snapExport";
 import type {
   HabitCategory,
   Locale,
@@ -47,7 +47,10 @@ import { ReportView } from "./views/ReportView";
 import { SnapView } from "./views/SnapView";
 import { TodayView } from "./views/TodayView";
 
-const defaultShareAdapter: ShareAdapter = getWebShareAdapter(downloadSnapBlob);
+const defaultSnapRenderer: SnapRenderer = getWebSnapRenderer();
+const defaultShareAdapter: ShareAdapter = getWebShareAdapter((blob, filename) =>
+  defaultSnapRenderer.downloadSnap({ blob, filename })
+);
 const defaultImagePicker: ImagePickerAdapter = getWebImagePickerAdapter();
 
 const defaultDecorSelections = Object.fromEntries(
@@ -216,7 +219,7 @@ export default function App() {
     setShareStatus(t(locale, "snap.sharePreparing"));
 
     try {
-      const blob = await createSnapExportBlob({
+      const rendered = await defaultSnapRenderer.renderSnap({
         imageUrl: photoPreviewUrl,
         photoName: photoName || "snap",
         filter: selectedFilter,
@@ -230,10 +233,9 @@ export default function App() {
         locale
       });
 
-      const filename = buildSnapExportFilename(photoName || "snap");
       await defaultShareAdapter.shareSnap({
-        blob,
-        filename,
+        blob: rendered.blob,
+        filename: rendered.filename,
         title: t(locale, "snap.title"),
         text: memo || photoName
       });
