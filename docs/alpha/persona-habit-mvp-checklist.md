@@ -41,10 +41,11 @@ Updated: 2026-05-15
 - [x] 모임에서 기록 기반 추천, 초대, 첫 미션, 공동 XP 흐름을 볼 수 있다.
 - [x] 모바일 폭 시각 QA를 캡처한다.
 - [x] 데스크톱 폭 시각 QA를 캡처한다.
-- [ ] Vercel 배포 후 프로덕션 URL에서 첫 화면을 확인한다.
+- [x] Vercel 배포 후 프로덕션 URL에서 첫 화면을 확인한다.
 
 ## 검증 로그
 
 - Focused tests: `npm run test:run -- src/lib/personaIdentity.test.ts src/lib/persistence.test.ts src/App.test.tsx`
 - Full verification: `npm run format:check`, `npm run lint`, `npm run test:run`, `npm run build`, `npm audit --audit-level=moderate`, `git diff --check`
 - Browser QA: `390x844` 모바일에서 첫 30초 도움말과 집 말투/테마, `1280x720` 데스크톱에서 리포트 AI 근거를 확인했다.
+- Production QA: `https://habit-six-gamma.vercel.app/`가 HTTP 200으로 응답하고, HTML이 새 빌드 자산 `index-De6pAWdc.js`, `index-Cg3SVgYn.css`를 가리키는 것을 확인했다.
