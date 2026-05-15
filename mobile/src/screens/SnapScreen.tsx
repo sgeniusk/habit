@@ -1,4 +1,4 @@
-// 스냅 탭. expo-image-picker 로 카메라 또는 사진첩에서 한 컷을 가져온다.
+// 스냅 탭. 사진 선택 → 카테고리/장소/메모 → 저장하면 records 에 추가된다.
 import { useState } from "react";
 import {
   Alert,
@@ -7,15 +7,36 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View,
-  type ImageSourcePropType
+  TextInput,
+  View
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Camera, Image as ImageIcon } from "lucide-react-native";
 
+import { categoryOptions, placeOptions } from "../data/personaCatalog";
+import { useSnapRecords } from "../lib/SnapRecordsContext";
+import { localize } from "../lib/i18n";
+import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
+import type { HabitCategory, PlaceType, SnapRecord } from "../types/habit";
+
+const placeLabelsKo: Record<PlaceType, string> = {
+  home: "집",
+  library: "도서관",
+  school: "학교",
+  cafe: "카페",
+  gym: "헬스장",
+  restaurant: "식당",
+  outdoors: "야외",
+  other: "기타"
+};
+
 export function SnapScreen() {
+  const { addRecord } = useSnapRecords();
   const [pickedUri, setPickedUri] = useState<string | null>(null);
-  const [pickedFromCamera, setPickedFromCamera] = useState(false);
+  const [category, setCategory] = useState<HabitCategory>("study");
+  const [place, setPlace] = useState<PlaceType>("library");
+  const [memo, setMemo] = useState("");
+  const [savedToast, setSavedToast] = useState("");
 
   async function pickFromCamera() {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
@@ -23,17 +44,14 @@ export function SnapScreen() {
       Alert.alert("카메라 권한이 필요해요", "설정에서 카메라 접근을 허용해 주세요.");
       return;
     }
-
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ["images"],
       quality: 0.85,
       allowsEditing: true,
       aspect: [1, 1]
     });
-
     if (!result.canceled && result.assets[0]) {
       setPickedUri(result.assets[0].uri);
-      setPickedFromCamera(true);
     }
   }
 
@@ -43,26 +61,32 @@ export function SnapScreen() {
       Alert.alert("사진첩 권한이 필요해요", "설정에서 사진 접근을 허용해 주세요.");
       return;
     }
-
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       quality: 0.85,
       allowsEditing: true,
       aspect: [1, 1]
     });
-
     if (!result.canceled && result.assets[0]) {
       setPickedUri(result.assets[0].uri);
-      setPickedFromCamera(false);
     }
   }
 
-  function resetPick() {
+  function saveSnap() {
+    const record: SnapRecord = {
+      id: createRecordId(),
+      category,
+      placeType: place,
+      memo: memo.trim() || undefined,
+      imageUrl: pickedUri ?? undefined,
+      createdAt: new Date().toISOString()
+    };
+    addRecord(record);
     setPickedUri(null);
-    setPickedFromCamera(false);
+    setMemo("");
+    setSavedToast("스냅이 저장됐어요. 페르소나가 자라요.");
+    setTimeout(() => setSavedToast(""), 2000);
   }
-
-  const previewSource: ImageSourcePropType | undefined = pickedUri ? { uri: pickedUri } : undefined;
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -70,52 +94,112 @@ export function SnapScreen() {
       <Text style={styles.title}>오늘의 한 컷</Text>
 
       <View style={styles.preview}>
-        {previewSource ? (
-          <Image source={previewSource} style={styles.previewImage} resizeMode="cover" />
+        {pickedUri ? (
+          <Image source={{ uri: pickedUri }} style={styles.previewImage} resizeMode="cover" />
         ) : (
           <View style={styles.previewPlaceholder}>
             <Text style={styles.previewPlaceholderTitle}>사진을 골라 시작해요</Text>
             <Text style={styles.previewPlaceholderBody}>
-              카메라로 찍거나 사진첩에서 한 컷을 가져옵니다.
+              카메라로 찍거나 사진첩에서 한 컷.
             </Text>
           </View>
         )}
       </View>
 
       <View style={styles.actionRow}>
-        <Pressable style={[styles.actionButton, styles.actionButtonPrimary]} onPress={pickFromCamera}>
-          <Camera size={18} color="#ffffff" />
-          <Text style={styles.actionButtonPrimaryText}>카메라로 찍기</Text>
+        <Pressable style={[styles.actionButton, styles.actionPrimary]} onPress={pickFromCamera}>
+          <Camera size={18} color={colors.white} />
+          <Text style={styles.actionPrimaryText}>카메라</Text>
         </Pressable>
         <Pressable style={styles.actionButton} onPress={pickFromGallery}>
-          <ImageIcon size={18} color="#1c2733" />
-          <Text style={styles.actionButtonText}>사진첩</Text>
+          <ImageIcon size={18} color={colors.ink} />
+          <Text style={styles.actionText}>사진첩</Text>
         </Pressable>
       </View>
 
-      {pickedUri ? (
-        <Pressable style={styles.resetLink} onPress={resetPick}>
-          <Text style={styles.resetLinkText}>
-            {pickedFromCamera ? "카메라로 찍은 사진" : "사진첩의 사진"} 다시 고르기
-          </Text>
-        </Pressable>
+      <Text style={styles.sectionTitle}>어떤 순간인가요?</Text>
+      <View style={styles.chipRow}>
+        {categoryOptions.map((option) => (
+          <Pressable
+            key={option.id}
+            style={[styles.chip, category === option.id && styles.chipActive]}
+            onPress={() => setCategory(option.id)}
+          >
+            <Text style={[styles.chipText, category === option.id && styles.chipTextActive]}>
+              {option.label}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+
+      <Text style={styles.sectionTitle}>어디에서 남겼나요?</Text>
+      <View style={styles.chipRow}>
+        {placeOptions.map((option) => (
+          <Pressable
+            key={option}
+            style={[styles.chip, place === option && styles.chipActive]}
+            onPress={() => setPlace(option)}
+          >
+            <Text style={[styles.chipText, place === option && styles.chipTextActive]}>
+              {placeLabelsKo[option]}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+
+      <Text style={styles.sectionTitle}>한 줄 감정</Text>
+      <TextInput
+        value={memo}
+        onChangeText={setMemo}
+        placeholder="예: 맑아서 조금 더 걸었다"
+        placeholderTextColor={colors.muted}
+        multiline
+        style={styles.memoInput}
+      />
+
+      <Pressable
+        style={({ pressed }) => [
+          styles.saveButton,
+          pressed && styles.saveButtonPressed
+        ]}
+        onPress={saveSnap}
+      >
+        <Text style={styles.saveButtonText}>꾸며서 올리기</Text>
+      </Pressable>
+
+      {savedToast ? (
+        <View style={styles.toast}>
+          <Text style={styles.toastText}>{savedToast}</Text>
+        </View>
       ) : null}
+
+      <Text style={styles.metaHint}>
+        선택한 카테고리: {categoryOptions.find((option) => option.id === category)?.label ?? ""} · 장소: {placeLabelsKo[place]}
+      </Text>
     </ScrollView>
   );
 }
 
+function createRecordId(): string {
+  if (typeof globalThis.crypto?.randomUUID === "function") {
+    return `record-${globalThis.crypto.randomUUID()}`;
+  }
+  const randomPart = Math.random().toString(36).slice(2, 10);
+  return `record-${Date.now()}-${randomPart}`;
+}
+
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f4f7e8" },
-  content: { padding: 18, gap: 14 },
-  eyebrow: { color: "#2f9d65", fontWeight: "800", fontSize: 12, textTransform: "uppercase" },
-  title: { color: "#1c2733", fontWeight: "900", fontSize: 26, lineHeight: 30 },
+  screen: { flex: 1, backgroundColor: colors.background },
+  content: { padding: spacing.lg, gap: spacing.md, paddingBottom: spacing.xxl * 2 },
+  eyebrow: { ...typography.eyebrow, color: colors.leaf, textTransform: "uppercase" },
+  title: { ...typography.title, color: colors.ink },
   preview: {
     aspectRatio: 1,
-    borderRadius: 16,
+    borderRadius: radii.lg,
     overflow: "hidden",
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     borderWidth: 2,
-    borderColor: "#1c2733"
+    borderColor: colors.ink
   },
   previewImage: { width: "100%", height: "100%" },
   previewPlaceholder: {
@@ -123,15 +207,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 6,
-    padding: 24
+    padding: spacing.xl
   },
-  previewPlaceholderTitle: { color: "#1c2733", fontWeight: "900", fontSize: 18 },
-  previewPlaceholderBody: {
-    color: "#667267",
-    fontWeight: "700",
-    fontSize: 14,
-    textAlign: "center"
-  },
+  previewPlaceholderTitle: { color: colors.ink, fontWeight: "900", fontSize: 18 },
+  previewPlaceholderBody: { color: colors.muted, fontWeight: "700", fontSize: 13, textAlign: "center" },
   actionRow: { flexDirection: "row", gap: 10 },
   actionButton: {
     flex: 1,
@@ -140,14 +219,57 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 8,
     paddingVertical: 14,
-    borderRadius: 12,
-    backgroundColor: "#ffffff",
+    borderRadius: radii.md,
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: "#d8e2d1"
+    borderColor: colors.line
   },
-  actionButtonPrimary: { backgroundColor: "#1c2733", borderColor: "#1c2733" },
-  actionButtonText: { color: "#1c2733", fontWeight: "900", fontSize: 14 },
-  actionButtonPrimaryText: { color: "#ffffff", fontWeight: "900", fontSize: 14 },
-  resetLink: { alignSelf: "center", paddingVertical: 6 },
-  resetLinkText: { color: "#5477d2", fontWeight: "800", fontSize: 13 }
+  actionPrimary: { backgroundColor: colors.ink, borderColor: colors.ink },
+  actionText: { color: colors.ink, fontWeight: "900", fontSize: 14 },
+  actionPrimaryText: { color: colors.white, fontWeight: "900", fontSize: 14 },
+  sectionTitle: { ...typography.h3, color: colors.ink, marginTop: spacing.sm },
+  chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
+  chip: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.white
+  },
+  chipActive: { borderColor: colors.leaf, backgroundColor: colors.leafSoft },
+  chipText: { color: colors.ink, fontWeight: "800", fontSize: 13 },
+  chipTextActive: { color: colors.leaf },
+  memoInput: {
+    minHeight: 80,
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.line,
+    color: colors.ink,
+    fontWeight: "700",
+    fontSize: 14,
+    textAlignVertical: "top"
+  },
+  saveButton: {
+    marginTop: spacing.sm,
+    paddingVertical: 16,
+    borderRadius: radii.md,
+    backgroundColor: colors.ink,
+    alignItems: "center",
+    ...shadows.card
+  },
+  saveButtonPressed: { opacity: 0.85 },
+  saveButtonText: { color: colors.white, fontWeight: "900", fontSize: 15 },
+  toast: {
+    marginTop: spacing.sm,
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.leafSoft,
+    borderWidth: 1,
+    borderColor: "#cce8d0"
+  },
+  toastText: { color: colors.leaf, fontWeight: "900", fontSize: 13 },
+  metaHint: { color: colors.muted, fontWeight: "700", fontSize: 12, marginTop: 4 }
 });

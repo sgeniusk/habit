@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Sparkles, UserPlus, Users } from "lucide-react-native";
 
-import { initialRecords } from "../data/sampleRecords";
+import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { localize } from "../lib/i18n";
 import {
   acceptMeetInvite,
@@ -14,7 +14,8 @@ import {
 import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 
 export function MeetScreen() {
-  const suggestions = useMemo(() => buildMeetSuggestions(initialRecords), []);
+  const { records } = useSnapRecords();
+  const suggestions = useMemo(() => buildMeetSuggestions(records), [records]);
   const topSuggestion = suggestions[0];
   const [session, setSession] = useState<MeetSession | null>(null);
 

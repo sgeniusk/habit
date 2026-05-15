@@ -4,7 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Sparkles } from "lucide-react-native";
 
 import { findPersonaByCategory, personaCatalog } from "../data/personaCatalog";
-import { initialRecords } from "../data/sampleRecords";
+import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { localize } from "../lib/i18n";
 import { buildPersonaSummaries } from "../lib/personaEngine";
 import {
@@ -15,17 +15,22 @@ import {
 import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 import type { PersonaVoiceMode } from "../types/habit";
 
-const records = initialRecords;
-const summaries = buildPersonaSummaries(records);
-const featuredPersona = findPersonaByCategory(records[0]?.category ?? "study");
-const activeSummary = summaries.find((summary) => summary.archetype === featuredPersona.category);
-const activeLevel = activeSummary?.level ?? 1;
-const activeXp = activeSummary?.xp ?? 0;
-const activeProgress = activeSummary?.progress ?? 0;
-const unlockedRewards = activeSummary?.unlockedItems ?? [];
-
 export function HomeScreen() {
+  const { records } = useSnapRecords();
   const [voiceMode, setVoiceMode] = useState<PersonaVoiceMode>("cute");
+
+  const summaries = useMemo(() => buildPersonaSummaries(records), [records]);
+  const featuredPersona = useMemo(
+    () => findPersonaByCategory(records[0]?.category ?? "study"),
+    [records]
+  );
+  const activeSummary = summaries.find(
+    (summary) => summary.archetype === featuredPersona.category
+  );
+  const activeLevel = activeSummary?.level ?? 1;
+  const activeXp = activeSummary?.xp ?? 0;
+  const activeProgress = activeSummary?.progress ?? 0;
+  const unlockedRewards = activeSummary?.unlockedItems ?? [];
 
   const identity = useMemo(
     () =>
@@ -36,7 +41,7 @@ export function HomeScreen() {
         xp: activeXp,
         locale: "ko"
       }),
-    []
+    [featuredPersona.category, activeLevel, activeXp]
   );
 
   const companion = useMemo(
@@ -48,7 +53,7 @@ export function HomeScreen() {
         voiceMode,
         locale: "ko"
       }),
-    [voiceMode]
+    [featuredPersona.category, activeLevel, voiceMode]
   );
 
   return (

@@ -2,24 +2,22 @@
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import { initialRecords } from "../data/sampleRecords";
-import { t } from "../lib/i18n";
+import { useSnapRecords } from "../lib/SnapRecordsContext";
 import {
+  buildPersonaSummaries,
   findHiddenHabitInsights,
   type HabitInsight,
   type HabitInsightConfidence
 } from "../lib/personaEngine";
-import { buildPersonaSummaries } from "../lib/personaEngine";
 import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 
-const records = initialRecords;
-const summaries = buildPersonaSummaries(records);
-const insights = findHiddenHabitInsights(records);
-
 export function ReportScreen() {
+  const { records } = useSnapRecords();
   const [softenAll, setSoftenAll] = useState(true);
 
-  const visible = useMemo(() => insights, []);
+  const summaries = useMemo(() => buildPersonaSummaries(records), [records]);
+  const insights = useMemo(() => findHiddenHabitInsights(records), [records]);
+  const visible = insights;
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>

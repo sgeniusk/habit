@@ -1,21 +1,35 @@
-// 오늘 탭. streak 일수와 대표 페르소나 활동을 도메인 로직에서 derive 한다.
+// 오늘 탭. 컨텍스트의 records 를 기반으로 streak 와 대표 페르소나를 derive.
+import { useMemo } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Check } from "lucide-react-native";
 
 import { findPersonaByCategory } from "../data/personaCatalog";
-import { initialRecords } from "../data/sampleRecords";
+import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { localize } from "../lib/i18n";
 import { countConsecutiveSnapDays } from "../lib/streakEngine";
+import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 
-const records = initialRecords;
-const latestRecord = records[0];
-const featuredPersona = findPersonaByCategory(latestRecord?.category ?? "study");
-const featuredName = localize(featuredPersona.name, "ko");
-const featuredActivity = localize(featuredPersona.activity, "ko");
-const featuredPlace = localize(featuredPersona.place, "ko");
-const streakDays = countConsecutiveSnapDays(records);
+const categoryLabelsKo: Record<string, string> = {
+  study: "공부",
+  meal: "식단",
+  exercise: "운동",
+  reading: "독서",
+  cleaning: "정리",
+  selfcare: "셀프케어",
+  hobby: "취미"
+};
 
 export function TodayScreen() {
+  const { records } = useSnapRecords();
+  const featuredPersona = useMemo(
+    () => findPersonaByCategory(records[0]?.category ?? "study"),
+    [records]
+  );
+  const streakDays = useMemo(() => countConsecutiveSnapDays(records), [records]);
+  const featuredName = localize(featuredPersona.name, "ko");
+  const featuredActivity = localize(featuredPersona.activity, "ko");
+  const featuredPlace = localize(featuredPersona.place, "ko");
+
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <View style={styles.topStrip}>
@@ -24,7 +38,7 @@ export function TodayScreen() {
           <Text style={styles.title}>오늘의 기록</Text>
         </View>
         <View style={styles.streakBadge}>
-          <Check size={16} color="#1c2733" />
+          <Check size={16} color={colors.ink} />
           <Text style={styles.streakBadgeText}>{streakDays}일</Text>
         </View>
       </View>
@@ -35,63 +49,59 @@ export function TodayScreen() {
       </View>
 
       <View style={styles.heroBand}>
-        <Text style={styles.statusPill}>대표 페르소나 · {featuredPlace.split("·")[0].trim()}</Text>
+        <Text style={styles.statusPill}>
+          대표 페르소나 · {featuredPlace.split("·")[0].trim()}
+        </Text>
         <Text style={styles.heroName}>{featuredName}</Text>
         <Text style={styles.heroActivity}>{featuredActivity}.</Text>
       </View>
 
       <View style={styles.timeline}>
         <Text style={styles.sectionTitle}>오늘 남긴 기록</Text>
-        {records.slice(0, 4).map((record) => (
-          <View key={record.id} style={styles.recordRow}>
-            <Text style={styles.recordCategory}>{categoryLabel(record.category)}</Text>
-            <Text style={styles.recordMemo} numberOfLines={1}>
-              {record.memo ?? "스냅 기록"}
-            </Text>
-          </View>
-        ))}
+        {records.length === 0 ? (
+          <Text style={styles.timelineEmpty}>아직 기록이 없어요. 스냅 탭에서 첫 한 컷을 남겨봐요.</Text>
+        ) : (
+          records.slice(0, 5).map((record) => (
+            <View key={record.id} style={styles.recordRow}>
+              <Text style={styles.recordCategory}>
+                {categoryLabelsKo[record.category] ?? record.category}
+              </Text>
+              <Text style={styles.recordMemo} numberOfLines={1}>
+                {record.memo ?? "스냅 기록"}
+              </Text>
+            </View>
+          ))
+        )}
       </View>
     </ScrollView>
   );
 }
 
-function categoryLabel(category: string) {
-  const map: Record<string, string> = {
-    study: "공부",
-    meal: "식단",
-    exercise: "운동",
-    reading: "독서",
-    cleaning: "정리",
-    selfcare: "셀프케어",
-    hobby: "취미"
-  };
-  return map[category] ?? category;
-}
-
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: "#f4f7e8" },
-  content: { padding: 18, gap: 14 },
+  screen: { flex: 1, backgroundColor: colors.background },
+  content: { padding: spacing.lg, gap: spacing.md },
   topStrip: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" },
-  eyebrow: { color: "#2f9d65", fontWeight: "800", fontSize: 12, textTransform: "uppercase" },
-  title: { color: "#1c2733", fontWeight: "900", fontSize: 26, lineHeight: 30 },
+  eyebrow: { ...typography.eyebrow, color: colors.leaf, textTransform: "uppercase" },
+  title: { ...typography.title, color: colors.ink },
   streakBadge: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
     paddingVertical: 6,
     paddingHorizontal: 10,
-    borderRadius: 999,
-    backgroundColor: "#ffffff",
+    borderRadius: radii.pill,
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: "#d8e2d1"
+    borderColor: colors.line
   },
-  streakBadgeText: { color: "#1c2733", fontWeight: "900", fontSize: 13 },
+  streakBadgeText: { color: colors.ink, fontWeight: "900", fontSize: 13 },
   heroCta: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: "#1c2733"
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    backgroundColor: colors.ink,
+    ...shadows.card
   },
-  heroCtaTitle: { color: "#ffffff", fontWeight: "900", fontSize: 16 },
+  heroCtaTitle: { color: colors.white, fontWeight: "900", fontSize: 16 },
   heroCtaHint: {
     color: "rgba(255, 255, 255, 0.78)",
     fontWeight: "700",
@@ -99,10 +109,10 @@ const styles = StyleSheet.create({
     marginTop: 4
   },
   heroBand: {
-    padding: 18,
+    padding: spacing.lg,
     minHeight: 160,
-    borderRadius: 14,
-    backgroundColor: "#ccefd6",
+    borderRadius: radii.lg,
+    backgroundColor: colors.mint,
     borderWidth: 1,
     borderColor: "#b7dbbf",
     gap: 6
@@ -111,36 +121,37 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     paddingVertical: 4,
     paddingHorizontal: 10,
-    borderRadius: 999,
-    backgroundColor: "#ffffff",
+    borderRadius: radii.pill,
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: "#d8e2d1",
-    color: "#1c2733",
+    borderColor: colors.line,
+    color: colors.ink,
     fontSize: 12,
     fontWeight: "800",
     overflow: "hidden"
   },
-  heroName: { color: "#1c2733", fontWeight: "900", fontSize: 22, marginTop: 8 },
-  heroActivity: { color: "#1c2733", fontWeight: "700", fontSize: 14 },
+  heroName: { color: colors.ink, fontWeight: "900", fontSize: 22, marginTop: 8 },
+  heroActivity: { color: colors.ink, fontWeight: "700", fontSize: 14 },
   timeline: {
-    padding: 16,
-    borderRadius: 14,
-    backgroundColor: "#ffffff",
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: "#d8e2d1",
+    borderColor: colors.line,
     gap: 10
   },
-  sectionTitle: { color: "#1c2733", fontWeight: "900", fontSize: 16 },
+  sectionTitle: { ...typography.h3, color: colors.ink },
+  timelineEmpty: { color: colors.muted, fontWeight: "700", fontSize: 13 },
   recordRow: { flexDirection: "row", alignItems: "center", gap: 10 },
   recordCategory: {
     paddingVertical: 3,
     paddingHorizontal: 8,
-    borderRadius: 999,
-    backgroundColor: "#e6f6e8",
-    color: "#2f9d65",
+    borderRadius: radii.pill,
+    backgroundColor: colors.leafSoft,
+    color: colors.leaf,
     fontWeight: "900",
     fontSize: 11,
     overflow: "hidden"
   },
-  recordMemo: { flex: 1, color: "#1c2733", fontWeight: "700", fontSize: 13 }
+  recordMemo: { flex: 1, color: colors.ink, fontWeight: "700", fontSize: 13 }
 });
