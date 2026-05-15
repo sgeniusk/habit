@@ -76,9 +76,16 @@ Updated: 2026-05-15
 - [x] ImagePickerAdapter — 사진 입력 처리를 sanitizeImageFile 위의 얇은 래퍼로 분리. RN 은 expo-image-picker 로 같은 인터페이스 만족.
 - [x] SnapRenderer — PNG export 와 다운로드 트리거 분리. RenderedSnap 한 호출로 blob + filename 반환. RN 은 expo-image-manipulator 또는 react-native-skia 로 매핑.
 
-### 묶음 3 — UX 마감 묶음
+### 묶음 3 — UX 마감 묶음 (진행 중)
 
-모임/리포트/페르소나 말투 i18n 사전 확장, `HabitInsight.confidence` 내부 enum 화, TodayView 의 하드코딩 목업 제거, App.tsx 의 useState 18개를 hook 으로 분리.
+- [x] `HabitInsight.confidence` 를 영어 enum (high/medium/low) 으로 바꾸고 `insight.evidenceLabel` 키 추가. ReportView 가 locale 별 라벨로 변환.
+- [x] TodayView 의 streak 6일 / hero 활동 문구 / 진행률 / +28xp 모임 기여 하드코딩을 records 기반 derived 값으로 교체. `countConsecutiveSnapDays` 헬퍼 추가.
+- [x] HomeView 의 한국어 하드코딩 약 25곳을 i18n 사전 (`home.*` 키) 로 분리.
+- [ ] MeetView 의 한국어 하드코딩 i18n 분리.
+- [ ] TodayView 의 잔여 한국어 라벨 (저널/모드 스위치) i18n 분리.
+- [ ] ReportView 의 잔여 한국어 라벨 (7일 요약/오래된 기억 등) i18n 분리.
+- [ ] PersonaCard.name/activity 등 데이터 모델 안의 한국어 문구 분리.
+- [ ] App.tsx 의 18개 useState 를 `useSnapForm` / `useUserPreferences` 등 hook 으로 분리 (출시 마감과 직접 관련 없는 내부 정리).
 
 ### 묶음 4 ~ 6 — 사용자 결정 대기
 
