@@ -179,7 +179,32 @@ export type TranslationKey =
   | "today.metricMeet"
   | "today.insightEyebrow"
   | "today.insightTitle"
-  | "today.timelineTitle";
+  | "today.timelineTitle"
+  | "report.title"
+  | "report.weeklyEyebrow"
+  | "report.modeAria"
+  | "report.modeWeekly"
+  | "report.modeMemory"
+  | "report.metricWeeklySnap"
+  | "report.metricFeaturedGrowth"
+  | "report.metricHiddenPattern"
+  | "report.aiHabitTitle"
+  | "report.restoreHiddenInsights"
+  | "report.restoreHiddenMessage"
+  | "report.softenedMessage"
+  | "report.hiddenMessage"
+  | "report.softenButton"
+  | "report.hideButton"
+  | "report.memoryEyebrow"
+  | "report.memoryTitle"
+  | "report.memoryDescription"
+  | "report.memoryFilterAria"
+  | "report.memoryFilterTitle"
+  | "report.memoryFilterPrefix"
+  | "report.memoryFilterAll"
+  | "report.memoryFilterMonth"
+  | "report.memoryFilterPlace"
+  | "report.memoryFilterPersona";
 
 const translations: Record<Locale, Record<TranslationKey, string>> = {
   ko: {
@@ -359,7 +384,33 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "today.metricMeet": "모임 기여",
     "today.insightEyebrow": "AI Insight",
     "today.insightTitle": "숨은 습관 발견",
-    "today.timelineTitle": "오늘 남긴 기록"
+    "today.timelineTitle": "오늘 남긴 기록",
+    "report.title": "7일 생활 리포트",
+    "report.weeklyEyebrow": "Weekly Loop",
+    "report.modeAria": "리포트 보기 방식",
+    "report.modeWeekly": "7일 요약",
+    "report.modeMemory": "오래된 기억",
+    "report.metricWeeklySnap": "주간 스냅",
+    "report.metricFeaturedGrowth": "대표 성장",
+    "report.metricHiddenPattern": "숨은 패턴",
+    "report.aiHabitTitle": "AI가 발견한 숨은 습관",
+    "report.restoreHiddenInsights": "숨긴 인사이트 다시 보기",
+    "report.restoreHiddenMessage": "숨긴 인사이트를 다시 보여줄게요",
+    "report.softenedMessage": "조금 더 부드럽게 볼게요",
+    "report.hiddenMessage": "이런 분석은 덜 보여줄게요",
+    "report.softenButton": "문구 순하게",
+    "report.hideButton": "관심 없음",
+    "report.memoryEyebrow": "Memory Search",
+    "report.memoryTitle": "기억 더듬기",
+    "report.memoryDescription":
+      "오래된 스냅을 AI가 다시 꺼내서, 지금의 페르소나가 어디서 시작됐는지 묻습니다.",
+    "report.memoryFilterAria": "기억 필터",
+    "report.memoryFilterTitle": "기억 필터",
+    "report.memoryFilterPrefix": "필터",
+    "report.memoryFilterAll": "전체",
+    "report.memoryFilterMonth": "월",
+    "report.memoryFilterPlace": "장소",
+    "report.memoryFilterPersona": "페르소나"
   },
   en: {
     "language.label": "Language",
@@ -538,7 +589,32 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "today.metricMeet": "Meet xp",
     "today.insightEyebrow": "AI Insight",
     "today.insightTitle": "Hidden habit",
-    "today.timelineTitle": "Logged today"
+    "today.timelineTitle": "Logged today",
+    "report.title": "7-day life report",
+    "report.weeklyEyebrow": "Weekly Loop",
+    "report.modeAria": "Report view mode",
+    "report.modeWeekly": "7-day summary",
+    "report.modeMemory": "Memories",
+    "report.metricWeeklySnap": "Weekly snaps",
+    "report.metricFeaturedGrowth": "Featured growth",
+    "report.metricHiddenPattern": "Hidden patterns",
+    "report.aiHabitTitle": "AI-spotted hidden habits",
+    "report.restoreHiddenInsights": "Show hidden insights",
+    "report.restoreHiddenMessage": "Showing hidden insights again",
+    "report.softenedMessage": "Reading this more gently",
+    "report.hiddenMessage": "This kind of analysis will appear less",
+    "report.softenButton": "Soften wording",
+    "report.hideButton": "Not interested",
+    "report.memoryEyebrow": "Memory Search",
+    "report.memoryTitle": "Memory recall",
+    "report.memoryDescription": "AI brings older snaps back to ask where today's persona began.",
+    "report.memoryFilterAria": "Memory filter",
+    "report.memoryFilterTitle": "Memory filter",
+    "report.memoryFilterPrefix": "Filter",
+    "report.memoryFilterAll": "All",
+    "report.memoryFilterMonth": "Month",
+    "report.memoryFilterPlace": "Place",
+    "report.memoryFilterPersona": "Persona"
   }
 };
 

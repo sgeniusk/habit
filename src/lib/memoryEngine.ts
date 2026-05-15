@@ -15,7 +15,7 @@ export type MemoryCuration = {
 };
 
 export type MemoryFilter =
-  | { type: "all"; value: "전체" }
+  | { type: "all"; value: string }
   | { type: "month"; value: string }
   | { type: "place"; value: string }
   | { type: "persona"; value: string };

@@ -59,12 +59,12 @@ export function ReportView({
     <section className="screen report-screen" aria-labelledby="report-title">
       <div className="top-strip">
         <div>
-          <p className="eyebrow">Weekly Loop</p>
-          <h1 id="report-title">7일 생활 리포트</h1>
+          <p className="eyebrow">{t(locale, "report.weeklyEyebrow")}</p>
+          <h1 id="report-title">{t(locale, "report.title")}</h1>
         </div>
       </div>
 
-      <div className="mode-switch report-mode-switch" aria-label="리포트 보기 방식">
+      <div className="mode-switch report-mode-switch" aria-label={t(locale, "report.modeAria")}>
         <button
           type="button"
           className={reportMode === "weekly" ? "is-selected" : ""}
@@ -72,7 +72,7 @@ export function ReportView({
           onClick={() => setReportMode("weekly")}
         >
           <CalendarDays size={17} aria-hidden="true" />
-          7일 요약
+          {t(locale, "report.modeWeekly")}
         </button>
         <button
           type="button"
@@ -81,20 +81,32 @@ export function ReportView({
           onClick={() => setReportMode("memory")}
         >
           <Archive size={17} aria-hidden="true" />
-          오래된 기억
+          {t(locale, "report.modeMemory")}
         </button>
       </div>
 
       {reportMode === "weekly" ? (
         <>
           <div className="report-summary">
-            <MetricTile label="주간 스냅" value={`${weeklyRecords.length}`} tone="leaf" />
-            <MetricTile label="대표 성장" value={`Lv.${personas[0]?.level ?? 1}`} tone="coral" />
-            <MetricTile label="숨은 패턴" value={`${visibleInsights.length}`} tone="blue" />
+            <MetricTile
+              label={t(locale, "report.metricWeeklySnap")}
+              value={`${weeklyRecords.length}`}
+              tone="leaf"
+            />
+            <MetricTile
+              label={t(locale, "report.metricFeaturedGrowth")}
+              value={`Lv.${personas[0]?.level ?? 1}`}
+              tone="coral"
+            />
+            <MetricTile
+              label={t(locale, "report.metricHiddenPattern")}
+              value={`${visibleInsights.length}`}
+              tone="blue"
+            />
           </div>
 
           <section className="insight-list" aria-labelledby="ai-habit-title">
-            <h2 id="ai-habit-title">AI가 발견한 숨은 습관</h2>
+            <h2 id="ai-habit-title">{t(locale, "report.aiHabitTitle")}</h2>
             {insightFeedbackMessage ? (
               <p className="insight-feedback-message" role="status">
                 {insightFeedbackMessage}
@@ -102,7 +114,7 @@ export function ReportView({
             ) : null}
             {hiddenInsights.length > 0 ? (
               <div className="hidden-insight-panel">
-                <strong>숨긴 인사이트 {hiddenInsights.length}개</strong>
+                <strong>{formatHiddenInsightCount(locale, hiddenInsights.length)}</strong>
                 <button
                   type="button"
                   onClick={() => {
@@ -110,10 +122,10 @@ export function ReportView({
                       ...current,
                       hiddenInsightTitles: []
                     }));
-                    setInsightFeedbackMessage("숨긴 인사이트를 다시 보여줄게요");
+                    setInsightFeedbackMessage(t(locale, "report.restoreHiddenMessage"));
                   }}
                 >
-                  숨긴 인사이트 다시 보기
+                  {t(locale, "report.restoreHiddenInsights")}
                 </button>
               </div>
             ) : null}
@@ -126,7 +138,7 @@ export function ReportView({
                     <h3>{insight.title}</h3>
                     <span>{t(locale, confidenceTranslationKey(insight.confidence))}</span>
                   </div>
-                  <p>{isSoftened ? softenInsightBody(insight.body) : insight.body}</p>
+                  <p>{isSoftened ? softenInsightBody(insight.body, locale) : insight.body}</p>
                   <p className="insight-evidence">
                     <span>{t(locale, "insight.evidenceLabel")}</span>
                     {insight.evidence}
@@ -144,10 +156,10 @@ export function ReportView({
                             ? current.softenedInsightTitles
                             : [...current.softenedInsightTitles, insight.title]
                         }));
-                        setInsightFeedbackMessage("조금 더 부드럽게 볼게요");
+                        setInsightFeedbackMessage(t(locale, "report.softenedMessage"));
                       }}
                     >
-                      문구 순하게
+                      {t(locale, "report.softenButton")}
                     </button>
                     <button
                       type="button"
@@ -158,10 +170,10 @@ export function ReportView({
                             ? current.hiddenInsightTitles
                             : [...current.hiddenInsightTitles, insight.title]
                         }));
-                        setInsightFeedbackMessage("이런 분석은 덜 보여줄게요");
+                        setInsightFeedbackMessage(t(locale, "report.hiddenMessage"));
                       }}
                     >
-                      관심 없음
+                      {t(locale, "report.hideButton")}
                     </button>
                   </div>
                 </article>
@@ -172,23 +184,25 @@ export function ReportView({
       ) : (
         <section className="memory-section" aria-labelledby="memory-title">
           <div>
-            <p className="eyebrow">Memory Search</p>
-            <h2 id="memory-title">기억 더듬기</h2>
+            <p className="eyebrow">{t(locale, "report.memoryEyebrow")}</p>
+            <h2 id="memory-title">{t(locale, "report.memoryTitle")}</h2>
           </div>
-          <p>오래된 스냅을 AI가 다시 꺼내서, 지금의 페르소나가 어디서 시작됐는지 묻습니다.</p>
-          <div className="memory-filter-panel" aria-label="기억 필터">
+          <p>{t(locale, "report.memoryDescription")}</p>
+          <div className="memory-filter-panel" aria-label={t(locale, "report.memoryFilterAria")}>
             <div>
-              <h3>기억 필터</h3>
-              <span>필터: {formatMemoryFilterLabel(memoryFilter)}</span>
+              <h3>{t(locale, "report.memoryFilterTitle")}</h3>
+              <span>{`${t(locale, "report.memoryFilterPrefix")}: ${formatMemoryFilterLabel(memoryFilter, locale)}`}</span>
             </div>
             <div className="memory-filter-row">
               <button
                 type="button"
                 className={memoryFilter.type === "all" ? "is-selected" : ""}
                 aria-pressed={memoryFilter.type === "all"}
-                onClick={() => setMemoryFilter({ type: "all", value: "전체" })}
+                onClick={() =>
+                  setMemoryFilter({ type: "all", value: t(locale, "report.memoryFilterAll") })
+                }
               >
-                전체
+                {t(locale, "report.memoryFilterAll")}
               </button>
               {memoryFilterOptions.months.map((month) => (
                 <button
@@ -198,7 +212,7 @@ export function ReportView({
                   aria-pressed={isActiveFilter(memoryFilter, "month", month)}
                   onClick={() => setMemoryFilter({ type: "month", value: month })}
                 >
-                  월 · {month}
+                  {`${t(locale, "report.memoryFilterMonth")} · ${month}`}
                 </button>
               ))}
               {memoryFilterOptions.places.map((place) => (
@@ -209,7 +223,7 @@ export function ReportView({
                   aria-pressed={isActiveFilter(memoryFilter, "place", place)}
                   onClick={() => setMemoryFilter({ type: "place", value: place })}
                 >
-                  장소 · {place}
+                  {`${t(locale, "report.memoryFilterPlace")} · ${place}`}
                 </button>
               ))}
               {memoryFilterOptions.personas.map((persona) => (
@@ -220,7 +234,7 @@ export function ReportView({
                   aria-pressed={isActiveFilter(memoryFilter, "persona", persona)}
                   onClick={() => setMemoryFilter({ type: "persona", value: persona })}
                 >
-                  페르소나 · {persona}
+                  {`${t(locale, "report.memoryFilterPersona")} · ${persona}`}
                 </button>
               ))}
             </div>
@@ -260,7 +274,14 @@ function confidenceTranslationKey(confidence: HabitInsightConfidence): Translati
   return "insight.confidenceMedium";
 }
 
-function softenInsightBody(body: string) {
+function softenInsightBody(body: string, locale: Locale) {
+  if (locale === "en") {
+    const softer = body
+      .replace("타입일 가능성이 큽니다.", "타입일 수도 있어요.")
+      .replace("같이 있어야 오래 갑니다.", "같이 있으면 더 오래 갈 수 있어요.");
+    return `As a possibility, ${softer}`;
+  }
+
   return `가능성으로 보면, ${body
     .replace("타입일 가능성이 큽니다.", "타입일 수도 있어요.")
     .replace("같이 있어야 오래 갑니다.", "같이 있으면 더 오래 갈 수 있어요.")}`;
@@ -270,20 +291,28 @@ function isActiveFilter(filter: MemoryFilter, type: MemoryFilter["type"], value:
   return filter.type === type && filter.value === value;
 }
 
-function formatMemoryFilterLabel(filter: MemoryFilter) {
+function formatMemoryFilterLabel(filter: MemoryFilter, locale: Locale) {
   if (filter.type === "all") {
-    return "전체";
+    return t(locale, "report.memoryFilterAll");
   }
 
   if (filter.type === "month") {
-    return `월 · ${filter.value}`;
+    return `${t(locale, "report.memoryFilterMonth")} · ${filter.value}`;
   }
 
   if (filter.type === "place") {
-    return `장소 · ${filter.value}`;
+    return `${t(locale, "report.memoryFilterPlace")} · ${filter.value}`;
   }
 
-  return `페르소나 · ${filter.value}`;
+  return `${t(locale, "report.memoryFilterPersona")} · ${filter.value}`;
+}
+
+function formatHiddenInsightCount(locale: Locale, count: number) {
+  if (locale === "en") {
+    return `${count} hidden insight${count === 1 ? "" : "s"}`;
+  }
+
+  return `숨긴 인사이트 ${count}개`;
 }
 
 function getRecentRecords(records: SnapRecord[], days: number) {
