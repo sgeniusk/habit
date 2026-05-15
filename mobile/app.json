@@ -13,7 +13,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#f4f7e8"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "app.personahabit.mobile",
@@ -39,7 +41,8 @@
     "plugins": [
       "expo-image-picker",
       "expo-location",
-      "expo-notifications"
+      "expo-notifications",
+      "expo-asset"
     ],
     "extra": {
       "router": {}
