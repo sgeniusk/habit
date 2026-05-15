@@ -160,7 +160,26 @@ export type TranslationKey =
   | "meet.feedbackPinMessage"
   | "meet.feedbackLaterMessage"
   | "meet.feedbackHideMessage"
-  | "meet.restoreFeedbackMessage";
+  | "meet.restoreFeedbackMessage"
+  | "today.weatherCardAria"
+  | "today.journalEyebrow"
+  | "today.journalModeTitle"
+  | "today.journalModeAi"
+  | "today.journalModeSolo"
+  | "today.journalContextAria"
+  | "today.journalHumidityPrefix"
+  | "today.journalDistancePrefix"
+  | "today.journalLineLabel"
+  | "today.journalLinePlaceholder"
+  | "today.journalSend"
+  | "today.journalSoloIntro"
+  | "today.journalPolishedLabel"
+  | "today.metricSnap"
+  | "today.metricPersonas"
+  | "today.metricMeet"
+  | "today.insightEyebrow"
+  | "today.insightTitle"
+  | "today.timelineTitle";
 
 const translations: Record<Locale, Record<TranslationKey, string>> = {
   ko: {
@@ -321,7 +340,26 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "meet.feedbackPinMessage": "고정했어요",
     "meet.feedbackLaterMessage": "나중에 다시 볼게요",
     "meet.feedbackHideMessage": "덜 보여줄게요",
-    "meet.restoreFeedbackMessage": "숨긴 추천을 다시 볼게요"
+    "meet.restoreFeedbackMessage": "숨긴 추천을 다시 볼게요",
+    "today.weatherCardAria": "오늘 날씨와 지역",
+    "today.journalEyebrow": "Journal",
+    "today.journalModeTitle": "오늘 기록 방식",
+    "today.journalModeAi": "AI랑 같이쓰기",
+    "today.journalModeSolo": "혼자 기록하기",
+    "today.journalContextAria": "오늘 일기 맥락",
+    "today.journalHumidityPrefix": "습도",
+    "today.journalDistancePrefix": "집에서",
+    "today.journalLineLabel": "한 줄 일기",
+    "today.journalLinePlaceholder": "예: 오늘은 괜히 멀리 걷고 싶었어",
+    "today.journalSend": "정리해줘",
+    "today.journalSoloIntro": "네 문장 그대로 남겨둘게. 오늘의 목소리를 먼저 믿어보자.",
+    "today.journalPolishedLabel": "정리된 한 줄",
+    "today.metricSnap": "오늘 스냅",
+    "today.metricPersonas": "보유 페르소나",
+    "today.metricMeet": "모임 기여",
+    "today.insightEyebrow": "AI Insight",
+    "today.insightTitle": "숨은 습관 발견",
+    "today.timelineTitle": "오늘 남긴 기록"
   },
   en: {
     "language.label": "Language",
@@ -481,7 +519,26 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "meet.feedbackPinMessage": "pinned",
     "meet.feedbackLaterMessage": "saved for later",
     "meet.feedbackHideMessage": "will be hidden",
-    "meet.restoreFeedbackMessage": "Showing hidden suggestions again"
+    "meet.restoreFeedbackMessage": "Showing hidden suggestions again",
+    "today.weatherCardAria": "Today's weather and place",
+    "today.journalEyebrow": "Journal",
+    "today.journalModeTitle": "How to log today",
+    "today.journalModeAi": "Write with AI",
+    "today.journalModeSolo": "Write solo",
+    "today.journalContextAria": "Today's journal context",
+    "today.journalHumidityPrefix": "Humidity",
+    "today.journalDistancePrefix": "From home",
+    "today.journalLineLabel": "One-line journal",
+    "today.journalLinePlaceholder": "e.g. felt like walking a little farther today",
+    "today.journalSend": "Polish",
+    "today.journalSoloIntro": "Your sentence stays as-is. Trust today's own voice first.",
+    "today.journalPolishedLabel": "Polished line",
+    "today.metricSnap": "Today snaps",
+    "today.metricPersonas": "Personas",
+    "today.metricMeet": "Meet xp",
+    "today.insightEyebrow": "AI Insight",
+    "today.insightTitle": "Hidden habit",
+    "today.timelineTitle": "Logged today"
   }
 };
 

@@ -102,7 +102,7 @@ export function TodayView({
   const personaOpening =
     journalMode === "ai"
       ? buildJournalOpening(journalContext)
-      : "네 문장 그대로 남겨둘게. 오늘의 목소리를 먼저 믿어보자.";
+      : t(locale, "today.journalSoloIntro");
 
   async function grantWeatherPermission() {
     setWeatherPermission("loading");
@@ -231,7 +231,7 @@ export function TodayView({
         </div>
       ) : null}
 
-      <section className="weather-card" aria-label="오늘 날씨와 지역">
+      <section className="weather-card" aria-label={t(locale, "today.weatherCardAria")}>
         <div>
           <span className="weather-icon">
             {weatherPermission === "error" ? (
@@ -295,8 +295,8 @@ export function TodayView({
 
       <section className="journal-card" aria-labelledby="journal-title">
         <div>
-          <p className="eyebrow">Journal</p>
-          <h2 id="journal-title">오늘 기록 방식</h2>
+          <p className="eyebrow">{t(locale, "today.journalEyebrow")}</p>
+          <h2 id="journal-title">{t(locale, "today.journalModeTitle")}</h2>
         </div>
         <div className="mode-switch">
           <button
@@ -306,7 +306,7 @@ export function TodayView({
             onClick={() => setJournalMode("ai")}
           >
             <Wand2 size={17} aria-hidden="true" />
-            AI랑 같이쓰기
+            {t(locale, "today.journalModeAi")}
           </button>
           <button
             type="button"
@@ -315,17 +315,17 @@ export function TodayView({
             onClick={() => setJournalMode("solo")}
           >
             <PenLine size={17} aria-hidden="true" />
-            혼자 기록하기
+            {t(locale, "today.journalModeSolo")}
           </button>
         </div>
-        <div className="journal-context-row" aria-label="오늘 일기 맥락">
+        <div className="journal-context-row" aria-label={t(locale, "today.journalContextAria")}>
           <span>
             <Droplets size={15} aria-hidden="true" />
-            습도 {journalContext.humidity}%
+            {`${t(locale, "today.journalHumidityPrefix")} ${journalContext.humidity}%`}
           </span>
           <span>
             <Route size={15} aria-hidden="true" />
-            집에서 {journalContext.distanceFromHomeKm}km
+            {`${t(locale, "today.journalDistancePrefix")} ${journalContext.distanceFromHomeKm}km`}
           </span>
         </div>
         <div className="journal-dialogue">
@@ -341,17 +341,17 @@ export function TodayView({
           </div>
         </div>
         <label className="journal-compose">
-          <span>한 줄 일기</span>
+          <span>{t(locale, "today.journalLineLabel")}</span>
           <textarea
             value={journalLine}
             onChange={(event) => setJournalLine(event.target.value)}
-            placeholder="예: 오늘은 괜히 멀리 걷고 싶었어"
+            placeholder={t(locale, "today.journalLinePlaceholder")}
             rows={3}
           />
         </label>
         <button type="button" className="journal-send-button" onClick={saveJournalDraft}>
           <Send size={18} aria-hidden="true" />
-          <span>정리해줘</span>
+          <span>{t(locale, "today.journalSend")}</span>
         </button>
         {journalDrafts.length > 0 ? (
           <div className="journal-draft-list">
@@ -360,7 +360,7 @@ export function TodayView({
                 <p className="journal-original">{draft.originalLine}</p>
                 <p className="journal-persona-line">{draft.personaLine}</p>
                 <div>
-                  <span>정리된 한 줄</span>
+                  <span>{t(locale, "today.journalPolishedLabel")}</span>
                   <strong>{draft.polishedLine}</strong>
                 </div>
                 <div className="trait-row">
@@ -375,21 +375,29 @@ export function TodayView({
       </section>
 
       <div className="daily-grid">
-        <MetricTile label="오늘 스냅" value={`${todayCount}/3`} tone="leaf" />
-        <MetricTile label="보유 페르소나" value={`${personaCatalog.length}`} tone="blue" />
-        <MetricTile label="모임 기여" value={`+${meetContributionXp}xp`} tone="coral" />
+        <MetricTile label={t(locale, "today.metricSnap")} value={`${todayCount}/3`} tone="leaf" />
+        <MetricTile
+          label={t(locale, "today.metricPersonas")}
+          value={`${personaCatalog.length}`}
+          tone="blue"
+        />
+        <MetricTile
+          label={t(locale, "today.metricMeet")}
+          value={`+${meetContributionXp}xp`}
+          tone="coral"
+        />
       </div>
 
       <section className="insight-band" aria-labelledby="hidden-habit-title">
         <div>
-          <p className="eyebrow">AI Insight</p>
-          <h2 id="hidden-habit-title">숨은 습관 발견</h2>
+          <p className="eyebrow">{t(locale, "today.insightEyebrow")}</p>
+          <h2 id="hidden-habit-title">{t(locale, "today.insightTitle")}</h2>
         </div>
         <p>{insights[0]?.body}</p>
       </section>
 
       <section className="timeline-section" aria-labelledby="timeline-title">
-        <h2 id="timeline-title">오늘 남긴 기록</h2>
+        <h2 id="timeline-title">{t(locale, "today.timelineTitle")}</h2>
         <div className="record-list">
           {records.slice(0, 4).map((record) => (
             <RecordRow key={record.id} record={record} locale={locale} />
