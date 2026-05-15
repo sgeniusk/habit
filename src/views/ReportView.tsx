@@ -159,6 +159,27 @@ export function ReportView({
                     <span>{t(locale, "insight.evidenceLabel")}</span>
                     {insight.evidence}
                   </p>
+                  {insight.sourceRecordIds.length > 0 ? (
+                    <ul
+                      className="insight-source-row"
+                      aria-label={t(locale, "insight.evidenceLabel")}
+                    >
+                      {insight.sourceRecordIds
+                        .map((id) => records.find((record) => record.id === id))
+                        .filter((record): record is SnapRecord => Boolean(record))
+                        .slice(0, 3)
+                        .map((record) => (
+                          <li key={record.id} className="insight-source-chip">
+                            {record.imageUrl ? (
+                              <img src={record.imageUrl} alt="" aria-hidden="true" />
+                            ) : (
+                              <span className="insight-source-placeholder" aria-hidden="true" />
+                            )}
+                            <span>{formatSourceDate(record.createdAt, locale)}</span>
+                          </li>
+                        ))}
+                    </ul>
+                  ) : null}
                   <p>{isSoftened ? softenInsightBody(insight.body, locale) : insight.body}</p>
                   <strong>{insight.recommendation}</strong>
                   <div className="insight-action-row">
@@ -322,6 +343,15 @@ function formatMemoryFilterLabel(filter: MemoryFilter, locale: Locale) {
   }
 
   return `${t(locale, "report.memoryFilterPersona")} · ${filter.value}`;
+}
+
+function formatSourceDate(createdAt: string, locale: Locale) {
+  const formatter = new Intl.DateTimeFormat(locale === "en" ? "en-US" : "ko-KR", {
+    month: "short",
+    day: "numeric",
+    timeZone: "Asia/Seoul"
+  });
+  return formatter.format(new Date(createdAt));
 }
 
 function formatHiddenInsightCount(locale: Locale, count: number) {

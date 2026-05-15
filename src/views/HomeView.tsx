@@ -1,4 +1,4 @@
-import { Shirt, SlidersHorizontal, Sofa } from "lucide-react";
+import { Pencil, Shirt, SlidersHorizontal, Sofa } from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { outfitItems, roomItems } from "../data/personaCatalog";
 import { localize, t, type TranslationKey } from "../lib/i18n";
@@ -59,6 +59,7 @@ export function HomeView({
   const activeXp = activeSummary?.xp ?? 0;
   const activeProgress = activeSummary?.progress ?? 0;
   const nextLevelXp = activeXp === 0 ? 100 : activeProgress === 0 ? 100 : 100 - activeProgress;
+  const nextLevelSnapCount = Math.max(1, Math.ceil(nextLevelXp / 100));
   const unlockedRewards = activeSummary?.unlockedItems ?? [];
   const personaIdentity = buildPersonaIdentity({
     category: activePersona.category,
@@ -110,8 +111,11 @@ export function HomeView({
             <span>{`${t(locale, "home.nicknameSubtitle")} · ${personaIdentity.displayName}`}</span>
             <span>{`${t(locale, "home.roleSubtitle")} · ${personaIdentity.roleLabel}`}</span>
           </div>
-          <label className="nickname-field">
-            <span>{t(locale, "home.nicknameField")}</span>
+          <label className="nickname-field nickname-field-emphasized">
+            <span>
+              <Pencil size={14} aria-hidden="true" />
+              {t(locale, "home.nicknameField")}
+            </span>
             <input
               aria-label={t(locale, "home.nicknameField")}
               value={personaNickname}
@@ -130,6 +134,11 @@ export function HomeView({
                 Lv.{activeLevel} · {activeXp}xp
               </strong>
               <span>{`${t(locale, "home.nextLevel")} ${nextLevelXp}xp`}</span>
+              <small className="next-snap-hint">
+                {locale === "en"
+                  ? `≈ ${nextLevelSnapCount} more snap${nextLevelSnapCount === 1 ? "" : "s"}`
+                  : `스냅 약 ${nextLevelSnapCount} 회 남음`}
+              </small>
             </div>
             <div
               className="progress-track"

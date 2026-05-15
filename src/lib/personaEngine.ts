@@ -23,6 +23,7 @@ export type HabitInsight = {
   evidence: string;
   recommendation: string;
   confidence: HabitInsightConfidence;
+  sourceRecordIds: string[];
 };
 
 const personaNames: Record<HabitCategory, string> = {
@@ -114,11 +115,13 @@ export function buildPersonaSummaries(records: VerificationRecord[]): PersonaSum
 export function findHiddenHabitInsights(records: VerificationRecord[]): HabitInsight[] {
   const insights: HabitInsight[] = [];
   const studyRecords = records.filter((record) => record.category === "study");
-  const libraryStudyCount = studyRecords.filter((record) => record.placeType === "library").length;
-  const lateNightCount = records.filter((record) => {
+  const libraryStudyRecords = studyRecords.filter((record) => record.placeType === "library");
+  const libraryStudyCount = libraryStudyRecords.length;
+  const lateNightRecords = records.filter((record) => {
     const hour = new Date(record.createdAt).getHours();
     return hour >= 21 || hour <= 3;
-  }).length;
+  });
+  const lateNightCount = lateNightRecords.length;
   const categoryLabels = Array.from(new Set(records.map((record) => record.category)))
     .map((category) => getCategoryLabel(category))
     .join(", ");
@@ -129,7 +132,8 @@ export function findHiddenHabitInsights(records: VerificationRecord[]): HabitIns
       body: "공부 스냅이 도서관에 몰려 있어요. 의지가 아니라 환경이 집중을 도와주는 타입일 가능성이 큽니다.",
       evidence: `공부 스냅 ${libraryStudyCount}개가 도서관에서 반복됐어요.`,
       recommendation: "이번 주에는 어려운 과목을 도서관 시간대에 배치해 보세요.",
-      confidence: "high"
+      confidence: "high",
+      sourceRecordIds: libraryStudyRecords.slice(0, 3).map((record) => record.id)
     });
   }
 
@@ -139,7 +143,8 @@ export function findHiddenHabitInsights(records: VerificationRecord[]): HabitIns
       body: "늦은 시간 스냅이 보여요. 밤에도 움직일 힘이 있지만, 회복 루틴이 같이 있어야 오래 갑니다.",
       evidence: `밤 9시 이후 또는 새벽 스냅 ${lateNightCount}개가 보여요.`,
       recommendation: "밤 스냅 다음에는 물, 스트레칭, 짧은 정리 중 하나를 붙여 보세요.",
-      confidence: lateNightCount >= 2 ? "high" : "medium"
+      confidence: lateNightCount >= 2 ? "high" : "medium",
+      sourceRecordIds: lateNightRecords.slice(0, 3).map((record) => record.id)
     });
   }
 
@@ -149,7 +154,8 @@ export function findHiddenHabitInsights(records: VerificationRecord[]): HabitIns
       body: "공부, 식단, 운동처럼 다른 종류의 기록이 함께 쌓이면 단일 습관보다 오래 지속되는 생활 정체성이 만들어집니다.",
       evidence: `최근 스냅 ${records.length}개에 ${categoryLabels} ${new Set(records.map((record) => record.category)).size}가지 생활 축이 함께 있어요.`,
       recommendation: "이번 주 대표 페르소나 하나와 보조 페르소나 하나를 같이 키워 보세요.",
-      confidence: "medium"
+      confidence: "medium",
+      sourceRecordIds: records.slice(0, 3).map((record) => record.id)
     });
   }
 
