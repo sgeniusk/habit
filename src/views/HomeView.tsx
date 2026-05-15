@@ -91,6 +91,9 @@ export function HomeView({
 
       <section className="home-stage" aria-label={activeName}>
         <div className="room-scene">
+          <span className="featured-persona-badge" aria-label={t(locale, "home.featuredBadge")}>
+            ★ {t(locale, "home.featuredBadge")}
+          </span>
           <span className="room-window" />
           <span className="room-rug" />
           <span className="room-desk" />
@@ -100,6 +103,7 @@ export function HomeView({
         </div>
         <div className="activity-panel">
           <p className="eyebrow">{t(locale, "home.activityEyebrow")}</p>
+          <span className="featured-headline-badge">★ {t(locale, "home.featuredBadge")}</span>
           <h2 id="activity-title">{activeName}</h2>
           <strong className="nickname-title">{personaIdentity.displayName}</strong>
           <div className="persona-identity-row" aria-label={t(locale, "home.identityRowLabel")}>

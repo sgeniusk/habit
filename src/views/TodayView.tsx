@@ -171,6 +171,17 @@ export function TodayView({
         </div>
       </div>
 
+      <button type="button" className="hero-cta" onClick={onSnap}>
+        <span className="hero-cta-icon">
+          <Camera size={22} aria-hidden="true" />
+        </span>
+        <span className="hero-cta-copy">
+          <strong>{t(locale, "today.captureCta")}</strong>
+          <small>{t(locale, "today.heroCtaHint")}</small>
+        </span>
+        <ChevronRight size={20} aria-hidden="true" />
+      </button>
+
       {showOnboarding ? (
         <div className="onboarding-scrim">
           <section

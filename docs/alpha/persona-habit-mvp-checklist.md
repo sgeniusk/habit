@@ -99,6 +99,25 @@ Updated: 2026-05-15
 ### 사용자 인터뷰 키트 (완료)
 
 - [x] [docs/research/2026-05-15-first-flow-interview-kit.md](../research/2026-05-15-first-flow-interview-kit.md) — 모집 기준, 6 단계 인터뷰 흐름, 피드백 시트 양식, 결과 종합 보고 템플릿.
+- [x] [docs/research/2026-05-15-first-flow-interview-report.md](../research/2026-05-15-first-flow-interview-report.md) — Claude Work 자동 시뮬레이션 3 인 (학생/직장인/캐주얼) 결과 보고서. 가상 평가 대비 -0.5~1.2 점 부풀림 검출.
+
+### 묶음 P0-Interview — 인터뷰 결과 반영 (완료)
+
+3 인 모의 인터뷰 보고서 (Minseo/Jihoon/Sua) 의 P0 4 가지를 즉시 마감.
+
+- [x] Hero CTA 시인성 강화 — TodayView 상단에 prominent capture-cta 추가 (목표 10 초 발견).
+- [x] 집 탭 대표 페르소나 시각 표시 — `featured-persona-badge` (room-scene) + `featured-headline-badge` (activity-panel).
+- [x] AI 리포트 근거 라인 상단화 — `insight-evidence` 를 body 위로 이동, 가장 먼저 보이게.
+- [x] AI 리포트 기본 톤 "순하게" — `softenAllInsights` 기본 true, 토글로 원문 그대로 전환 가능.
+
+### 묶음 P1-Interview — 다음 마감 후보
+
+- [ ] 카테고리 재설계 — 학생 "공부" 노출 순서 + 캐주얼 "일상" 세분화.
+- [ ] 페르소나 진화 게이지에 "x/y 회 남음" 라벨.
+- [ ] 페르소나 애칭 변경 UI 명시적 버튼화.
+- [ ] 도장과 스티커 역할 차별화 또는 한쪽 통합.
+- [ ] 모임 친구 진입 알림 정책 흐름 점검.
+- [ ] AI 인사이트 근거에 사진 메타데이터 (날짜·미리보기) 추가.
 
 ### 묶음 5 ~ 6 — 외부 서비스 결정 대기
 

@@ -33,6 +33,7 @@ export function ReportView({
   const [memoryFilter, setMemoryFilter] = useState<MemoryFilter>({ type: "all", value: "전체" });
   const [insightFeedback, setInsightFeedback] = useState(() => loadInsightFeedback());
   const [insightFeedbackMessage, setInsightFeedbackMessage] = useState("");
+  const [softenAllInsights, setSoftenAllInsights] = useState(true);
   const softenedInsights = insightFeedback.softenedInsightTitles;
   const hiddenInsights = insightFeedback.hiddenInsightTitles;
   const weeklyRecords = useMemo(() => getRecentRecords(records, 7), [records]);
@@ -106,7 +107,23 @@ export function ReportView({
           </div>
 
           <section className="insight-list" aria-labelledby="ai-habit-title">
-            <h2 id="ai-habit-title">{t(locale, "report.aiHabitTitle")}</h2>
+            <div className="insight-list-header">
+              <h2 id="ai-habit-title">{t(locale, "report.aiHabitTitle")}</h2>
+              <button
+                type="button"
+                className={softenAllInsights ? "soften-toggle is-active" : "soften-toggle"}
+                aria-pressed={softenAllInsights}
+                aria-label={t(locale, "report.softenToggleLabel")}
+                onClick={() => setSoftenAllInsights((current) => !current)}
+              >
+                <span>{t(locale, "report.softenToggleLabel")}</span>
+                <strong>
+                  {softenAllInsights
+                    ? t(locale, "report.softenToggleOn")
+                    : t(locale, "report.softenToggleOff")}
+                </strong>
+              </button>
+            </div>
             {insightFeedbackMessage ? (
               <p className="insight-feedback-message" role="status">
                 {insightFeedbackMessage}
@@ -130,7 +147,7 @@ export function ReportView({
               </div>
             ) : null}
             {visibleInsights.map((insight) => {
-              const isSoftened = softenedInsights.includes(insight.title);
+              const isSoftened = softenAllInsights || softenedInsights.includes(insight.title);
 
               return (
                 <article className="insight-card" key={insight.title} aria-label={insight.title}>
@@ -138,11 +155,11 @@ export function ReportView({
                     <h3>{insight.title}</h3>
                     <span>{t(locale, confidenceTranslationKey(insight.confidence))}</span>
                   </div>
-                  <p>{isSoftened ? softenInsightBody(insight.body, locale) : insight.body}</p>
                   <p className="insight-evidence">
                     <span>{t(locale, "insight.evidenceLabel")}</span>
                     {insight.evidence}
                   </p>
+                  <p>{isSoftened ? softenInsightBody(insight.body, locale) : insight.body}</p>
                   <strong>{insight.recommendation}</strong>
                   <div className="insight-action-row">
                     <button

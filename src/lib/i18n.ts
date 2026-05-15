@@ -195,6 +195,11 @@ export type TranslationKey =
   | "today.insightEyebrow"
   | "today.insightTitle"
   | "today.timelineTitle"
+  | "today.heroCtaHint"
+  | "home.featuredBadge"
+  | "report.softenToggleLabel"
+  | "report.softenToggleOn"
+  | "report.softenToggleOff"
   | "report.title"
   | "report.weeklyEyebrow"
   | "report.modeAria"
@@ -401,6 +406,11 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "today.insightEyebrow": "AI Insight",
     "today.insightTitle": "숨은 습관 발견",
     "today.timelineTitle": "오늘 남긴 기록",
+    "today.heroCtaHint": "지금 한 컷 남기면 페르소나가 바로 자라요",
+    "home.featuredBadge": "대표",
+    "report.softenToggleLabel": "AI 톤",
+    "report.softenToggleOn": "순한 표현",
+    "report.softenToggleOff": "원문 그대로",
     "report.title": "7일 생활 리포트",
     "report.weeklyEyebrow": "Weekly Loop",
     "report.modeAria": "리포트 보기 방식",
@@ -607,6 +617,11 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "today.insightEyebrow": "AI Insight",
     "today.insightTitle": "Hidden habit",
     "today.timelineTitle": "Logged today",
+    "today.heroCtaHint": "Drop one snap now and your persona reacts instantly",
+    "home.featuredBadge": "Featured",
+    "report.softenToggleLabel": "AI tone",
+    "report.softenToggleOn": "Soft phrasing",
+    "report.softenToggleOff": "Original phrasing",
     "report.title": "7-day life report",
     "report.weeklyEyebrow": "Weekly Loop",
     "report.modeAria": "Report view mode",

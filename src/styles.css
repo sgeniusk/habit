@@ -51,6 +51,115 @@ button {
   overflow: hidden;
 }
 
+.hero-cta {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  margin: 0 0 4px;
+  padding: 16px 18px;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--ink) 0%, #2d3e30 100%);
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 18px 32px rgba(28, 39, 51, 0.22);
+}
+
+.hero-cta-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.hero-cta-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hero-cta-copy strong {
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 950;
+}
+
+.hero-cta-copy small {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.featured-persona-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 4;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+}
+
+.featured-headline-badge {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  margin-top: 2px;
+  margin-bottom: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+}
+
+.insight-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.soften-toggle {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid rgba(28, 39, 51, 0.18);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.soften-toggle.is-active {
+  border-color: var(--leaf);
+  background: #f3fbf4;
+  color: var(--leaf);
+}
+
+.soften-toggle strong {
+  color: inherit;
+  font-size: 11px;
+}
+
 .storage-warning {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
