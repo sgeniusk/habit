@@ -17,10 +17,13 @@ describe("Persona Habit prototype", () => {
   it("shows weather, location, and daily journal choices on Today", () => {
     render(<App />);
 
-    expect(screen.getByText("스냅 하나로 앱이 움직여요")).toBeInTheDocument();
-    expect(screen.getByText("스냅을 남기면")).toBeInTheDocument();
-    expect(screen.getByText("집에서 페르소나가 반응해요")).toBeInTheDocument();
-    expect(screen.getByText("리포트가 숨은 습관을 찾아요")).toBeInTheDocument();
+    const guide = screen.getByRole("dialog", { name: "첫 30초 도움말" });
+    expect(guide).toBeInTheDocument();
+    expect(within(guide).getByText("1/3")).toBeInTheDocument();
+    expect(
+      within(guide).getByRole("heading", { name: "오늘은 하루 기록의 입구예요", level: 3 })
+    ).toBeInTheDocument();
+    expect(within(guide).getByRole("button", { name: "다음" })).toBeInTheDocument();
     expect(screen.getByText("서울 성수동")).toBeInTheDocument();
     expect(screen.getByText("18도 · 산책하기 좋은 맑음")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "권한 거부 미리보기" })).toBeInTheDocument();
@@ -34,19 +37,48 @@ describe("Persona Habit prototype", () => {
     const user = userEvent.setup();
     const { unmount } = render(<App />);
 
+    await user.click(screen.getByRole("button", { name: "다음" }));
+    expect(
+      within(screen.getByRole("dialog", { name: "첫 30초 도움말" })).getByText("2/3")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "스냅에서 한 컷을 남겨요", level: 3 })
+    ).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "다음" }));
+    expect(
+      within(screen.getByRole("dialog", { name: "첫 30초 도움말" })).getByText("3/3")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "집과 리포트가 바로 반응해요", level: 3 })
+    ).toBeInTheDocument();
+
     await user.click(screen.getByRole("button", { name: "첫 스냅 찍기" }));
 
     expect(screen.getByRole("heading", { name: "오늘의 한 컷", level: 1 })).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "오늘" }));
-    await user.click(screen.getByRole("button", { name: "안내 닫기" }));
 
-    expect(screen.queryByText("스냅 하나로 앱이 움직여요")).toBeNull();
+    expect(screen.queryByRole("dialog", { name: "첫 30초 도움말" })).toBeNull();
 
     unmount();
     render(<App />);
 
-    expect(screen.queryByText("스냅 하나로 앱이 움직여요")).toBeNull();
+    expect(screen.queryByRole("dialog", { name: "첫 30초 도움말" })).toBeNull();
+  });
+
+  it("dismisses the guided onboarding when a user skips it", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "건너뛰기" }));
+
+    expect(screen.queryByRole("dialog", { name: "첫 30초 도움말" })).toBeNull();
+
+    unmount();
+    render(<App />);
+
+    expect(screen.queryByRole("dialog", { name: "첫 30초 도움말" })).toBeNull();
   });
 
   it("previews location weather permission and failure states on Today", async () => {

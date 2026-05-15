@@ -19,12 +19,21 @@ export type TranslationKey =
   | "today.title"
   | "today.captureCta"
   | "today.onboarding.eyebrow"
+  | "today.onboarding.dialogTitle"
   | "today.onboarding.title"
   | "today.onboarding.body"
+  | "today.onboarding.stepTodayTitle"
+  | "today.onboarding.stepTodayBody"
+  | "today.onboarding.stepSnapTitle"
+  | "today.onboarding.stepSnapBody"
+  | "today.onboarding.stepRewardTitle"
+  | "today.onboarding.stepRewardBody"
   | "today.onboarding.stepSnap"
   | "today.onboarding.stepHome"
   | "today.onboarding.stepReport"
   | "today.onboarding.primary"
+  | "today.onboarding.next"
+  | "today.onboarding.skip"
   | "today.onboarding.dismiss"
   | "snap.title"
   | "snap.emptyPhoto"
@@ -87,13 +96,25 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "today.title": "오늘의 기록",
     "today.captureCta": "오늘의 한 컷 남기기",
     "today.onboarding.eyebrow": "첫 30초",
+    "today.onboarding.dialogTitle": "첫 30초 도움말",
     "today.onboarding.title": "스냅 하나로 앱이 움직여요",
     "today.onboarding.body":
       "처음엔 한 컷만 남겨도 충분해요. 그 한 컷이 집, 모임, 리포트로 이어집니다.",
+    "today.onboarding.stepTodayTitle": "오늘은 하루 기록의 입구예요",
+    "today.onboarding.stepTodayBody":
+      "날씨, 위치, 한 줄 감정을 보고 오늘 어떤 순간을 남길지 가볍게 고릅니다.",
+    "today.onboarding.stepSnapTitle": "스냅에서 한 컷을 남겨요",
+    "today.onboarding.stepSnapBody":
+      "사진을 고르고 필터, 스티커, 시간/횟수/페르소나 도장을 붙여 기록합니다.",
+    "today.onboarding.stepRewardTitle": "집과 리포트가 바로 반응해요",
+    "today.onboarding.stepRewardBody":
+      "저장하면 페르소나 집, 모임 추천, 리포트가 바로 업데이트됩니다.",
     "today.onboarding.stepSnap": "스냅을 남기면",
     "today.onboarding.stepHome": "집에서 페르소나가 반응해요",
     "today.onboarding.stepReport": "리포트가 숨은 습관을 찾아요",
     "today.onboarding.primary": "첫 스냅 찍기",
+    "today.onboarding.next": "다음",
+    "today.onboarding.skip": "건너뛰기",
     "today.onboarding.dismiss": "안내 닫기",
     "snap.title": "오늘의 한 컷",
     "snap.emptyPhoto": "스냅을 찍어보세요",
@@ -155,13 +176,25 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "today.title": "Today's record",
     "today.captureCta": "Capture today's moment",
     "today.onboarding.eyebrow": "First 30 seconds",
+    "today.onboarding.dialogTitle": "First 30-second guide",
     "today.onboarding.title": "One snap starts the loop",
     "today.onboarding.body":
       "One photo is enough to begin. That moment feeds Home, Meet, and Report.",
+    "today.onboarding.stepTodayTitle": "Today is your entry point",
+    "today.onboarding.stepTodayBody":
+      "Check the weather, place, and one-line feeling before choosing what to capture.",
+    "today.onboarding.stepSnapTitle": "Capture one moment in Snap",
+    "today.onboarding.stepSnapBody":
+      "Pick a photo, then add a filter, sticker, and time/count/persona stamps.",
+    "today.onboarding.stepRewardTitle": "Home and Report react right away",
+    "today.onboarding.stepRewardBody":
+      "Saving updates your persona home, meet suggestions, and report immediately.",
     "today.onboarding.stepSnap": "Capture a snap",
     "today.onboarding.stepHome": "Your persona reacts at home",
     "today.onboarding.stepReport": "Report finds hidden habits",
     "today.onboarding.primary": "Take first snap",
+    "today.onboarding.next": "Next",
+    "today.onboarding.skip": "Skip",
     "today.onboarding.dismiss": "Hide guide",
     "snap.title": "Today's snap",
     "snap.emptyPhoto": "Take a snap",

@@ -7,7 +7,6 @@ import {
   Droplets,
   Home,
   LocateFixed,
-  Map,
   MapPin,
   MessageCircle,
   PenLine,
@@ -28,7 +27,7 @@ import {
   type JournalDraft,
   type JournalMode
 } from "../lib/journalEngine";
-import { t } from "../lib/i18n";
+import { t, type TranslationKey } from "../lib/i18n";
 import { findHiddenHabitInsights } from "../lib/personaEngine";
 import {
   buildWeatherCardState,
@@ -42,6 +41,27 @@ import {
 import type { Locale, SnapRecord } from "../types/habit";
 
 const defaultWeatherAdapter = createAutoWeatherAdapter();
+const onboardingGuideSteps: {
+  titleKey: TranslationKey;
+  bodyKey: TranslationKey;
+  Icon: typeof Camera;
+}[] = [
+  {
+    titleKey: "today.onboarding.stepTodayTitle",
+    bodyKey: "today.onboarding.stepTodayBody",
+    Icon: LocateFixed
+  },
+  {
+    titleKey: "today.onboarding.stepSnapTitle",
+    bodyKey: "today.onboarding.stepSnapBody",
+    Icon: Camera
+  },
+  {
+    titleKey: "today.onboarding.stepRewardTitle",
+    bodyKey: "today.onboarding.stepRewardBody",
+    Icon: Home
+  }
+];
 
 export function TodayView({
   locale,
@@ -69,8 +89,11 @@ export function TodayView({
   const [weatherPermission, setWeatherPermission] = useState<WeatherPermissionState>("granted");
   const [weatherSnapshot, setWeatherSnapshot] = useState<WeatherSnapshot>(fallbackWeatherSnapshot);
   const [weatherSyncMessage, setWeatherSyncMessage] = useState("");
+  const [onboardingStep, setOnboardingStep] = useState(0);
   const weatherCard = buildWeatherCardState(weatherPermission, weatherSnapshot);
   const journalContext = buildWeatherJournalContext(weatherSnapshot);
+  const currentOnboardingStep = onboardingGuideSteps[onboardingStep];
+  const OnboardingIcon = currentOnboardingStep.Icon;
   const personaOpening =
     journalMode === "ai"
       ? buildJournalOpening(journalContext)
@@ -117,6 +140,15 @@ export function TodayView({
     setJournalLine("");
   }
 
+  function advanceOnboarding() {
+    setOnboardingStep((currentStep) => Math.min(currentStep + 1, onboardingGuideSteps.length - 1));
+  }
+
+  function startFirstSnapMission() {
+    onDismissOnboarding();
+    onSnap();
+  }
+
   return (
     <section className="screen today-screen" aria-labelledby="today-title">
       <div className="top-strip">
@@ -131,37 +163,67 @@ export function TodayView({
       </div>
 
       {showOnboarding ? (
-        <section className="onboarding-card" aria-labelledby="onboarding-title">
-          <div className="onboarding-copy">
-            <p className="eyebrow">{t(locale, "today.onboarding.eyebrow")}</p>
-            <h2 id="onboarding-title">{t(locale, "today.onboarding.title")}</h2>
-            <p>{t(locale, "today.onboarding.body")}</p>
-          </div>
-          <div className="onboarding-steps" aria-label={t(locale, "today.onboarding.title")}>
-            <span>
-              <Camera size={17} aria-hidden="true" />
-              {t(locale, "today.onboarding.stepSnap")}
-            </span>
-            <span>
-              <Home size={17} aria-hidden="true" />
-              {t(locale, "today.onboarding.stepHome")}
-            </span>
-            <span>
-              <Map size={17} aria-hidden="true" />
-              {t(locale, "today.onboarding.stepReport")}
-            </span>
-          </div>
-          <div className="onboarding-actions">
-            <button type="button" className="onboarding-primary" onClick={onSnap}>
-              <Camera size={18} aria-hidden="true" />
-              <span>{t(locale, "today.onboarding.primary")}</span>
-            </button>
-            <button type="button" className="onboarding-dismiss" onClick={onDismissOnboarding}>
-              <X size={17} aria-hidden="true" />
-              <span>{t(locale, "today.onboarding.dismiss")}</span>
-            </button>
-          </div>
-        </section>
+        <div className="onboarding-scrim">
+          <section
+            className="onboarding-card onboarding-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="onboarding-dialog-title"
+            aria-describedby="onboarding-step-body"
+          >
+            <div className="onboarding-copy">
+              <div className="onboarding-dialog-topline">
+                <p className="eyebrow">{t(locale, "today.onboarding.eyebrow")}</p>
+                <span>{`${onboardingStep + 1}/${onboardingGuideSteps.length}`}</span>
+              </div>
+              <h2 id="onboarding-dialog-title">{t(locale, "today.onboarding.dialogTitle")}</h2>
+              <div className="onboarding-step-callout">
+                <span className="onboarding-step-icon">
+                  <OnboardingIcon size={22} aria-hidden="true" />
+                </span>
+                <div>
+                  <h3>{t(locale, currentOnboardingStep.titleKey)}</h3>
+                  <p id="onboarding-step-body">{t(locale, currentOnboardingStep.bodyKey)}</p>
+                </div>
+              </div>
+            </div>
+            <div className="onboarding-steps" aria-label={t(locale, "today.onboarding.title")}>
+              {onboardingGuideSteps.map((step, stepIndex) => {
+                const StepIcon = step.Icon;
+                return (
+                  <span
+                    key={step.titleKey}
+                    className={stepIndex === onboardingStep ? "is-active" : ""}
+                  >
+                    <StepIcon size={17} aria-hidden="true" />
+                    {t(locale, step.titleKey)}
+                  </span>
+                );
+              })}
+            </div>
+            <div className="onboarding-actions">
+              {onboardingStep < onboardingGuideSteps.length - 1 ? (
+                <button type="button" className="onboarding-primary" onClick={advanceOnboarding}>
+                  <ChevronRight size={18} aria-hidden="true" />
+                  <span>{t(locale, "today.onboarding.next")}</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="onboarding-primary"
+                  onClick={startFirstSnapMission}
+                >
+                  <Camera size={18} aria-hidden="true" />
+                  <span>{t(locale, "today.onboarding.primary")}</span>
+                </button>
+              )}
+              <button type="button" className="onboarding-dismiss" onClick={onDismissOnboarding}>
+                <X size={17} aria-hidden="true" />
+                <span>{t(locale, "today.onboarding.skip")}</span>
+              </button>
+            </div>
+          </section>
+        </div>
       ) : null}
 
       <section className="weather-card" aria-label="오늘 날씨와 지역">

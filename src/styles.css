@@ -175,13 +175,86 @@ p {
   box-shadow: 0 14px 26px rgba(28, 39, 51, 0.1);
 }
 
+.onboarding-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  align-items: end;
+  justify-items: center;
+  padding: 18px 14px 96px;
+  background: rgba(28, 39, 51, 0.34);
+  backdrop-filter: blur(4px);
+}
+
+.onboarding-dialog {
+  width: min(430px, 100%);
+  box-shadow: 0 24px 70px rgba(16, 24, 32, 0.28);
+}
+
 .onboarding-copy {
   display: grid;
   gap: 5px;
 }
 
+.onboarding-dialog-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.onboarding-dialog-topline span {
+  display: inline-grid;
+  place-items: center;
+  min-height: 28px;
+  min-width: 48px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: var(--ink);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 950;
+}
+
 .onboarding-copy h2 {
   font-size: 22px;
+}
+
+.onboarding-step-callout {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(28, 39, 51, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.86);
+}
+
+.onboarding-step-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: #e9f7e7;
+  color: var(--leaf);
+}
+
+.onboarding-step-callout h3 {
+  margin: 0 0 4px;
+  color: var(--ink);
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.onboarding-step-callout p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.45;
 }
 
 .onboarding-steps {
@@ -205,6 +278,12 @@ p {
   font-weight: 900;
   line-height: 1.25;
   text-align: center;
+}
+
+.onboarding-steps span.is-active {
+  border-color: var(--leaf);
+  background: #f0f9ec;
+  color: var(--leaf);
 }
 
 .onboarding-actions {
@@ -238,6 +317,13 @@ p {
   border: 1px solid rgba(28, 39, 51, 0.2);
   background: #ffffff;
   color: var(--muted);
+}
+
+@media (min-width: 720px) {
+  .onboarding-scrim {
+    align-items: center;
+    padding: 24px;
+  }
 }
 
 .hero-band,
