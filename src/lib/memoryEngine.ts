@@ -1,5 +1,6 @@
+// 오래된 스냅을 회상 카드로 큐레이션하는 모듈. 모든 사용자 노출 문자열을 locale 별로 만든다.
 import { getCategoryLabel, getPlaceLabel } from "./personaEngine";
-import type { SnapRecord } from "../types/habit";
+import type { Locale, SnapRecord } from "../types/habit";
 
 export type MemorySignalRecord = SnapRecord;
 
@@ -28,7 +29,10 @@ export type MemoryFilterOptions = {
 
 const DISTANT_MEMORY_DAYS = 14;
 
-export function buildMemoryCurations(records: MemorySignalRecord[]): MemoryCuration[] {
+export function buildMemoryCurations(
+  records: MemorySignalRecord[],
+  locale: Locale = "ko"
+): MemoryCuration[] {
   const sortedRecords = [...records].sort(
     (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
   );
@@ -40,19 +44,33 @@ export function buildMemoryCurations(records: MemorySignalRecord[]): MemoryCurat
   });
   const memoryRecords = distantRecords.length > 0 ? distantRecords : sortedRecords.slice(0, 1);
 
-  return memoryRecords.slice(0, 3).map(buildMemoryCard);
+  return memoryRecords.slice(0, 3).map((record) => buildMemoryCard(record, locale));
 }
 
-function buildMemoryCard(record: MemorySignalRecord): MemoryCuration {
-  const memo =
-    record.memo ??
-    `${getPlaceLabel(record.placeType)}에서 남긴 ${getCategoryLabel(record.category)} 기록`;
-  const period = formatKoreanMonth(record.createdAt);
-  const personaLabel = getCategoryLabel(record.category);
-  const placeLabel = getPlaceLabel(record.placeType);
+function buildMemoryCard(record: MemorySignalRecord, locale: Locale): MemoryCuration {
+  const personaLabel = getCategoryLabel(record.category, locale);
+  const placeLabel = getPlaceLabel(record.placeType, locale);
+  const fallbackMemo =
+    locale === "en"
+      ? `${personaLabel} record left at ${placeLabel}`
+      : `${placeLabel}에서 남긴 ${personaLabel} 기록`;
+  const memo = record.memo ?? fallbackMemo;
+  const period = formatPeriod(record.createdAt, locale);
   const tags = [personaLabel, placeLabel];
 
   if (isRunningMemory(record)) {
+    if (locale === "en") {
+      return {
+        id: `memory-${record.id}`,
+        title: "An old running feel",
+        period,
+        placeLabel,
+        personaLabel,
+        summary: `${memo} remains in the log. It feels like the moment today's runner first woke their body up.`,
+        prompt: "Try to recall what felt most refreshing after that run.",
+        tags: [...tags, "old memory"]
+      };
+    }
     return {
       id: `memory-${record.id}`,
       title: "오래전의 러닝 감각",
@@ -65,6 +83,18 @@ function buildMemoryCard(record: MemorySignalRecord): MemoryCuration {
     };
   }
 
+  if (locale === "en") {
+    return {
+      id: `memory-${record.id}`,
+      title: "The oldest scrap of life",
+      period,
+      placeLabel,
+      personaLabel,
+      summary: `${memo} remains in the log. The rhythm differs from today, yet something was clearly being held back then.`,
+      prompt: "Try to recall one thing — the place, a scent, or someone who was there.",
+      tags: [...tags, "memory piece"]
+    };
+  }
   return {
     id: `memory-${record.id}`,
     title: "가장 오래된 생활 조각",
@@ -105,12 +135,13 @@ function unique(values: string[]) {
   return [...new Set(values)];
 }
 
-function formatKoreanMonth(createdAt: string) {
-  return new Intl.DateTimeFormat("ko-KR", {
+function formatPeriod(createdAt: string, locale: Locale) {
+  const formatter = new Intl.DateTimeFormat(locale === "en" ? "en-US" : "ko-KR", {
     year: "numeric",
     month: "long",
     timeZone: "Asia/Seoul"
-  }).format(new Date(createdAt));
+  });
+  return formatter.format(new Date(createdAt));
 }
 
 function isRunningMemory(record: MemorySignalRecord) {

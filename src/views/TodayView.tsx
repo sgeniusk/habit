@@ -104,7 +104,7 @@ export function TodayView({
   const OnboardingIcon = currentOnboardingStep.Icon;
   const personaOpening =
     journalMode === "ai"
-      ? buildJournalOpening(journalContext)
+      ? buildJournalOpening(journalContext, locale)
       : t(locale, "today.journalSoloIntro");
 
   async function grantWeatherPermission() {
@@ -141,7 +141,8 @@ export function TodayView({
       buildJournalDraft({
         text: trimmedLine,
         mode: journalMode,
-        context: journalContext
+        context: journalContext,
+        locale
       }),
       ...current
     ]);

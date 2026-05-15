@@ -115,11 +115,12 @@ export default function App() {
     () =>
       buildPersonaIdentity({
         category: selectedCategory,
-        nickname: personaNicknames[selectedCategory],
+        nickname: personaNicknames[selectedCategory] ?? "",
         level: 1,
-        xp: 0
+        xp: 0,
+        locale
       }),
-    [personaNicknames, selectedCategory]
+    [personaNicknames, selectedCategory, locale]
   );
   const activeDecor = decorSelections[activeHomePersona.id] ?? {
     roomItem: activeHomePersona.roomItem,

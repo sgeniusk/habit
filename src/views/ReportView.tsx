@@ -37,7 +37,7 @@ export function ReportView({
   const hiddenInsights = insightFeedback.hiddenInsightTitles;
   const weeklyRecords = useMemo(() => getRecentRecords(records, 7), [records]);
   const weeklyInsights = useMemo(() => findHiddenHabitInsights(weeklyRecords), [weeklyRecords]);
-  const memoryCurations = useMemo(() => buildMemoryCurations(records), [records]);
+  const memoryCurations = useMemo(() => buildMemoryCurations(records, locale), [records, locale]);
   const memoryFilterOptions = useMemo(
     () => buildMemoryFilterOptions(memoryCurations),
     [memoryCurations]

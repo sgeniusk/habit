@@ -64,13 +64,15 @@ export function HomeView({
     category: activePersona.category,
     nickname: personaNickname,
     level: activeLevel,
-    xp: activeXp
+    xp: activeXp,
+    locale
   });
   const companionLine = buildPersonaCompanionLine({
     category: activePersona.category,
     nickname: personaNickname,
     level: activeLevel,
-    voiceMode: personaVoiceMode
+    voiceMode: personaVoiceMode,
+    locale
   });
 
   function getSummaryForPersona(persona: PersonaCard) {

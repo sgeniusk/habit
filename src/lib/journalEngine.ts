@@ -1,3 +1,6 @@
+// 오늘 탭의 일기 모듈. 페르소나가 사용자에게 건네는 인사와 정리 초안을 locale 별로 만든다.
+import type { Locale } from "../types/habit";
+
 export type JournalMode = "ai" | "solo";
 
 export type JournalContext = {
@@ -24,7 +27,19 @@ export const todayJournalContext: JournalContext = {
   distanceFromHomeKm: 4.2
 };
 
-export function buildJournalOpening(context: JournalContext) {
+export function buildJournalOpening(context: JournalContext, locale: Locale = "ko") {
+  if (locale === "en") {
+    if (context.condition === "비") {
+      return `It's going to rain today. With ${context.humidity}% humidity, your mood may feel a touch damp too.`;
+    }
+
+    if (context.distanceFromHomeKm >= 3) {
+      return `Clear today and ${context.humidity}% humidity. You're a bit far from home — anywhere good to wander?`;
+    }
+
+    return `${context.temperatureC}°C and clear today. Pass me one line about where you are.`;
+  }
+
   if (context.condition === "비") {
     return `오늘은 비 온대. 습도도 ${context.humidity}%라 마음도 조금 눅눅할 수 있어.`;
   }
@@ -39,16 +54,69 @@ export function buildJournalOpening(context: JournalContext) {
 export function buildJournalDraft({
   text,
   mode,
-  context
+  context,
+  locale = "ko"
 }: {
   text: string;
   mode: JournalMode;
   context: JournalContext;
+  locale?: Locale;
 }): JournalDraft {
   const originalLine = text.trim();
-  const isWalking = /걷|걸|산책|멀리|나왔/.test(originalLine);
-  const isResting = /집|쉬|누워|잠|회복/.test(originalLine);
-  const isRainy = context.condition === "비" || /비|우산|축축|눅눅/.test(originalLine);
+  const isWalking = /걷|걸|산책|멀리|나왔|walk|stroll/i.test(originalLine);
+  const isResting = /집|쉬|누워|잠|회복|rest|home/i.test(originalLine);
+  const isRainy = context.condition === "비" || /비|우산|축축|눅눅|rain/i.test(originalLine);
+
+  if (locale === "en") {
+    if (mode === "solo") {
+      return {
+        originalLine,
+        personaLine: "I'll leave your words right next to me, untouched.",
+        polishedLine: originalLine,
+        moodTags: [conditionTagEn(context.condition), "self-written"],
+        mode
+      };
+    }
+
+    if (isRainy) {
+      return {
+        originalLine,
+        personaLine: "On rainy days your heart dries slowly too. It's fine to drop the pace.",
+        polishedLine: "A day I let my heart dry slowly under the rain's hush.",
+        moodTags: [conditionTagEn(context.condition), "recovery", "settling"],
+        mode
+      };
+    }
+
+    if (isWalking) {
+      return {
+        originalLine,
+        personaLine:
+          "A bit far from home, huh — anywhere good to wander? Tell me how the way back felt too.",
+        polishedLine: "A day I walked far in clear weather and reset my inner compass.",
+        moodTags: [conditionTagEn(context.condition), "moving", "settling"],
+        mode
+      };
+    }
+
+    if (isResting) {
+      return {
+        originalLine,
+        personaLine: "Today feels like an inward day. Even quiet counts as a record.",
+        polishedLine: "A day I tended to myself again in the quiet rhythm of home.",
+        moodTags: [conditionTagEn(context.condition), "recovery", "home"],
+        mode
+      };
+    }
+
+    return {
+      originalLine,
+      personaLine: "That one line — it has been sitting deep inside you for a while.",
+      polishedLine: "A day I caught today's small feeling and handed it to myself.",
+      moodTags: [conditionTagEn(context.condition), "sense", "record"],
+      mode
+    };
+  }
 
   if (mode === "solo") {
     return {
@@ -98,4 +166,10 @@ export function buildJournalDraft({
     moodTags: [context.condition, "감각", "기록"],
     mode
   };
+}
+
+function conditionTagEn(condition: JournalContext["condition"]) {
+  if (condition === "비") return "rainy";
+  if (condition === "흐림") return "cloudy";
+  return "clear";
 }

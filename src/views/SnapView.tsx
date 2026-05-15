@@ -124,7 +124,8 @@ export function SnapView({
     category: personaCategory,
     nickname: personaNickname,
     level: 1,
-    xp: 0
+    xp: 0,
+    locale
   });
   const previewClassName = [
     "photo-drop snap-preview",
