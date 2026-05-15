@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Persona Habit",
-    "slug": "persona-habit",
+    "name": "Formi",
+    "slug": "formi",
     "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "personahabit",
+    "scheme": "formi",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -18,7 +18,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.personahabit.mobile",
+      "bundleIdentifier": "app.formi.mobile",
       "infoPlist": {
         "NSCameraUsageDescription": "오늘의 생활 스냅을 카메라로 남길 때 사용해요.",
         "NSPhotoLibraryUsageDescription": "사진첩에서 골라 생활 스냅을 만들 때 사용해요.",
@@ -26,7 +26,7 @@
       }
     },
     "android": {
-      "package": "app.personahabit.mobile",
+      "package": "app.formi.mobile",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#f4f7e8"

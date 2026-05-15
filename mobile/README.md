@@ -1,6 +1,6 @@
-# Persona Habit Mobile (Expo)
+# Formi Mobile (Expo)
 
-iOS/Android 출시를 위한 Expo React Native 앱입니다. 현재는 5 탭 빈 화면 셋업 단계. 도메인 로직은 `../src/lib/*` (web 코드) 의 순수 함수를 점진적으로 가져옵니다.
+iOS/Android 출시를 위한 Expo React Native 앱입니다. 앱 이름은 **Formi** (form + me). 정체성 없는 말랑한 자아가 생활 기록으로 형태를 얻어 가는 컨셉. 현재는 5 탭 빈 화면 셋업 단계. 도메인 로직은 `../src/lib/*` (web 코드) 의 순수 함수를 점진적으로 가져옵니다.
 
 ## 실행
 
