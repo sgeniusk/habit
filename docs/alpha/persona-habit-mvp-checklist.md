@@ -49,3 +49,32 @@ Updated: 2026-05-15
 - Full verification: `npm run format:check`, `npm run lint`, `npm run test:run`, `npm run build`, `npm audit --audit-level=moderate`, `git diff --check`
 - Browser QA: `390x844` 모바일에서 첫 30초 도움말과 집 말투/테마, `1280x720` 데스크톱에서 리포트 AI 근거를 확인했다.
 - Production QA: `https://habit-six-gamma.vercel.app/`가 HTTP 200으로 응답하고, HTML이 새 빌드 자산 `index-De6pAWdc.js`, `index-Cg3SVgYn.css`를 가리키는 것을 확인했다.
+
+## 출시 직전 Readiness Pass
+
+웹 MVP 마감 자평이 iOS/Android 출시 직전 수준에 부합하는지 비판적 점검을 거쳤다. 보고서는 [docs/audit/2026-05-15-pre-native-readiness-audit.md](../audit/2026-05-15-pre-native-readiness-audit.md).
+
+### 묶음 1 — 안전 묶음 (완료)
+
+출시 후 첫 주 크래시/데이터 손실을 막는다.
+
+- [x] React Error Boundary 를 main.tsx 에서 App 위에 둔다.
+- [x] localStorage 모든 setItem 호출을 try-catch + quota/error outcome 으로 흡수한다.
+- [x] 사진 업로드 시 canvas 재인코딩으로 EXIF/GPS 메타데이터를 제거하고 1600px 로 축소한다.
+- [x] loadSnapRecords 가 깨진 record shape 를 자동 제거한다.
+- [x] record ID 를 `crypto.randomUUID()` 기반으로 바꾸어 같은 ms 충돌을 방지한다.
+- [x] TodayView 의 디버그 버튼 ("권한 거부 미리보기", "실패 상태 보기") 을 `import.meta.env.PROD` 가드한다.
+- [x] 저장 실패 시 사용자에게 노출되는 storage warning banner 를 추가한다.
+- [x] persistence/ErrorBoundary/imageSanitizer 단위 테스트를 추가했다 (총 77 tests pass).
+
+### 묶음 2 — 어댑터 묶음 (다음)
+
+플랫폼 어댑터 인터페이스(`ImagePickerAdapter`, `ShareAdapter`, `SnapExportRenderer`, `StorageAdapter`) 분리. `src/lib/adapters/web/*` 로 웹 구현체 이동.
+
+### 묶음 3 — UX 마감 묶음
+
+모임/리포트/페르소나 말투 i18n 사전 확장, `HabitInsight.confidence` 내부 enum 화, TodayView 의 하드코딩 목업 제거, App.tsx 의 useState 18개를 hook 으로 분리.
+
+### 묶음 4 ~ 6 — 사용자 결정 대기
+
+심사(CSP/처리방침)/백엔드(Supabase)/모니터링(Sentry/PostHog/Expo Notifications) 은 외부 서비스 결정 후 진행한다.

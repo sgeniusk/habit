@@ -1,3 +1,4 @@
+// localStorage 영속화 계층. quota/JSON.parse 실패를 모두 흡수해 호출자에 안전 신호만 돌려준다.
 import type { SnapRecord, UserPreferenceState } from "../types/habit";
 import type { MeetSession, MeetSuggestionFeedback } from "./socialEngine";
 
@@ -13,7 +14,19 @@ export type InsightFeedbackState = {
   softenedInsightTitles: string[];
 };
 
+export type PersistenceWriteOutcome = "ok" | "quota-exceeded" | "error";
+
 type StorageLike = Pick<Storage, "getItem" | "removeItem" | "setItem">;
+
+let lastWriteOutcome: PersistenceWriteOutcome = "ok";
+
+export function getLastPersistenceWriteOutcome(): PersistenceWriteOutcome {
+  return lastWriteOutcome;
+}
+
+export function resetLastPersistenceWriteOutcome() {
+  lastWriteOutcome = "ok";
+}
 
 export function loadMeetSession(storage: StorageLike = window.localStorage): MeetSession | null {
   const rawSession = storage.getItem(MEET_SESSION_STORAGE_KEY);
@@ -25,13 +38,13 @@ export function loadMeetSession(storage: StorageLike = window.localStorage): Mee
   try {
     return JSON.parse(rawSession) as MeetSession;
   } catch {
-    storage.removeItem(MEET_SESSION_STORAGE_KEY);
+    safeRemove(storage, MEET_SESSION_STORAGE_KEY);
     return null;
   }
 }
 
 export function saveMeetSession(session: MeetSession, storage: StorageLike = window.localStorage) {
-  storage.setItem(MEET_SESSION_STORAGE_KEY, JSON.stringify(session));
+  return safeSet(storage, MEET_SESSION_STORAGE_KEY, JSON.stringify(session));
 }
 
 export function loadMeetSuggestionFeedback(
@@ -44,7 +57,7 @@ export function saveMeetSuggestionFeedback(
   feedback: MeetSuggestionFeedback[],
   storage: StorageLike = window.localStorage
 ) {
-  storage.setItem(MEET_SUGGESTION_FEEDBACK_STORAGE_KEY, JSON.stringify(feedback));
+  return safeSet(storage, MEET_SUGGESTION_FEEDBACK_STORAGE_KEY, JSON.stringify(feedback));
 }
 
 export function loadInsightFeedback(
@@ -64,7 +77,7 @@ export function saveInsightFeedback(
   feedback: InsightFeedbackState,
   storage: StorageLike = window.localStorage
 ) {
-  storage.setItem(INSIGHT_FEEDBACK_STORAGE_KEY, JSON.stringify(feedback));
+  return safeSet(storage, INSIGHT_FEEDBACK_STORAGE_KEY, JSON.stringify(feedback));
 }
 
 export function loadOnboardingDismissed(storage: StorageLike = window.localStorage) {
@@ -75,18 +88,34 @@ export function saveOnboardingDismissed(
   dismissed: boolean,
   storage: StorageLike = window.localStorage
 ) {
-  storage.setItem(ONBOARDING_DISMISSED_STORAGE_KEY, JSON.stringify(dismissed));
+  return safeSet(storage, ONBOARDING_DISMISSED_STORAGE_KEY, JSON.stringify(dismissed));
 }
 
 export function loadSnapRecords(
   fallbackRecords: SnapRecord[],
   storage: StorageLike = window.localStorage
 ) {
-  return loadJson<SnapRecord[]>(SNAP_RECORDS_STORAGE_KEY, fallbackRecords, storage);
+  const records = loadJson<SnapRecord[]>(SNAP_RECORDS_STORAGE_KEY, fallbackRecords, storage);
+
+  if (!Array.isArray(records)) {
+    return fallbackRecords;
+  }
+
+  const guarded = records.filter(isSnapRecordShape);
+
+  if (guarded.length !== records.length) {
+    if (guarded.length === 0) {
+      safeRemove(storage, SNAP_RECORDS_STORAGE_KEY);
+      return fallbackRecords;
+    }
+    safeSet(storage, SNAP_RECORDS_STORAGE_KEY, JSON.stringify(guarded));
+  }
+
+  return guarded;
 }
 
 export function saveSnapRecords(records: SnapRecord[], storage: StorageLike = window.localStorage) {
-  storage.setItem(SNAP_RECORDS_STORAGE_KEY, JSON.stringify(records));
+  return safeSet(storage, SNAP_RECORDS_STORAGE_KEY, JSON.stringify(records));
 }
 
 export function loadUserPreferences(
@@ -127,7 +156,7 @@ export function saveUserPreferences(
   preferences: UserPreferenceState,
   storage: StorageLike = window.localStorage
 ) {
-  storage.setItem(USER_PREFERENCES_STORAGE_KEY, JSON.stringify(preferences));
+  return safeSet(storage, USER_PREFERENCES_STORAGE_KEY, JSON.stringify(preferences));
 }
 
 function loadJson<T>(key: string, fallback: T, storage: StorageLike): T {
@@ -140,9 +169,64 @@ function loadJson<T>(key: string, fallback: T, storage: StorageLike): T {
   try {
     return JSON.parse(rawValue) as T;
   } catch {
-    storage.removeItem(key);
+    safeRemove(storage, key);
     return fallback;
   }
+}
+
+function safeSet(storage: StorageLike, key: string, value: string): PersistenceWriteOutcome {
+  try {
+    storage.setItem(key, value);
+    lastWriteOutcome = "ok";
+    return "ok";
+  } catch (error) {
+    if (isQuotaError(error)) {
+      lastWriteOutcome = "quota-exceeded";
+      return "quota-exceeded";
+    }
+    lastWriteOutcome = "error";
+    return "error";
+  }
+}
+
+function safeRemove(storage: StorageLike, key: string) {
+  try {
+    storage.removeItem(key);
+  } catch {
+    // 무시한다. removeItem 자체가 실패할 만한 상황은 quota 와 무관하고 안전하게 다음 시도로 넘긴다.
+  }
+}
+
+function isQuotaError(error: unknown): boolean {
+  if (typeof DOMException !== "undefined" && error instanceof DOMException) {
+    return (
+      error.name === "QuotaExceededError" ||
+      error.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+      error.code === 22 ||
+      error.code === 1014
+    );
+  }
+
+  if (error instanceof Error) {
+    return error.name === "QuotaExceededError" || error.name === "NS_ERROR_DOM_QUOTA_REACHED";
+  }
+
+  return false;
+}
+
+function isSnapRecordShape(value: unknown): value is SnapRecord {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+
+  const record = value as Record<string, unknown>;
+
+  return (
+    typeof record.id === "string" &&
+    typeof record.category === "string" &&
+    typeof record.placeType === "string" &&
+    typeof record.createdAt === "string"
+  );
 }
 
 function isPersonaStampPosition(

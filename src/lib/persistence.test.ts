@@ -10,6 +10,7 @@ import {
   saveOnboardingDismissed,
   saveSnapRecords,
   saveUserPreferences,
+  SNAP_RECORDS_STORAGE_KEY,
   USER_PREFERENCES_STORAGE_KEY
 } from "./persistence";
 import type { MeetSuggestionFeedback } from "./socialEngine";
@@ -135,6 +136,77 @@ describe("persistence", () => {
         storage
       )
     ).toEqual(preferences);
+  });
+
+  it("returns a quota outcome when localStorage rejects the write", () => {
+    const quotaError = new DOMException("Quota exceeded", "QuotaExceededError");
+    const storage = {
+      getItem: () => null,
+      removeItem: () => undefined,
+      setItem: () => {
+        throw quotaError;
+      }
+    };
+
+    const outcome = saveSnapRecords(
+      [
+        {
+          id: "alpha-snap",
+          category: "study",
+          placeType: "library",
+          createdAt: "2026-05-15T09:00:00.000+09:00"
+        }
+      ],
+      storage
+    );
+
+    expect(outcome).toBe("quota-exceeded");
+  });
+
+  it("returns an error outcome for non-quota write failures", () => {
+    const storage = {
+      getItem: () => null,
+      removeItem: () => undefined,
+      setItem: () => {
+        throw new Error("disk read-only");
+      }
+    };
+
+    const outcome = saveInsightFeedback(
+      { hiddenInsightTitles: [], softenedInsightTitles: [] },
+      storage
+    );
+
+    expect(outcome).toBe("error");
+  });
+
+  it("drops snap records that lack required fields when loading", () => {
+    const storage = createMemoryStorage();
+
+    storage.setItem(
+      SNAP_RECORDS_STORAGE_KEY,
+      JSON.stringify([
+        {
+          id: "valid",
+          category: "study",
+          placeType: "library",
+          createdAt: "2026-05-15T09:00:00.000+09:00"
+        },
+        { id: "broken-missing-fields" },
+        null
+      ])
+    );
+
+    const fallback: SnapRecord[] = [];
+
+    expect(loadSnapRecords(fallback, storage)).toEqual([
+      {
+        id: "valid",
+        category: "study",
+        placeType: "library",
+        createdAt: "2026-05-15T09:00:00.000+09:00"
+      }
+    ]);
   });
 
   it("fills missing preference fields from alpha defaults", () => {

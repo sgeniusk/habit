@@ -15,13 +15,15 @@ import {
   normalizeLocale,
   t
 } from "./lib/i18n";
+import { sanitizeImageFile } from "./lib/imageSanitizer";
 import {
   loadOnboardingDismissed,
   loadSnapRecords,
   loadUserPreferences,
   saveOnboardingDismissed,
   saveSnapRecords,
-  saveUserPreferences
+  saveUserPreferences,
+  type PersistenceWriteOutcome
 } from "./lib/persistence";
 import { buildPersonaIdentity, defaultPersonaNicknames } from "./lib/personaIdentity";
 import { buildPersonaSummaries, findHiddenHabitInsights } from "./lib/personaEngine";
@@ -81,6 +83,7 @@ export default function App() {
   const [shareError, setShareError] = useState("");
   const [savedPulse, setSavedPulse] = useState(false);
   const [savedFeedbackVisible, setSavedFeedbackVisible] = useState(false);
+  const [storageWarning, setStorageWarning] = useState<PersistenceWriteOutcome>("ok");
   const locale = normalizeLocale(userPreferences.locale);
   const decorSelections = userPreferences.decorSelections;
   const selectedProofStamps = userPreferences.selectedProofStamps;
@@ -124,7 +127,10 @@ export default function App() {
   const nextSnapCountLabel = formatSnapCountLabel(locale, todayCount);
 
   useEffect(() => {
-    saveSnapRecords(records);
+    const outcome = saveSnapRecords(records);
+    if (outcome !== "ok") {
+      queueMicrotask(() => setStorageWarning(outcome));
+    }
   }, [records]);
 
   useEffect(() => {
@@ -132,12 +138,15 @@ export default function App() {
   }, [locale]);
 
   useEffect(() => {
-    saveUserPreferences(userPreferences);
+    const outcome = saveUserPreferences(userPreferences);
+    if (outcome !== "ok") {
+      queueMicrotask(() => setStorageWarning(outcome));
+    }
   }, [userPreferences]);
 
   function saveRecord() {
     const nextRecord: SnapRecord = {
-      id: `record-${Date.now()}`,
+      id: createRecordId(),
       category: selectedCategory,
       placeType: selectedPlace,
       memo: memo || photoName || t(locale, "snap.emptyPhoto"),
@@ -160,7 +169,7 @@ export default function App() {
     window.setTimeout(() => setSavedPulse(false), 800);
   }
 
-  function handlePhotoSelect(file?: File) {
+  async function handlePhotoSelect(file?: File) {
     if (!file) {
       return;
     }
@@ -176,29 +185,20 @@ export default function App() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        setPhotoPreviewUrl(reader.result);
-        setPhotoError("");
-        setShareStatus("");
-        setShareError("");
-      } else {
-        setPhotoPreviewUrl("");
-        setPhotoError(t(locale, "snap.imageLoadError"));
-        setShareStatus("");
-        setShareError("");
-      }
-    };
-    reader.onerror = () => {
+    setPhotoName(file.name);
+
+    try {
+      const sanitizedDataUrl = await sanitizeImageFile(file);
+      setPhotoPreviewUrl(sanitizedDataUrl);
+      setPhotoError("");
+      setShareStatus("");
+      setShareError("");
+    } catch {
       setPhotoPreviewUrl("");
       setPhotoError(t(locale, "snap.imageLoadError"));
       setShareStatus("");
       setShareError("");
-    };
-
-    setPhotoName(file.name);
-    reader.readAsDataURL(file);
+    }
   }
 
   async function exportShareImage() {
@@ -296,11 +296,37 @@ export default function App() {
 
   function dismissOnboarding() {
     setOnboardingDismissed(true);
-    saveOnboardingDismissed(true);
+    const outcome = saveOnboardingDismissed(true);
+    if (outcome !== "ok") {
+      setStorageWarning(outcome);
+    }
+  }
+
+  function dismissStorageWarning() {
+    setStorageWarning("ok");
   }
 
   return (
     <div className="app-shell">
+      {storageWarning !== "ok" ? (
+        <div className="storage-warning" role="alert">
+          <div>
+            <strong>
+              {storageWarning === "quota-exceeded"
+                ? "저장 공간이 거의 가득 찼어요."
+                : "저장에 문제가 생겼어요."}
+            </strong>
+            <p>
+              {storageWarning === "quota-exceeded"
+                ? "오래된 스냅의 사진을 정리하면 새 기록을 안전하게 저장할 수 있어요."
+                : "잠시 후 다시 시도하거나 새로고침해 보세요."}
+            </p>
+          </div>
+          <button type="button" onClick={dismissStorageWarning} aria-label="알림 닫기">
+            닫기
+          </button>
+        </div>
+      ) : null}
       <div className="app-toolbar" aria-label={t(locale, "language.label")}>
         {localeOptions.map((option) => (
           <button
@@ -448,4 +474,18 @@ function getInitialRoute(): { activeTab: TabId; inviteToken: string } {
     activeTab: "today",
     inviteToken: ""
   };
+}
+
+function createRecordId(): string {
+  if (
+    typeof globalThis !== "undefined" &&
+    typeof globalThis.crypto !== "undefined" &&
+    typeof globalThis.crypto.randomUUID === "function"
+  ) {
+    return `record-${globalThis.crypto.randomUUID()}`;
+  }
+
+  const randomPart = Math.random().toString(36).slice(2, 10);
+
+  return `record-${Date.now()}-${randomPart}`;
 }

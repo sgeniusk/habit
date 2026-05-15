@@ -254,12 +254,16 @@ export function TodayView({
             )}
             {weatherCard.actionLabel}
           </button>
-          <button type="button" onClick={denyWeatherPermission}>
-            권한 거부 미리보기
-          </button>
-          <button type="button" onClick={showWeatherFailure}>
-            실패 상태 보기
-          </button>
+          {import.meta.env.PROD ? null : (
+            <>
+              <button type="button" onClick={denyWeatherPermission}>
+                권한 거부 미리보기
+              </button>
+              <button type="button" onClick={showWeatherFailure}>
+                실패 상태 보기
+              </button>
+            </>
+          )}
         </div>
         {weatherSyncMessage ? (
           <strong className="weather-sync-status">{weatherSyncMessage}</strong>
