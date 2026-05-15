@@ -86,7 +86,11 @@ export type TranslationKey =
   | "place.gym"
   | "place.restaurant"
   | "place.outdoors"
-  | "place.other";
+  | "place.other"
+  | "insight.confidenceHigh"
+  | "insight.confidenceMedium"
+  | "insight.confidenceLow"
+  | "insight.evidenceLabel";
 
 const translations: Record<Locale, Record<TranslationKey, string>> = {
   ko: {
@@ -171,7 +175,11 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "place.gym": "헬스장",
     "place.restaurant": "식당",
     "place.outdoors": "야외",
-    "place.other": "기타"
+    "place.other": "기타",
+    "insight.confidenceHigh": "높음",
+    "insight.confidenceMedium": "보통",
+    "insight.confidenceLow": "낮음",
+    "insight.evidenceLabel": "근거"
   },
   en: {
     "language.label": "Language",
@@ -255,7 +263,11 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "place.gym": "Gym",
     "place.restaurant": "Restaurant",
     "place.outdoors": "Outdoors",
-    "place.other": "Other"
+    "place.other": "Other",
+    "insight.confidenceHigh": "High",
+    "insight.confidenceMedium": "Medium",
+    "insight.confidenceLow": "Low",
+    "insight.evidenceLabel": "Evidence"
   }
 };
 

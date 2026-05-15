@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Archive, CalendarDays } from "lucide-react";
 import { MetricTile } from "../components/MetricTile";
+import { t, type TranslationKey } from "../lib/i18n";
 import {
   buildMemoryCurations,
   buildMemoryFilterOptions,
@@ -8,16 +9,22 @@ import {
   type MemoryFilter
 } from "../lib/memoryEngine";
 import { loadInsightFeedback, saveInsightFeedback } from "../lib/persistence";
-import { buildPersonaSummaries, findHiddenHabitInsights } from "../lib/personaEngine";
-import type { SnapRecord } from "../types/habit";
+import {
+  buildPersonaSummaries,
+  findHiddenHabitInsights,
+  type HabitInsightConfidence
+} from "../lib/personaEngine";
+import type { Locale, SnapRecord } from "../types/habit";
 
 type ReportMode = "weekly" | "memory";
 
 export function ReportView({
+  locale,
   records,
   personas,
   insights
 }: {
+  locale: Locale;
   records: SnapRecord[];
   personas: ReturnType<typeof buildPersonaSummaries>;
   insights: ReturnType<typeof findHiddenHabitInsights>;
@@ -117,11 +124,11 @@ export function ReportView({
                 <article className="insight-card" key={insight.title} aria-label={insight.title}>
                   <div>
                     <h3>{insight.title}</h3>
-                    <span>{insight.confidence}</span>
+                    <span>{t(locale, confidenceTranslationKey(insight.confidence))}</span>
                   </div>
                   <p>{isSoftened ? softenInsightBody(insight.body) : insight.body}</p>
                   <p className="insight-evidence">
-                    <span>근거</span>
+                    <span>{t(locale, "insight.evidenceLabel")}</span>
                     {insight.evidence}
                   </p>
                   <strong>{insight.recommendation}</strong>
@@ -239,6 +246,18 @@ export function ReportView({
       )}
     </section>
   );
+}
+
+function confidenceTranslationKey(confidence: HabitInsightConfidence): TranslationKey {
+  if (confidence === "high") {
+    return "insight.confidenceHigh";
+  }
+
+  if (confidence === "low") {
+    return "insight.confidenceLow";
+  }
+
+  return "insight.confidenceMedium";
 }
 
 function softenInsightBody(body: string) {

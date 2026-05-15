@@ -440,7 +440,7 @@ export default function App() {
         )}
         {activeTab === "meet" && <MeetView records={records} inviteToken={inviteToken} />}
         {activeTab === "report" && (
-          <ReportView records={records} personas={personas} insights={insights} />
+          <ReportView locale={locale} records={records} personas={personas} insights={insights} />
         )}
       </main>
 
