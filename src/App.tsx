@@ -78,6 +78,7 @@ export default function App() {
   const [shareStatus, setShareStatus] = useState("");
   const [shareError, setShareError] = useState("");
   const [savedPulse, setSavedPulse] = useState(false);
+  const [savedFeedbackVisible, setSavedFeedbackVisible] = useState(false);
   const locale = normalizeLocale(userPreferences.locale);
   const decorSelections = userPreferences.decorSelections;
   const selectedProofStamps = userPreferences.selectedProofStamps;
@@ -152,6 +153,7 @@ export default function App() {
     setShareStatus("");
     setShareError("");
     setSavedPulse(true);
+    setSavedFeedbackVisible(true);
     window.setTimeout(() => setSavedPulse(false), 800);
   }
 
@@ -159,6 +161,8 @@ export default function App() {
     if (!file) {
       return;
     }
+
+    setSavedFeedbackVisible(false);
 
     if (!file.type.startsWith("image/")) {
       setPhotoPreviewUrl("");
@@ -336,6 +340,7 @@ export default function App() {
             shareStatus={shareStatus}
             shareError={shareError}
             savedPulse={savedPulse}
+            showSaveFeedback={savedFeedbackVisible}
             onCategoryChange={setSelectedCategory}
             onPlaceChange={setSelectedPlace}
             onFilterChange={setSelectedFilter}
@@ -346,6 +351,18 @@ export default function App() {
             onPhotoSelect={handlePhotoSelect}
             onShareImage={exportShareImage}
             onSave={saveRecord}
+            onSavedHome={() => {
+              setInviteToken("");
+              setActiveTab("home");
+            }}
+            onSavedReport={() => {
+              setInviteToken("");
+              setActiveTab("report");
+            }}
+            onSavedMeet={() => {
+              setInviteToken("");
+              setActiveTab("meet");
+            }}
           />
         )}
         {activeTab === "home" && (

@@ -44,6 +44,11 @@ export type TranslationKey =
   | "snap.shareReady"
   | "snap.shareNoPhoto"
   | "snap.shareError"
+  | "snap.saveFeedback.title"
+  | "snap.saveFeedback.body"
+  | "snap.saveFeedback.home"
+  | "snap.saveFeedback.report"
+  | "snap.saveFeedback.meet"
   | "snap.imageOnlyError"
   | "snap.imageLoadError"
   | "proof.time"
@@ -108,6 +113,11 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "snap.shareReady": "공유 이미지 저장됨",
     "snap.shareNoPhoto": "사진을 먼저 선택해 주세요.",
     "snap.shareError": "공유 이미지를 만들지 못했어요.",
+    "snap.saveFeedback.title": "스냅 저장 완료",
+    "snap.saveFeedback.body": "집, 모임, 리포트에 바로 반영됐어요.",
+    "snap.saveFeedback.home": "집에서 보기",
+    "snap.saveFeedback.report": "리포트 보기",
+    "snap.saveFeedback.meet": "모임 추천 보기",
     "snap.imageOnlyError": "이미지 파일만 선택할 수 있어요.",
     "snap.imageLoadError": "이미지를 불러오지 못했어요.",
     "proof.time": "시간 도장",
@@ -171,6 +181,11 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "snap.shareReady": "Share image saved",
     "snap.shareNoPhoto": "Choose a photo first.",
     "snap.shareError": "Couldn't create the share image.",
+    "snap.saveFeedback.title": "Snap saved",
+    "snap.saveFeedback.body": "Home, Meet, and Report have been updated.",
+    "snap.saveFeedback.home": "View Home",
+    "snap.saveFeedback.report": "View Report",
+    "snap.saveFeedback.meet": "View Meet",
     "snap.imageOnlyError": "Please choose an image file.",
     "snap.imageLoadError": "Couldn't load this image.",
     "proof.time": "Time stamp",

@@ -25,6 +25,7 @@ describe("i18n", () => {
     expect(getPlaceLabelForLocale("library", "en")).toBe("Library");
     expect(getPersonaStampPositionLabel("top-left", "en")).toBe("Top left");
     expect(t("en", "snap.shareImage")).toBe("Save share image");
+    expect(t("en", "snap.saveFeedback.home")).toBe("View Home");
     expect(t("en", "today.onboarding.title")).toBe("One snap starts the loop");
     expect(formatSnapCountLabel("en", 2)).toBe("Today #2");
   });

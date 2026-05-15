@@ -1,4 +1,4 @@
-import { Download, ImagePlus, Sparkles } from "lucide-react";
+import { BarChart3, Download, Home, ImagePlus, Sparkles, Users } from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import {
   categoryOptions,
@@ -57,6 +57,7 @@ export function SnapView({
   shareStatus,
   shareError,
   savedPulse,
+  showSaveFeedback,
   onCategoryChange,
   onPlaceChange,
   onFilterChange,
@@ -66,7 +67,10 @@ export function SnapView({
   onMemoChange,
   onPhotoSelect,
   onShareImage,
-  onSave
+  onSave,
+  onSavedHome,
+  onSavedReport,
+  onSavedMeet
 }: {
   locale: Locale;
   selectedCategory: HabitCategory;
@@ -88,6 +92,7 @@ export function SnapView({
   shareStatus: string;
   shareError: string;
   savedPulse: boolean;
+  showSaveFeedback: boolean;
   onCategoryChange: (category: HabitCategory) => void;
   onPlaceChange: (place: PlaceType) => void;
   onFilterChange: (filter: string) => void;
@@ -98,6 +103,9 @@ export function SnapView({
   onPhotoSelect: (file?: File) => void;
   onShareImage: () => void;
   onSave: () => void;
+  onSavedHome: () => void;
+  onSavedReport: () => void;
+  onSavedMeet: () => void;
 }) {
   const personaIdentity = buildPersonaIdentity({
     category: personaCategory,
@@ -315,6 +323,30 @@ export function SnapView({
       <small className={shareError ? "share-image-help is-error" : "share-image-help"}>
         {shareError || shareStatus || t(locale, "snap.shareHelp")}
       </small>
+
+      {showSaveFeedback && (
+        <section className="save-feedback-card" aria-labelledby="save-feedback-title">
+          <div>
+            <p className="eyebrow">Saved</p>
+            <h2 id="save-feedback-title">{t(locale, "snap.saveFeedback.title")}</h2>
+            <p>{t(locale, "snap.saveFeedback.body")}</p>
+          </div>
+          <div className="save-feedback-actions">
+            <button type="button" onClick={onSavedHome}>
+              <Home size={18} aria-hidden="true" />
+              <span>{t(locale, "snap.saveFeedback.home")}</span>
+            </button>
+            <button type="button" onClick={onSavedReport}>
+              <BarChart3 size={18} aria-hidden="true" />
+              <span>{t(locale, "snap.saveFeedback.report")}</span>
+            </button>
+            <button type="button" onClick={onSavedMeet}>
+              <Users size={18} aria-hidden="true" />
+              <span>{t(locale, "snap.saveFeedback.meet")}</span>
+            </button>
+          </div>
+        </section>
+      )}
     </section>
   );
 }

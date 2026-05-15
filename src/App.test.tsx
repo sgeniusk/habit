@@ -173,6 +173,24 @@ describe("Persona Habit prototype", () => {
     expect(screen.getByText("필름 · 🏃 러닝")).toBeInTheDocument();
   });
 
+  it("offers next-step shortcuts after saving a snap", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    await user.click(screen.getByRole("button", { name: "스냅" }));
+    await user.click(screen.getByRole("button", { name: "운동" }));
+    await user.click(screen.getByRole("button", { name: "꾸며서 올리기" }));
+
+    expect(screen.getByText("스냅 저장 완료")).toBeInTheDocument();
+    expect(screen.getByText("집, 모임, 리포트에 바로 반영됐어요.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "리포트 보기" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "모임 추천 보기" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "집에서 보기" }));
+
+    expect(screen.getByRole("heading", { name: "루틴 러너", level: 2 })).toBeInTheDocument();
+  });
+
   it("keeps the uploaded image on the latest saved snap", async () => {
     const user = userEvent.setup();
     render(<App />);
