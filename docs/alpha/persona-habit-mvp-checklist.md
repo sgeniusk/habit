@@ -67,9 +67,14 @@ Updated: 2026-05-15
 - [x] 저장 실패 시 사용자에게 노출되는 storage warning banner 를 추가한다.
 - [x] persistence/ErrorBoundary/imageSanitizer 단위 테스트를 추가했다 (총 77 tests pass).
 
-### 묶음 2 — 어댑터 묶음 (다음)
+### 묶음 2 — 어댑터 묶음 (완료)
 
-플랫폼 어댑터 인터페이스(`ImagePickerAdapter`, `ShareAdapter`, `SnapExportRenderer`, `StorageAdapter`) 분리. `src/lib/adapters/web/*` 로 웹 구현체 이동.
+네이티브 전환을 향한 4개 어댑터 인터페이스를 `src/lib/adapters/*` 로 분리한다.
+
+- [x] StorageAdapter — `getItem`/`setItem`/`removeItem` 동기 인터페이스. 웹은 `window.localStorage`, 네이티브는 MMKV 후보. persistence.ts 가 인터페이스에만 의존.
+- [x] ShareAdapter — Web Share API 도입. navigator.share 지원 환경에서는 네이티브 공유 시트, 미지원 환경에서는 다운로드 fallback. RN 은 expo-sharing 으로 매핑.
+- [x] ImagePickerAdapter — 사진 입력 처리를 sanitizeImageFile 위의 얇은 래퍼로 분리. RN 은 expo-image-picker 로 같은 인터페이스 만족.
+- [x] SnapRenderer — PNG export 와 다운로드 트리거 분리. RenderedSnap 한 호출로 blob + filename 반환. RN 은 expo-image-manipulator 또는 react-native-skia 로 매핑.
 
 ### 묶음 3 — UX 마감 묶음
 
