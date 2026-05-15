@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "Persona Habit",
+    "slug": "persona-habit",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "personahabit",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f4f7e8"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.personahabit.mobile",
+      "infoPlist": {
+        "NSCameraUsageDescription": "오늘의 생활 스냅을 카메라로 남길 때 사용해요.",
+        "NSPhotoLibraryUsageDescription": "사진첩에서 골라 생활 스냅을 만들 때 사용해요.",
+        "NSLocationWhenInUseUsageDescription": "지역 날씨와 장소 패턴을 보여줄 때 사용해요."
+      }
+    },
+    "android": {
+      "package": "app.personahabit.mobile",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#f4f7e8"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "plugins": [
+      "expo-image-picker",
+      "expo-location",
+      "expo-notifications"
+    ],
+    "extra": {
+      "router": {}
+    }
+  }
+}

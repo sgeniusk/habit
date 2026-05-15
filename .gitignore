@@ -8,3 +8,9 @@ dist/
 .vercel
 .claude/
 .omc/
+
+# Mobile (Expo) build artifacts
+.expo/
+web-build/
+mobile/ios/
+mobile/android/
