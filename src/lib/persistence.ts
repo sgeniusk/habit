@@ -1,4 +1,5 @@
 // localStorage 영속화 계층. quota/JSON.parse 실패를 모두 흡수해 호출자에 안전 신호만 돌려준다.
+import { getWebStorageAdapter, type StorageAdapter } from "./adapters/storage";
 import type { SnapRecord, UserPreferenceState } from "../types/habit";
 import type { MeetSession, MeetSuggestionFeedback } from "./socialEngine";
 
@@ -16,8 +17,6 @@ export type InsightFeedbackState = {
 
 export type PersistenceWriteOutcome = "ok" | "quota-exceeded" | "error";
 
-type StorageLike = Pick<Storage, "getItem" | "removeItem" | "setItem">;
-
 let lastWriteOutcome: PersistenceWriteOutcome = "ok";
 
 export function getLastPersistenceWriteOutcome(): PersistenceWriteOutcome {
@@ -28,7 +27,9 @@ export function resetLastPersistenceWriteOutcome() {
   lastWriteOutcome = "ok";
 }
 
-export function loadMeetSession(storage: StorageLike = window.localStorage): MeetSession | null {
+export function loadMeetSession(
+  storage: StorageAdapter = getWebStorageAdapter()
+): MeetSession | null {
   const rawSession = storage.getItem(MEET_SESSION_STORAGE_KEY);
 
   if (!rawSession) {
@@ -43,25 +44,28 @@ export function loadMeetSession(storage: StorageLike = window.localStorage): Mee
   }
 }
 
-export function saveMeetSession(session: MeetSession, storage: StorageLike = window.localStorage) {
+export function saveMeetSession(
+  session: MeetSession,
+  storage: StorageAdapter = getWebStorageAdapter()
+) {
   return safeSet(storage, MEET_SESSION_STORAGE_KEY, JSON.stringify(session));
 }
 
 export function loadMeetSuggestionFeedback(
-  storage: StorageLike = window.localStorage
+  storage: StorageAdapter = getWebStorageAdapter()
 ): MeetSuggestionFeedback[] {
   return loadJson<MeetSuggestionFeedback[]>(MEET_SUGGESTION_FEEDBACK_STORAGE_KEY, [], storage);
 }
 
 export function saveMeetSuggestionFeedback(
   feedback: MeetSuggestionFeedback[],
-  storage: StorageLike = window.localStorage
+  storage: StorageAdapter = getWebStorageAdapter()
 ) {
   return safeSet(storage, MEET_SUGGESTION_FEEDBACK_STORAGE_KEY, JSON.stringify(feedback));
 }
 
 export function loadInsightFeedback(
-  storage: StorageLike = window.localStorage
+  storage: StorageAdapter = getWebStorageAdapter()
 ): InsightFeedbackState {
   return loadJson<InsightFeedbackState>(
     INSIGHT_FEEDBACK_STORAGE_KEY,
@@ -75,25 +79,25 @@ export function loadInsightFeedback(
 
 export function saveInsightFeedback(
   feedback: InsightFeedbackState,
-  storage: StorageLike = window.localStorage
+  storage: StorageAdapter = getWebStorageAdapter()
 ) {
   return safeSet(storage, INSIGHT_FEEDBACK_STORAGE_KEY, JSON.stringify(feedback));
 }
 
-export function loadOnboardingDismissed(storage: StorageLike = window.localStorage) {
+export function loadOnboardingDismissed(storage: StorageAdapter = getWebStorageAdapter()) {
   return loadJson<boolean>(ONBOARDING_DISMISSED_STORAGE_KEY, false, storage);
 }
 
 export function saveOnboardingDismissed(
   dismissed: boolean,
-  storage: StorageLike = window.localStorage
+  storage: StorageAdapter = getWebStorageAdapter()
 ) {
   return safeSet(storage, ONBOARDING_DISMISSED_STORAGE_KEY, JSON.stringify(dismissed));
 }
 
 export function loadSnapRecords(
   fallbackRecords: SnapRecord[],
-  storage: StorageLike = window.localStorage
+  storage: StorageAdapter = getWebStorageAdapter()
 ) {
   const records = loadJson<SnapRecord[]>(SNAP_RECORDS_STORAGE_KEY, fallbackRecords, storage);
 
@@ -114,13 +118,16 @@ export function loadSnapRecords(
   return guarded;
 }
 
-export function saveSnapRecords(records: SnapRecord[], storage: StorageLike = window.localStorage) {
+export function saveSnapRecords(
+  records: SnapRecord[],
+  storage: StorageAdapter = getWebStorageAdapter()
+) {
   return safeSet(storage, SNAP_RECORDS_STORAGE_KEY, JSON.stringify(records));
 }
 
 export function loadUserPreferences(
   fallbackPreferences: UserPreferenceState,
-  storage: StorageLike = window.localStorage
+  storage: StorageAdapter = getWebStorageAdapter()
 ) {
   const storedPreferences = loadJson<Partial<UserPreferenceState>>(
     USER_PREFERENCES_STORAGE_KEY,
@@ -154,12 +161,12 @@ export function loadUserPreferences(
 
 export function saveUserPreferences(
   preferences: UserPreferenceState,
-  storage: StorageLike = window.localStorage
+  storage: StorageAdapter = getWebStorageAdapter()
 ) {
   return safeSet(storage, USER_PREFERENCES_STORAGE_KEY, JSON.stringify(preferences));
 }
 
-function loadJson<T>(key: string, fallback: T, storage: StorageLike): T {
+function loadJson<T>(key: string, fallback: T, storage: StorageAdapter): T {
   const rawValue = storage.getItem(key);
 
   if (!rawValue) {
@@ -174,7 +181,7 @@ function loadJson<T>(key: string, fallback: T, storage: StorageLike): T {
   }
 }
 
-function safeSet(storage: StorageLike, key: string, value: string): PersistenceWriteOutcome {
+function safeSet(storage: StorageAdapter, key: string, value: string): PersistenceWriteOutcome {
   try {
     storage.setItem(key, value);
     lastWriteOutcome = "ok";
@@ -189,7 +196,7 @@ function safeSet(storage: StorageLike, key: string, value: string): PersistenceW
   }
 }
 
-function safeRemove(storage: StorageLike, key: string) {
+function safeRemove(storage: StorageAdapter, key: string) {
   try {
     storage.removeItem(key);
   } catch {
