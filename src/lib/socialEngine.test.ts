@@ -35,11 +35,12 @@ describe("buildMeetSuggestions", () => {
     const suggestions = buildMeetSuggestions(runningRecords);
 
     expect(suggestions[0]).toMatchObject({
-      title: "성수천 러닝 모임 추천",
-      signalLabel: "러닝 스냅 2회",
-      cta: "러닝 친구 초대하기"
+      title: { ko: "성수천 러닝 모임 추천", en: "Seongsucheon running meet suggestion" },
+      signalLabel: { ko: "러닝 스냅 2회", en: "2 running snaps" },
+      cta: { ko: "러닝 친구 초대하기", en: "Invite running friends" }
     });
-    expect(suggestions[0].reason).toContain("야외 운동 기록이 반복");
+    expect(suggestions[0].reason.ko).toContain("야외 운동 기록이 반복");
+    expect(suggestions[0].reason.en).toContain("Outdoor exercise");
   });
 
   it("falls back to a study room when library study repeats", () => {
@@ -58,8 +59,9 @@ describe("buildMeetSuggestions", () => {
       }
     ]);
 
-    expect(suggestions[0].title).toBe("도서관 9시 클럽 추천");
-    expect(suggestions[0].signalLabel).toBe("도서관 공부 2회");
+    expect(suggestions[0].title.ko).toBe("도서관 9시 클럽 추천");
+    expect(suggestions[0].signalLabel.ko).toBe("도서관 공부 2회");
+    expect(suggestions[0].title.en).toBe("Library 9 AM club suggestion");
   });
 
   it("applies hidden, pinned, and later feedback to meet suggestions", () => {
@@ -106,13 +108,12 @@ describe("buildMeetInvite", () => {
     const suggestion = buildMeetSuggestions(runningRecords)[0];
     const invite = buildMeetInvite(suggestion);
 
-    expect(invite).toMatchObject({
-      status: "초대 링크 생성됨",
-      roomTitle: "성수천 러닝 모임",
-      inviteUrl: "https://persona-habit.app/invite/running-meet-88",
-      previewMemberName: "예비 러너"
-    });
-    expect(invite.description).toContain("친구가 링크를 열면");
+    expect(invite.status).toBe("created");
+    expect(invite.roomTitle).toEqual({ ko: "성수천 러닝 모임", en: "Seongsucheon running meet" });
+    expect(invite.inviteUrl).toBe("https://persona-habit.app/invite/running-meet-88");
+    expect(invite.previewMemberName).toEqual({ ko: "예비 러너", en: "Runner-to-be" });
+    expect(invite.description.ko).toContain("친구가 링크를 열면");
+    expect(invite.description.en).toContain("Opening the link");
   });
 });
 
@@ -120,11 +121,12 @@ describe("meet session", () => {
   it("builds an invite acceptance session from a route token", () => {
     const session = buildMeetSessionFromInviteToken("running-meet-88", runningRecords);
 
-    expect(session?.invite).toMatchObject({
-      roomTitle: "성수천 러닝 모임",
-      inviteUrl: "https://persona-habit.app/invite/running-meet-88"
+    expect(session?.invite.roomTitle.ko).toBe("성수천 러닝 모임");
+    expect(session?.invite.inviteUrl).toBe("https://persona-habit.app/invite/running-meet-88");
+    expect(session?.firstSnapMission.title).toEqual({
+      ko: "첫 러닝 스냅 미션",
+      en: "First running snap mission"
     });
-    expect(session?.firstSnapMission.title).toBe("첫 러닝 스냅 미션");
   });
 
   it("stores invite acceptors and converts first snaps into group persona XP", () => {
@@ -132,19 +134,19 @@ describe("meet session", () => {
     const invite = buildMeetInvite(suggestion);
     const waitingSession = acceptMeetInvite(createMeetSession(invite), {
       id: "friend-runner",
-      name: "예비 러너"
+      name: { ko: "예비 러너", en: "Runner-to-be" }
     });
 
-    expect(waitingSession.members).toContainEqual({
+    expect(waitingSession.members[0]).toMatchObject({
       id: "friend-runner",
-      name: "예비 러너",
       status: "waiting-first-snap"
     });
-    expect(waitingSession.groupPersona).toMatchObject({
-      name: "공동 러닝 페르소나",
-      xp: 40,
-      level: 1
+    expect(waitingSession.members[0].name).toEqual({ ko: "예비 러너", en: "Runner-to-be" });
+    expect(waitingSession.groupPersona.name).toEqual({
+      ko: "공동 러닝 페르소나",
+      en: "Shared running persona"
     });
+    expect(waitingSession.groupPersona).toMatchObject({ xp: 40, level: 1 });
     expect(waitingSession.firstSnapMission.status).toBe("waiting");
 
     const completedSession = completeMeetFirstSnapMission(waitingSession, "friend-runner");
@@ -153,10 +155,11 @@ describe("meet session", () => {
       id: "friend-runner",
       status: "contributed"
     });
-    expect(completedSession.groupPersona).toMatchObject({
-      xp: 100,
-      level: 2,
-      mood: "첫 스냅을 같이 남기며 활력이 올라왔어요"
+    expect(completedSession.groupPersona.xp).toBe(100);
+    expect(completedSession.groupPersona.level).toBe(2);
+    expect(completedSession.groupPersona.mood).toEqual({
+      ko: "첫 스냅을 같이 남기며 활력이 올라왔어요",
+      en: "Energy went up after leaving the first snap together"
     });
     expect(completedSession.firstSnapMission.status).toBe("completed");
   });

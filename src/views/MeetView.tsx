@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { RoomRow } from "../components/RoomRow";
-import { t } from "../lib/i18n";
+import { localize, t } from "../lib/i18n";
 import {
   acceptMeetInvite,
   applyMeetSuggestionFeedback,
@@ -133,7 +133,7 @@ export function MeetView({
     setMeetSession(
       acceptMeetInvite(routeInviteSession, {
         id: "route-guest",
-        name: "초대 손님"
+        name: { ko: "초대 손님", en: "Invited guest" }
       })
     );
   }
@@ -146,7 +146,9 @@ export function MeetView({
     setSuggestionFeedback((current) =>
       upsertMeetSuggestionFeedback(current, topSuggestion.id, action)
     );
-    setSuggestionStatus(buildSuggestionFeedbackMessage(topSuggestion.title, action, locale));
+    setSuggestionStatus(
+      buildSuggestionFeedbackMessage(localize(topSuggestion.title, locale), action, locale)
+    );
   }
 
   function restoreHiddenSuggestions() {
@@ -194,7 +196,7 @@ export function MeetView({
         <article
           className="meet-suggestion-card"
           aria-labelledby="meet-suggestion-title"
-          aria-label={topSuggestion.title}
+          aria-label={localize(topSuggestion.title, locale)}
         >
           <div className="suggestion-heading">
             <span className="suggestion-icon">
@@ -202,12 +204,12 @@ export function MeetView({
             </span>
             <div>
               <p className="eyebrow">{t(locale, "meet.suggestionEyebrow")}</p>
-              <h2 id="meet-suggestion-title">{topSuggestion.title}</h2>
+              <h2 id="meet-suggestion-title">{localize(topSuggestion.title, locale)}</h2>
             </div>
           </div>
-          <p>{topSuggestion.reason}</p>
+          <p>{localize(topSuggestion.reason, locale)}</p>
           <div className="suggestion-signal-row">
-            <span>{topSuggestion.signalLabel}</span>
+            <span>{localize(topSuggestion.signalLabel, locale)}</span>
             <strong>{`${topSuggestion.matchScore}% ${t(locale, "meet.matchSuffix")}`}</strong>
           </div>
           <div className="suggestion-feedback-row" aria-label={t(locale, "meet.feedbackAria")}>
@@ -223,7 +225,7 @@ export function MeetView({
           </div>
           <button type="button" className="invite-suggestion-button" onClick={createInvite}>
             <UserPlus size={18} aria-hidden="true" />
-            {topSuggestion.cta}
+            {localize(topSuggestion.cta, locale)}
           </button>
         </article>
       ) : (
@@ -242,7 +244,7 @@ export function MeetView({
             <p className="eyebrow">{t(locale, "meet.inviteRouteEyebrow")}</p>
             <h2 id="invite-accept-title">{t(locale, "meet.inviteRouteTitle")}</h2>
           </div>
-          <strong>{`${routeInviteSession.invite.roomTitle} ${t(locale, "meet.inviteRouteSubtitle")}`}</strong>
+          <strong>{`${localize(routeInviteSession.invite.roomTitle, locale)} ${t(locale, "meet.inviteRouteSubtitle")}`}</strong>
           <p>{t(locale, "meet.inviteRouteBody")}</p>
           <button type="button" onClick={acceptRouteInvite}>
             {t(locale, "meet.inviteRouteAccept")}
@@ -259,7 +261,7 @@ export function MeetView({
                 ? t(locale, "meet.inviteWaiting")
                 : contributedMember
                   ? t(locale, "meet.inviteCompleted")
-                  : meetSession.invite.status}
+                  : t(locale, "meet.inviteCreated")}
             </span>
             {waitingMember ? (
               <strong>{`+${meetSession.invite.sharedXp} ${t(locale, "meet.sharedXpSuffix")}`}</strong>
@@ -267,9 +269,9 @@ export function MeetView({
           </div>
           <div>
             <p className="eyebrow">{t(locale, "meet.inviteRoomEyebrow")}</p>
-            <h2 id="meet-invite-title">{`${meetSession.invite.roomTitle} ${t(locale, "meet.inviteRoomSuffix")}`}</h2>
+            <h2 id="meet-invite-title">{`${localize(meetSession.invite.roomTitle, locale)} ${t(locale, "meet.inviteRoomSuffix")}`}</h2>
           </div>
-          <p>{meetSession.invite.description}</p>
+          <p>{localize(meetSession.invite.description, locale)}</p>
           <code>{meetSession.invite.inviteUrl}</code>
           <div className="invite-action-row">
             <button type="button" onClick={copyInviteLink}>
@@ -286,7 +288,7 @@ export function MeetView({
             <>
               <div className="invite-member-row">
                 <CheckCircle2 size={18} aria-hidden="true" />
-                <span>{`${(waitingMember ?? contributedMember)?.name} ${t(locale, "meet.memberSavedSuffix")}`}</span>
+                <span>{`${localize((waitingMember ?? contributedMember)?.name ?? { ko: "", en: "" }, locale)} ${t(locale, "meet.memberSavedSuffix")}`}</span>
               </div>
               <section
                 className="group-persona-card"
@@ -295,30 +297,30 @@ export function MeetView({
                 <div>
                   <Trophy size={18} aria-hidden="true" />
                   <div>
-                    <h3>{meetSession.groupPersona.name}</h3>
+                    <h3>{localize(meetSession.groupPersona.name, locale)}</h3>
                     <span>
                       Lv.{meetSession.groupPersona.level} · {meetSession.groupPersona.xp}xp
                     </span>
                   </div>
                 </div>
-                <p>{meetSession.groupPersona.mood}</p>
+                <p>{localize(meetSession.groupPersona.mood, locale)}</p>
                 <div className="progress-track" aria-label={t(locale, "meet.groupProgressAria")}>
                   <span style={{ width: `${Math.max(meetSession.groupPersona.progress, 8)}%` }} />
                 </div>
               </section>
               <section
                 className="first-snap-mission"
-                aria-label={meetSession.firstSnapMission.title}
+                aria-label={localize(meetSession.firstSnapMission.title, locale)}
               >
                 <div>
-                  <strong>{meetSession.firstSnapMission.title}</strong>
+                  <strong>{localize(meetSession.firstSnapMission.title, locale)}</strong>
                   <span>
                     {meetSession.firstSnapMission.status === "completed"
                       ? t(locale, "meet.missionCompleted")
                       : t(locale, "meet.missionWaiting")}
                   </span>
                 </div>
-                <p>{meetSession.firstSnapMission.description}</p>
+                <p>{localize(meetSession.firstSnapMission.description, locale)}</p>
                 {meetSession.firstSnapMission.status === "waiting" ? (
                   <button type="button" onClick={completeFirstSnapMission}>
                     {`+${meetSession.firstSnapMission.rewardXp}xp ${t(locale, "meet.missionCompleteButton")}`}

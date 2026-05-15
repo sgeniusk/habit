@@ -156,6 +156,7 @@ export type TranslationKey =
   | "meet.inviteRouteAccept"
   | "meet.inviteWaiting"
   | "meet.inviteCompleted"
+  | "meet.inviteCreated"
   | "meet.sharedXpSuffix"
   | "meet.inviteRoomEyebrow"
   | "meet.inviteRoomSuffix"
@@ -361,6 +362,7 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "meet.inviteRouteAccept": "초대 수락하고 시작하기",
     "meet.inviteWaiting": "친구 1명 참여 대기",
     "meet.inviteCompleted": "미션 완료",
+    "meet.inviteCreated": "초대 링크 생성됨",
     "meet.sharedXpSuffix": "공동 XP",
     "meet.inviteRoomEyebrow": "Invite Room",
     "meet.inviteRoomSuffix": "대기실",
@@ -566,6 +568,7 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "meet.inviteRouteAccept": "Accept invite and start",
     "meet.inviteWaiting": "1 friend waiting",
     "meet.inviteCompleted": "Mission complete",
+    "meet.inviteCreated": "Invite link created",
     "meet.sharedXpSuffix": "shared XP",
     "meet.inviteRoomEyebrow": "Invite Room",
     "meet.inviteRoomSuffix": "lobby",

@@ -1,15 +1,16 @@
-import type { HabitCategory, SnapRecord } from "../types/habit";
+// 사용자 스냅에서 모임 제안과 세션을 만들어내는 도메인 엔진. 한국어/영어 데이터를 모두 LocalizedString 으로 돌려준다.
+import type { HabitCategory, LocalizedString, SnapRecord } from "../types/habit";
 
 export type MeetSignalRecord = SnapRecord;
 
 export type MeetSuggestion = {
   id: string;
   category: HabitCategory;
-  title: string;
-  reason: string;
-  signalLabel: string;
+  title: LocalizedString;
+  reason: LocalizedString;
+  signalLabel: LocalizedString;
   matchScore: number;
-  cta: string;
+  cta: LocalizedString;
 };
 
 export type MeetSuggestionFeedbackAction = "hidden" | "later" | "pinned";
@@ -20,35 +21,37 @@ export type MeetSuggestionFeedback = {
   updatedAt: string;
 };
 
+export type MeetInviteStatus = "created";
+
 export type MeetInvite = {
-  status: "초대 링크 생성됨";
+  status: MeetInviteStatus;
   suggestionId: string;
   category: HabitCategory;
-  roomTitle: string;
+  roomTitle: LocalizedString;
   inviteUrl: string;
-  description: string;
-  previewMemberName: string;
+  description: LocalizedString;
+  previewMemberName: LocalizedString;
   sharedXp: number;
 };
 
 export type MeetMember = {
   id: string;
-  name: string;
+  name: LocalizedString;
   status: "waiting-first-snap" | "contributed";
 };
 
 export type MeetFirstSnapMission = {
-  title: string;
-  description: string;
+  title: LocalizedString;
+  description: LocalizedString;
   rewardXp: number;
   status: "waiting" | "completed";
 };
 
 export type MeetGroupPersona = {
-  name: string;
+  name: LocalizedString;
   xp: number;
   level: number;
-  mood: string;
+  mood: LocalizedString;
   progress: number;
 };
 
@@ -71,12 +74,17 @@ export function buildMeetSuggestions(records: MeetSignalRecord[]): MeetSuggestio
     suggestions.push({
       id: "running-meet",
       category: "exercise",
-      title: "성수천 러닝 모임 추천",
-      reason:
-        "야외 운동 기록이 반복되고 있어요. 혼자 뛰는 리듬이 생겼으니 비슷한 시간대의 러너와 묶어볼 만해요.",
-      signalLabel: `러닝 스냅 ${runningRecords.length}회`,
+      title: { ko: "성수천 러닝 모임 추천", en: "Seongsucheon running meet suggestion" },
+      reason: {
+        ko: "야외 운동 기록이 반복되고 있어요. 혼자 뛰는 리듬이 생겼으니 비슷한 시간대의 러너와 묶어볼 만해요.",
+        en: "Outdoor exercise records are repeating. Your solo pace is set, so it makes sense to pair with runners on the same schedule."
+      },
+      signalLabel: {
+        ko: `러닝 스냅 ${runningRecords.length}회`,
+        en: `${runningRecords.length} running snaps`
+      },
       matchScore: 88,
-      cta: "러닝 친구 초대하기"
+      cta: { ko: "러닝 친구 초대하기", en: "Invite running friends" }
     });
   }
 
@@ -84,12 +92,17 @@ export function buildMeetSuggestions(records: MeetSignalRecord[]): MeetSuggestio
     suggestions.push({
       id: "library-study-meet",
       category: "study",
-      title: "도서관 9시 클럽 추천",
-      reason:
-        "도서관 공부 기록이 반복되고 있어요. 같은 장소에서 시작하는 친구가 있으면 출석 자체가 유인이 됩니다.",
-      signalLabel: `도서관 공부 ${libraryStudyRecords.length}회`,
+      title: { ko: "도서관 9시 클럽 추천", en: "Library 9 AM club suggestion" },
+      reason: {
+        ko: "도서관 공부 기록이 반복되고 있어요. 같은 장소에서 시작하는 친구가 있으면 출석 자체가 유인이 됩니다.",
+        en: "Library study records are repeating. A friend who starts in the same place makes showing up a motivation on its own."
+      },
+      signalLabel: {
+        ko: `도서관 공부 ${libraryStudyRecords.length}회`,
+        en: `${libraryStudyRecords.length} library sessions`
+      },
       matchScore: 82,
-      cta: "공부방 초대하기"
+      cta: { ko: "공부방 초대하기", en: "Invite to study room" }
     });
   }
 
@@ -97,12 +110,17 @@ export function buildMeetSuggestions(records: MeetSignalRecord[]): MeetSuggestio
     suggestions.push({
       id: "meal-balance-meet",
       category: "meal",
-      title: "가벼운 점심 챌린지 추천",
-      reason:
-        "식단 스냅이 쌓이고 있어요. 사진으로 식사 리듬을 공유하면 부담 없이 서로의 선택을 밀어줄 수 있어요.",
-      signalLabel: `식단 스냅 ${mealRecords.length}회`,
+      title: { ko: "가벼운 점심 챌린지 추천", en: "Light lunch challenge suggestion" },
+      reason: {
+        ko: "식단 스냅이 쌓이고 있어요. 사진으로 식사 리듬을 공유하면 부담 없이 서로의 선택을 밀어줄 수 있어요.",
+        en: "Meal snaps are stacking up. Sharing your eating rhythm by photo keeps the gentle nudge mutual."
+      },
+      signalLabel: {
+        ko: `식단 스냅 ${mealRecords.length}회`,
+        en: `${mealRecords.length} meal snaps`
+      },
       matchScore: 76,
-      cta: "식단 모임 만들기"
+      cta: { ko: "식단 모임 만들기", en: "Start meal meet" }
     });
   }
 
@@ -110,12 +128,14 @@ export function buildMeetSuggestions(records: MeetSignalRecord[]): MeetSuggestio
     suggestions.push({
       id: "starter-meet",
       category: "selfcare",
-      title: "작은 루틴 모임 추천",
-      reason:
-        "아직 강한 반복 신호는 없지만, 오늘 남긴 스냅 하나를 친구와 같이 시작하면 다음 기록이 쉬워져요.",
-      signalLabel: "시작 신호 탐색",
+      title: { ko: "작은 루틴 모임 추천", en: "Small routine meet suggestion" },
+      reason: {
+        ko: "아직 강한 반복 신호는 없지만, 오늘 남긴 스냅 하나를 친구와 같이 시작하면 다음 기록이 쉬워져요.",
+        en: "No strong repeat signal yet, but starting today's snap together with a friend makes the next entry easier."
+      },
+      signalLabel: { ko: "시작 신호 탐색", en: "Looking for first signal" },
       matchScore: 61,
-      cta: "친구 초대하기"
+      cta: { ko: "친구 초대하기", en: "Invite a friend" }
     });
   }
 
@@ -181,15 +201,21 @@ function isRunningRecord(record: MeetSignalRecord) {
 }
 
 export function buildMeetInvite(suggestion: MeetSuggestion): MeetInvite {
-  const roomTitle = suggestion.title.replace(/\s*추천$/, "");
+  const roomTitle: LocalizedString = {
+    ko: suggestion.title.ko.replace(/\s*추천$/, ""),
+    en: suggestion.title.en.replace(/\s+suggestion$/i, "")
+  };
 
   return {
-    status: "초대 링크 생성됨",
+    status: "created",
     suggestionId: suggestion.id,
     category: suggestion.category,
     roomTitle,
     inviteUrl: `https://persona-habit.app/invite/${suggestion.id}-${suggestion.matchScore}`,
-    description: "친구가 링크를 열면 모임 대기실로 들어오고, 첫 스냅을 남기면 공동 XP가 쌓여요.",
+    description: {
+      ko: "친구가 링크를 열면 모임 대기실로 들어오고, 첫 스냅을 남기면 공동 XP가 쌓여요.",
+      en: "Opening the link puts your friend in the meet lobby. Their first snap adds shared XP."
+    },
     previewMemberName: buildPreviewMemberName(suggestion.category),
     sharedXp: 40
   };
@@ -213,11 +239,17 @@ export function createMeetSession(invite: MeetInvite): MeetSession {
     members: [],
     firstSnapMission: {
       title: buildFirstSnapMissionTitle(invite.category),
-      description: `${invite.roomTitle}에 들어온 친구가 첫 생활 스냅을 남기면 공동 페르소나가 바로 성장해요.`,
+      description: {
+        ko: `${invite.roomTitle.ko}에 들어온 친구가 첫 생활 스냅을 남기면 공동 페르소나가 바로 성장해요.`,
+        en: `When a friend who joined ${invite.roomTitle.en} leaves their first snap, the shared persona grows right away.`
+      },
       rewardXp: 60,
       status: "waiting"
     },
-    groupPersona: buildGroupPersona(invite.category, 0, "아직 첫 스냅을 기다리고 있어요")
+    groupPersona: buildGroupPersona(invite.category, 0, {
+      ko: "아직 첫 스냅을 기다리고 있어요",
+      en: "Waiting for the first snap"
+    })
   };
 }
 
@@ -238,11 +270,10 @@ export function acceptMeetInvite(session: MeetSession, member: Omit<MeetMember, 
   return {
     ...session,
     members,
-    groupPersona: buildGroupPersona(
-      session.invite.category,
-      nextXp,
-      "새 친구가 들어와 첫 스냅을 준비하고 있어요"
-    )
+    groupPersona: buildGroupPersona(session.invite.category, nextXp, {
+      ko: "새 친구가 들어와 첫 스냅을 준비하고 있어요",
+      en: "A new friend just joined and is preparing the first snap"
+    })
   };
 }
 
@@ -263,49 +294,54 @@ export function completeMeetFirstSnapMission(session: MeetSession, memberId: str
       ...session.firstSnapMission,
       status: "completed" as const
     },
-    groupPersona: buildGroupPersona(
-      session.invite.category,
-      nextXp,
-      "첫 스냅을 같이 남기며 활력이 올라왔어요"
-    )
+    groupPersona: buildGroupPersona(session.invite.category, nextXp, {
+      ko: "첫 스냅을 같이 남기며 활력이 올라왔어요",
+      en: "Energy went up after leaving the first snap together"
+    })
   };
 }
 
-function buildPreviewMemberName(category: HabitCategory) {
+function buildPreviewMemberName(category: HabitCategory): LocalizedString {
   if (category === "exercise") {
-    return "예비 러너";
+    return { ko: "예비 러너", en: "Runner-to-be" };
   }
 
   if (category === "study") {
-    return "집중 메이트";
+    return { ko: "집중 메이트", en: "Focus mate" };
   }
 
   if (category === "meal") {
-    return "식단 메이트";
+    return { ko: "식단 메이트", en: "Meal mate" };
   }
 
-  return "루틴 메이트";
+  return { ko: "루틴 메이트", en: "Routine mate" };
 }
 
-function buildFirstSnapMissionTitle(category: HabitCategory) {
+function buildFirstSnapMissionTitle(category: HabitCategory): LocalizedString {
   if (category === "exercise") {
-    return "첫 러닝 스냅 미션";
+    return { ko: "첫 러닝 스냅 미션", en: "First running snap mission" };
   }
 
   if (category === "study") {
-    return "첫 공부 스냅 미션";
+    return { ko: "첫 공부 스냅 미션", en: "First study snap mission" };
   }
 
   if (category === "meal") {
-    return "첫 식단 스냅 미션";
+    return { ko: "첫 식단 스냅 미션", en: "First meal snap mission" };
   }
 
-  return "첫 생활 스냅 미션";
+  return { ko: "첫 생활 스냅 미션", en: "First life snap mission" };
 }
 
-function buildGroupPersona(category: HabitCategory, xp: number, mood: string): MeetGroupPersona {
+function buildGroupPersona(
+  category: HabitCategory,
+  xp: number,
+  mood: LocalizedString
+): MeetGroupPersona {
+  const label = getGroupPersonaLabel(category);
+
   return {
-    name: `공동 ${getGroupPersonaLabel(category)} 페르소나`,
+    name: { ko: `공동 ${label.ko} 페르소나`, en: `Shared ${label.en} persona` },
     xp,
     level: Math.floor(xp / 100) + 1,
     mood,
@@ -313,18 +349,18 @@ function buildGroupPersona(category: HabitCategory, xp: number, mood: string): M
   };
 }
 
-function getGroupPersonaLabel(category: HabitCategory) {
+function getGroupPersonaLabel(category: HabitCategory): LocalizedString {
   if (category === "exercise") {
-    return "러닝";
+    return { ko: "러닝", en: "running" };
   }
 
   if (category === "study") {
-    return "공부";
+    return { ko: "공부", en: "study" };
   }
 
   if (category === "meal") {
-    return "식단";
+    return { ko: "식단", en: "meal" };
   }
 
-  return "루틴";
+  return { ko: "루틴", en: "routine" };
 }
