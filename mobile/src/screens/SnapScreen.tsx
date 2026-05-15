@@ -1,4 +1,5 @@
-// 스냅 탭. 사진 선택 → 카테고리/장소/메모 → 저장하면 records 에 추가된다.
+// 스냅 탭. 사진 선택 → 카테고리/장소/메모/필터/스티커/도장 → 저장.
+// 이미지는 expo-file-system 으로 영구 디렉토리에 복사되어 앱 재시작 후에도 남는다.
 import { useState } from "react";
 import {
   Alert,
@@ -13,11 +14,16 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { Camera, Image as ImageIcon } from "lucide-react-native";
 
-import { categoryOptions, placeOptions } from "../data/personaCatalog";
+import {
+  categoryOptions,
+  filterOptions,
+  placeOptions,
+  stickerOptions
+} from "../data/personaCatalog";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
-import { localize } from "../lib/i18n";
+import { persistPickedImage } from "../lib/imagePersistence";
 import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
-import type { HabitCategory, PlaceType, SnapRecord } from "../types/habit";
+import type { HabitCategory, PlaceType, ProofStampId, SnapRecord } from "../types/habit";
 
 const placeLabelsKo: Record<PlaceType, string> = {
   home: "집",
@@ -30,13 +36,33 @@ const placeLabelsKo: Record<PlaceType, string> = {
   other: "기타"
 };
 
+const proofStampOptions: { id: ProofStampId; label: string }[] = [
+  { id: "time", label: "시간" },
+  { id: "count", label: "횟수" },
+  { id: "persona", label: "페르소나" }
+];
+
 export function SnapScreen() {
   const { addRecord } = useSnapRecords();
   const [pickedUri, setPickedUri] = useState<string | null>(null);
   const [category, setCategory] = useState<HabitCategory>("study");
   const [place, setPlace] = useState<PlaceType>("library");
   const [memo, setMemo] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState(filterOptions[0]);
+  const [selectedSticker, setSelectedSticker] = useState(stickerOptions[0]);
+  const [proofStamps, setProofStamps] = useState<ProofStampId[]>(["time", "persona"]);
   const [savedToast, setSavedToast] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  async function handlePickedImage(uri: string) {
+    setIsProcessing(true);
+    try {
+      const persisted = await persistPickedImage(uri);
+      setPickedUri(persisted);
+    } finally {
+      setIsProcessing(false);
+    }
+  }
 
   async function pickFromCamera() {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
@@ -51,7 +77,7 @@ export function SnapScreen() {
       aspect: [1, 1]
     });
     if (!result.canceled && result.assets[0]) {
-      setPickedUri(result.assets[0].uri);
+      await handlePickedImage(result.assets[0].uri);
     }
   }
 
@@ -68,8 +94,14 @@ export function SnapScreen() {
       aspect: [1, 1]
     });
     if (!result.canceled && result.assets[0]) {
-      setPickedUri(result.assets[0].uri);
+      await handlePickedImage(result.assets[0].uri);
     }
+  }
+
+  function toggleProofStamp(id: ProofStampId) {
+    setProofStamps((current) =>
+      current.includes(id) ? current.filter((existing) => existing !== id) : [...current, id]
+    );
   }
 
   function saveSnap() {
@@ -78,6 +110,9 @@ export function SnapScreen() {
       category,
       placeType: place,
       memo: memo.trim() || undefined,
+      filter: selectedFilter,
+      sticker: selectedSticker,
+      proofStamps,
       imageUrl: pickedUri ?? undefined,
       createdAt: new Date().toISOString()
     };
@@ -85,7 +120,7 @@ export function SnapScreen() {
     setPickedUri(null);
     setMemo("");
     setSavedToast("스냅이 저장됐어요. 페르소나가 자라요.");
-    setTimeout(() => setSavedToast(""), 2000);
+    setTimeout(() => setSavedToast(""), 2200);
   }
 
   return (
@@ -99,22 +134,79 @@ export function SnapScreen() {
         ) : (
           <View style={styles.previewPlaceholder}>
             <Text style={styles.previewPlaceholderTitle}>사진을 골라 시작해요</Text>
-            <Text style={styles.previewPlaceholderBody}>
-              카메라로 찍거나 사진첩에서 한 컷.
-            </Text>
+            <Text style={styles.previewPlaceholderBody}>카메라로 찍거나 사진첩에서 한 컷.</Text>
           </View>
         )}
+        {pickedUri ? (
+          <View style={styles.previewBadge}>
+            <Text style={styles.previewBadgeText}>{selectedSticker}</Text>
+          </View>
+        ) : null}
       </View>
 
       <View style={styles.actionRow}>
-        <Pressable style={[styles.actionButton, styles.actionPrimary]} onPress={pickFromCamera}>
+        <Pressable
+          style={[styles.actionButton, styles.actionPrimary]}
+          onPress={pickFromCamera}
+          disabled={isProcessing}
+        >
           <Camera size={18} color={colors.white} />
           <Text style={styles.actionPrimaryText}>카메라</Text>
         </Pressable>
-        <Pressable style={styles.actionButton} onPress={pickFromGallery}>
+        <Pressable style={styles.actionButton} onPress={pickFromGallery} disabled={isProcessing}>
           <ImageIcon size={18} color={colors.ink} />
           <Text style={styles.actionText}>사진첩</Text>
         </Pressable>
+      </View>
+      {isProcessing ? <Text style={styles.processingHint}>사진 정리 중...</Text> : null}
+
+      <Text style={styles.sectionTitle}>필터</Text>
+      <View style={styles.chipRow}>
+        {filterOptions.map((option) => (
+          <Pressable
+            key={option}
+            style={[styles.chip, selectedFilter === option && styles.chipActive]}
+            onPress={() => setSelectedFilter(option)}
+          >
+            <Text style={[styles.chipText, selectedFilter === option && styles.chipTextActive]}>
+              {option}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+
+      <Text style={styles.sectionTitle}>스티커</Text>
+      <View style={styles.chipRow}>
+        {stickerOptions.map((option) => (
+          <Pressable
+            key={option}
+            style={[styles.chip, selectedSticker === option && styles.chipActive]}
+            onPress={() => setSelectedSticker(option)}
+          >
+            <Text style={[styles.chipText, selectedSticker === option && styles.chipTextActive]}>
+              {option}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+
+      <Text style={styles.sectionTitle}>인증 도장</Text>
+      <View style={styles.chipRow}>
+        {proofStampOptions.map((option) => {
+          const active = proofStamps.includes(option.id);
+          return (
+            <Pressable
+              key={option.id}
+              style={[styles.chip, active && styles.chipActive]}
+              onPress={() => toggleProofStamp(option.id)}
+            >
+              <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                {active ? "✓ " : ""}
+                {option.label}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
 
       <Text style={styles.sectionTitle}>어떤 순간인가요?</Text>
@@ -158,10 +250,7 @@ export function SnapScreen() {
       />
 
       <Pressable
-        style={({ pressed }) => [
-          styles.saveButton,
-          pressed && styles.saveButtonPressed
-        ]}
+        style={({ pressed }) => [styles.saveButton, pressed && styles.saveButtonPressed]}
         onPress={saveSnap}
       >
         <Text style={styles.saveButtonText}>꾸며서 올리기</Text>
@@ -172,10 +261,6 @@ export function SnapScreen() {
           <Text style={styles.toastText}>{savedToast}</Text>
         </View>
       ) : null}
-
-      <Text style={styles.metaHint}>
-        선택한 카테고리: {categoryOptions.find((option) => option.id === category)?.label ?? ""} · 장소: {placeLabelsKo[place]}
-      </Text>
     </ScrollView>
   );
 }
@@ -199,7 +284,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: colors.white,
     borderWidth: 2,
-    borderColor: colors.ink
+    borderColor: colors.ink,
+    position: "relative"
   },
   previewImage: { width: "100%", height: "100%" },
   previewPlaceholder: {
@@ -210,7 +296,24 @@ const styles = StyleSheet.create({
     padding: spacing.xl
   },
   previewPlaceholderTitle: { color: colors.ink, fontWeight: "900", fontSize: 18 },
-  previewPlaceholderBody: { color: colors.muted, fontWeight: "700", fontSize: 13, textAlign: "center" },
+  previewPlaceholderBody: {
+    color: colors.muted,
+    fontWeight: "700",
+    fontSize: 13,
+    textAlign: "center"
+  },
+  previewBadge: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: radii.pill,
+    backgroundColor: "rgba(255, 255, 255, 0.94)",
+    borderWidth: 1,
+    borderColor: colors.ink
+  },
+  previewBadgeText: { color: colors.ink, fontWeight: "900", fontSize: 13 },
   actionRow: { flexDirection: "row", gap: 10 },
   actionButton: {
     flex: 1,
@@ -227,6 +330,7 @@ const styles = StyleSheet.create({
   actionPrimary: { backgroundColor: colors.ink, borderColor: colors.ink },
   actionText: { color: colors.ink, fontWeight: "900", fontSize: 14 },
   actionPrimaryText: { color: colors.white, fontWeight: "900", fontSize: 14 },
+  processingHint: { color: colors.muted, fontWeight: "700", fontSize: 12, marginTop: 4 },
   sectionTitle: { ...typography.h3, color: colors.ink, marginTop: spacing.sm },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   chip: {
@@ -270,6 +374,5 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#cce8d0"
   },
-  toastText: { color: colors.leaf, fontWeight: "900", fontSize: 13 },
-  metaHint: { color: colors.muted, fontWeight: "700", fontSize: 12, marginTop: 4 }
+  toastText: { color: colors.leaf, fontWeight: "900", fontSize: 13 }
 });
