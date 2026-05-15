@@ -439,7 +439,9 @@ export default function App() {
             onPersonaVoiceModeChange={updatePersonaVoiceMode}
           />
         )}
-        {activeTab === "meet" && <MeetView records={records} inviteToken={inviteToken} />}
+        {activeTab === "meet" && (
+          <MeetView locale={locale} records={records} inviteToken={inviteToken} />
+        )}
         {activeTab === "report" && (
           <ReportView locale={locale} records={records} personas={personas} insights={insights} />
         )}

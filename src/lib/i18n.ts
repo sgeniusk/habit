@@ -118,7 +118,49 @@ export type TranslationKey =
   | "home.evolutionPending"
   | "home.rewardAreaLabel"
   | "home.progressAreaLabel"
-  | "home.appliedDecorLabel";
+  | "home.appliedDecorLabel"
+  | "meet.title"
+  | "meet.eyebrow"
+  | "meet.iconAria"
+  | "meet.heroEyebrow"
+  | "meet.heroTitle"
+  | "meet.heroDescription"
+  | "meet.hiddenCountSuffix"
+  | "meet.restoreHidden"
+  | "meet.suggestionEyebrow"
+  | "meet.matchSuffix"
+  | "meet.feedbackAria"
+  | "meet.feedbackPin"
+  | "meet.feedbackLater"
+  | "meet.feedbackHide"
+  | "meet.allHiddenTitle"
+  | "meet.allHiddenBody"
+  | "meet.inviteRouteEyebrow"
+  | "meet.inviteRouteTitle"
+  | "meet.inviteRouteSubtitle"
+  | "meet.inviteRouteBody"
+  | "meet.inviteRouteAccept"
+  | "meet.inviteWaiting"
+  | "meet.inviteCompleted"
+  | "meet.sharedXpSuffix"
+  | "meet.inviteRoomEyebrow"
+  | "meet.inviteRoomSuffix"
+  | "meet.copyInvite"
+  | "meet.prepareShare"
+  | "meet.shareCopySuccess"
+  | "meet.shareCopyManual"
+  | "meet.shareMessageReady"
+  | "meet.memberSavedSuffix"
+  | "meet.groupPersonaAria"
+  | "meet.groupProgressAria"
+  | "meet.missionCompleted"
+  | "meet.missionWaiting"
+  | "meet.missionCompleteButton"
+  | "meet.previewAccept"
+  | "meet.feedbackPinMessage"
+  | "meet.feedbackLaterMessage"
+  | "meet.feedbackHideMessage"
+  | "meet.restoreFeedbackMessage";
 
 const translations: Record<Locale, Record<TranslationKey, string>> = {
   ko: {
@@ -235,7 +277,51 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "home.evolutionPending": "생활 스냅을 기다리는 중",
     "home.rewardAreaLabel": "성장 보상",
     "home.progressAreaLabel": "보상 진행률",
-    "home.appliedDecorLabel": "적용 중인 꾸미기"
+    "home.appliedDecorLabel": "적용 중인 꾸미기",
+    "meet.title": "모임",
+    "meet.eyebrow": "Together",
+    "meet.iconAria": "친구 초대",
+    "meet.heroEyebrow": "4명이 함께 성장 중",
+    "meet.heroTitle": "아침 루틴 모임",
+    "meet.heroDescription":
+      "공부, 식단, 러닝 스냅이 섞이며 공동 페르소나가 차분한 실행형으로 자라고 있어요.",
+    "meet.hiddenCountSuffix": "개",
+    "meet.restoreHidden": "숨긴 추천 다시 보기",
+    "meet.suggestionEyebrow": "AI 모임 제안",
+    "meet.matchSuffix": "맞음",
+    "meet.feedbackAria": "모임 추천 피드백",
+    "meet.feedbackPin": "추천 고정",
+    "meet.feedbackLater": "나중에 보기",
+    "meet.feedbackHide": "관심 없음",
+    "meet.allHiddenTitle": "추천을 모두 숨겼어요",
+    "meet.allHiddenBody": "지금은 모임 제안을 쉬고, 생활 스냅이 더 쌓이면 다시 열어볼 수 있어요.",
+    "meet.inviteRouteEyebrow": "Invite Link",
+    "meet.inviteRouteTitle": "초대 링크로 들어왔어요",
+    "meet.inviteRouteSubtitle": "초대",
+    "meet.inviteRouteBody":
+      "첫 생활 스냅을 남기면 공동 페르소나가 바로 자라요. 초대를 수락하면 모임 대기실에 들어갑니다.",
+    "meet.inviteRouteAccept": "초대 수락하고 시작하기",
+    "meet.inviteWaiting": "친구 1명 참여 대기",
+    "meet.inviteCompleted": "미션 완료",
+    "meet.sharedXpSuffix": "공동 XP",
+    "meet.inviteRoomEyebrow": "Invite Room",
+    "meet.inviteRoomSuffix": "대기실",
+    "meet.copyInvite": "초대 링크 복사",
+    "meet.prepareShare": "공유 문구 만들기",
+    "meet.shareCopySuccess": "링크 복사됨",
+    "meet.shareCopyManual": "링크를 길게 눌러 복사해요",
+    "meet.shareMessageReady": "공유 문구 준비됨",
+    "meet.memberSavedSuffix": "저장됨",
+    "meet.groupPersonaAria": "공동 페르소나 성장",
+    "meet.groupProgressAria": "공동 페르소나 진행률",
+    "meet.missionCompleted": "첫 스냅 완료",
+    "meet.missionWaiting": "대기 중",
+    "meet.missionCompleteButton": "완료하기",
+    "meet.previewAccept": "초대 수락 미리보기",
+    "meet.feedbackPinMessage": "고정했어요",
+    "meet.feedbackLaterMessage": "나중에 다시 볼게요",
+    "meet.feedbackHideMessage": "덜 보여줄게요",
+    "meet.restoreFeedbackMessage": "숨긴 추천을 다시 볼게요"
   },
   en: {
     "language.label": "Language",
@@ -351,7 +437,51 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "home.evolutionPending": "Waiting for daily snaps",
     "home.rewardAreaLabel": "Growth rewards",
     "home.progressAreaLabel": "Reward progress",
-    "home.appliedDecorLabel": "Applied decor"
+    "home.appliedDecorLabel": "Applied decor",
+    "meet.title": "Meet",
+    "meet.eyebrow": "Together",
+    "meet.iconAria": "Invite friends",
+    "meet.heroEyebrow": "4 people growing together",
+    "meet.heroTitle": "Morning routine meet",
+    "meet.heroDescription": "Study, meal, and running snaps mix into a calm shared persona.",
+    "meet.hiddenCountSuffix": "items",
+    "meet.restoreHidden": "Show hidden suggestions",
+    "meet.suggestionEyebrow": "AI meet suggestion",
+    "meet.matchSuffix": "match",
+    "meet.feedbackAria": "Meet suggestion feedback",
+    "meet.feedbackPin": "Pin suggestion",
+    "meet.feedbackLater": "Later",
+    "meet.feedbackHide": "Not interested",
+    "meet.allHiddenTitle": "All suggestions hidden",
+    "meet.allHiddenBody":
+      "Take a break from meet suggestions — they will return as you log more snaps.",
+    "meet.inviteRouteEyebrow": "Invite Link",
+    "meet.inviteRouteTitle": "Opened via invite link",
+    "meet.inviteRouteSubtitle": "invite",
+    "meet.inviteRouteBody":
+      "Your first snap grows the shared persona. Accept the invite to enter the meet lobby.",
+    "meet.inviteRouteAccept": "Accept invite and start",
+    "meet.inviteWaiting": "1 friend waiting",
+    "meet.inviteCompleted": "Mission complete",
+    "meet.sharedXpSuffix": "shared XP",
+    "meet.inviteRoomEyebrow": "Invite Room",
+    "meet.inviteRoomSuffix": "lobby",
+    "meet.copyInvite": "Copy invite link",
+    "meet.prepareShare": "Make share message",
+    "meet.shareCopySuccess": "Link copied",
+    "meet.shareCopyManual": "Long-press the link to copy",
+    "meet.shareMessageReady": "Share message ready",
+    "meet.memberSavedSuffix": "saved",
+    "meet.groupPersonaAria": "Shared persona growth",
+    "meet.groupProgressAria": "Shared persona progress",
+    "meet.missionCompleted": "First snap complete",
+    "meet.missionWaiting": "Waiting",
+    "meet.missionCompleteButton": "Complete",
+    "meet.previewAccept": "Preview invite accept",
+    "meet.feedbackPinMessage": "pinned",
+    "meet.feedbackLaterMessage": "saved for later",
+    "meet.feedbackHideMessage": "will be hidden",
+    "meet.restoreFeedbackMessage": "Showing hidden suggestions again"
   }
 };
 

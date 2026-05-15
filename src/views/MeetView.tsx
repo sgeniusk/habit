@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { RoomRow } from "../components/RoomRow";
+import { t } from "../lib/i18n";
 import {
   acceptMeetInvite,
   applyMeetSuggestionFeedback,
@@ -32,12 +33,14 @@ import {
   saveMeetSession,
   saveMeetSuggestionFeedback
 } from "../lib/persistence";
-import type { SnapRecord } from "../types/habit";
+import type { Locale, SnapRecord } from "../types/habit";
 
 export function MeetView({
+  locale,
   records,
   inviteToken = ""
 }: {
+  locale: Locale;
   records: SnapRecord[];
   inviteToken?: string;
 }) {
@@ -89,14 +92,14 @@ export function MeetView({
 
     try {
       await navigator.clipboard?.writeText?.(meetSession.invite.inviteUrl);
-      setShareStatus("링크 복사됨");
+      setShareStatus(t(locale, "meet.shareCopySuccess"));
     } catch {
-      setShareStatus("링크를 길게 눌러 복사해요");
+      setShareStatus(t(locale, "meet.shareCopyManual"));
     }
   }
 
   function prepareShareMessage() {
-    setShareStatus("공유 문구 준비됨");
+    setShareStatus(t(locale, "meet.shareMessageReady"));
   }
 
   function previewInviteAccept() {
@@ -143,31 +146,31 @@ export function MeetView({
     setSuggestionFeedback((current) =>
       upsertMeetSuggestionFeedback(current, topSuggestion.id, action)
     );
-    setSuggestionStatus(buildSuggestionFeedbackMessage(topSuggestion.title, action));
+    setSuggestionStatus(buildSuggestionFeedbackMessage(topSuggestion.title, action, locale));
   }
 
   function restoreHiddenSuggestions() {
     setSuggestionFeedback([]);
-    setSuggestionStatus("숨긴 추천을 다시 볼게요");
+    setSuggestionStatus(t(locale, "meet.restoreFeedbackMessage"));
   }
 
   return (
     <section className="screen rooms-screen" aria-labelledby="meet-title">
       <div className="top-strip">
         <div>
-          <p className="eyebrow">Together</p>
-          <h1 id="meet-title">모임</h1>
+          <p className="eyebrow">{t(locale, "meet.eyebrow")}</p>
+          <h1 id="meet-title">{t(locale, "meet.title")}</h1>
         </div>
-        <button type="button" className="icon-button" aria-label="친구 초대">
+        <button type="button" className="icon-button" aria-label={t(locale, "meet.iconAria")}>
           <Users size={20} aria-hidden="true" />
         </button>
       </div>
 
       <article className="room-hero">
         <div>
-          <p className="eyebrow">4명이 함께 성장 중</p>
-          <h2>아침 루틴 모임</h2>
-          <p>공부, 식단, 러닝 스냅이 섞이며 공동 페르소나가 차분한 실행형으로 자라고 있어요.</p>
+          <p className="eyebrow">{t(locale, "meet.heroEyebrow")}</p>
+          <h2>{t(locale, "meet.heroTitle")}</h2>
+          <p>{t(locale, "meet.heroDescription")}</p>
         </div>
         <PersonaAvatar tone="blue" accessory="group" />
       </article>
@@ -180,9 +183,9 @@ export function MeetView({
 
       {hiddenSuggestionCount > 0 ? (
         <div className="hidden-meet-panel">
-          <strong>숨긴 모임 추천 {hiddenSuggestionCount}개</strong>
+          <strong>{formatHiddenMeetCount(locale, hiddenSuggestionCount)}</strong>
           <button type="button" onClick={restoreHiddenSuggestions}>
-            숨긴 추천 다시 보기
+            {t(locale, "meet.restoreHidden")}
           </button>
         </div>
       ) : null}
@@ -198,24 +201,24 @@ export function MeetView({
               <Sparkles size={18} aria-hidden="true" />
             </span>
             <div>
-              <p className="eyebrow">AI 모임 제안</p>
+              <p className="eyebrow">{t(locale, "meet.suggestionEyebrow")}</p>
               <h2 id="meet-suggestion-title">{topSuggestion.title}</h2>
             </div>
           </div>
           <p>{topSuggestion.reason}</p>
           <div className="suggestion-signal-row">
             <span>{topSuggestion.signalLabel}</span>
-            <strong>{topSuggestion.matchScore}% 맞음</strong>
+            <strong>{`${topSuggestion.matchScore}% ${t(locale, "meet.matchSuffix")}`}</strong>
           </div>
-          <div className="suggestion-feedback-row" aria-label="모임 추천 피드백">
+          <div className="suggestion-feedback-row" aria-label={t(locale, "meet.feedbackAria")}>
             <button type="button" onClick={() => tuneSuggestionFeedback("pinned")}>
-              추천 고정
+              {t(locale, "meet.feedbackPin")}
             </button>
             <button type="button" onClick={() => tuneSuggestionFeedback("later")}>
-              나중에 보기
+              {t(locale, "meet.feedbackLater")}
             </button>
             <button type="button" onClick={() => tuneSuggestionFeedback("hidden")}>
-              관심 없음
+              {t(locale, "meet.feedbackHide")}
             </button>
           </div>
           <button type="button" className="invite-suggestion-button" onClick={createInvite}>
@@ -226,26 +229,23 @@ export function MeetView({
       ) : (
         <section className="meet-suggestion-card" aria-labelledby="hidden-all-meet-title">
           <div>
-            <p className="eyebrow">AI 모임 제안</p>
-            <h2 id="hidden-all-meet-title">추천을 모두 숨겼어요</h2>
+            <p className="eyebrow">{t(locale, "meet.suggestionEyebrow")}</p>
+            <h2 id="hidden-all-meet-title">{t(locale, "meet.allHiddenTitle")}</h2>
           </div>
-          <p>지금은 모임 제안을 쉬고, 생활 스냅이 더 쌓이면 다시 열어볼 수 있어요.</p>
+          <p>{t(locale, "meet.allHiddenBody")}</p>
         </section>
       )}
 
       {!meetSession && routeInviteSession ? (
         <section className="invite-accept-card" aria-labelledby="invite-accept-title">
           <div>
-            <p className="eyebrow">Invite Link</p>
-            <h2 id="invite-accept-title">초대 링크로 들어왔어요</h2>
+            <p className="eyebrow">{t(locale, "meet.inviteRouteEyebrow")}</p>
+            <h2 id="invite-accept-title">{t(locale, "meet.inviteRouteTitle")}</h2>
           </div>
-          <strong>{routeInviteSession.invite.roomTitle} 초대</strong>
-          <p>
-            첫 생활 스냅을 남기면 공동 페르소나가 바로 자라요. 초대를 수락하면 모임 대기실에
-            들어갑니다.
-          </p>
+          <strong>{`${routeInviteSession.invite.roomTitle} ${t(locale, "meet.inviteRouteSubtitle")}`}</strong>
+          <p>{t(locale, "meet.inviteRouteBody")}</p>
           <button type="button" onClick={acceptRouteInvite}>
-            초대 수락하고 시작하기
+            {t(locale, "meet.inviteRouteAccept")}
           </button>
         </section>
       ) : null}
@@ -256,27 +256,29 @@ export function MeetView({
             <span>
               <Link size={15} aria-hidden="true" />
               {waitingMember
-                ? "친구 1명 참여 대기"
+                ? t(locale, "meet.inviteWaiting")
                 : contributedMember
-                  ? "미션 완료"
+                  ? t(locale, "meet.inviteCompleted")
                   : meetSession.invite.status}
             </span>
-            {waitingMember ? <strong>+{meetSession.invite.sharedXp} 공동 XP</strong> : null}
+            {waitingMember ? (
+              <strong>{`+${meetSession.invite.sharedXp} ${t(locale, "meet.sharedXpSuffix")}`}</strong>
+            ) : null}
           </div>
           <div>
-            <p className="eyebrow">Invite Room</p>
-            <h2 id="meet-invite-title">{meetSession.invite.roomTitle} 대기실</h2>
+            <p className="eyebrow">{t(locale, "meet.inviteRoomEyebrow")}</p>
+            <h2 id="meet-invite-title">{`${meetSession.invite.roomTitle} ${t(locale, "meet.inviteRoomSuffix")}`}</h2>
           </div>
           <p>{meetSession.invite.description}</p>
           <code>{meetSession.invite.inviteUrl}</code>
           <div className="invite-action-row">
             <button type="button" onClick={copyInviteLink}>
               <Clipboard size={16} aria-hidden="true" />
-              초대 링크 복사
+              {t(locale, "meet.copyInvite")}
             </button>
             <button type="button" onClick={prepareShareMessage}>
               <Share2 size={16} aria-hidden="true" />
-              공유 문구 만들기
+              {t(locale, "meet.prepareShare")}
             </button>
           </div>
           {shareStatus ? <strong className="invite-share-status">{shareStatus}</strong> : null}
@@ -284,9 +286,12 @@ export function MeetView({
             <>
               <div className="invite-member-row">
                 <CheckCircle2 size={18} aria-hidden="true" />
-                <span>{(waitingMember ?? contributedMember)?.name} 저장됨</span>
+                <span>{`${(waitingMember ?? contributedMember)?.name} ${t(locale, "meet.memberSavedSuffix")}`}</span>
               </div>
-              <section className="group-persona-card" aria-label="공동 페르소나 성장">
+              <section
+                className="group-persona-card"
+                aria-label={t(locale, "meet.groupPersonaAria")}
+              >
                 <div>
                   <Trophy size={18} aria-hidden="true" />
                   <div>
@@ -297,7 +302,7 @@ export function MeetView({
                   </div>
                 </div>
                 <p>{meetSession.groupPersona.mood}</p>
-                <div className="progress-track" aria-label="공동 페르소나 진행률">
+                <div className="progress-track" aria-label={t(locale, "meet.groupProgressAria")}>
                   <span style={{ width: `${Math.max(meetSession.groupPersona.progress, 8)}%` }} />
                 </div>
               </section>
@@ -309,21 +314,21 @@ export function MeetView({
                   <strong>{meetSession.firstSnapMission.title}</strong>
                   <span>
                     {meetSession.firstSnapMission.status === "completed"
-                      ? "첫 스냅 완료"
-                      : "대기 중"}
+                      ? t(locale, "meet.missionCompleted")
+                      : t(locale, "meet.missionWaiting")}
                   </span>
                 </div>
                 <p>{meetSession.firstSnapMission.description}</p>
                 {meetSession.firstSnapMission.status === "waiting" ? (
                   <button type="button" onClick={completeFirstSnapMission}>
-                    +{meetSession.firstSnapMission.rewardXp}xp 완료하기
+                    {`+${meetSession.firstSnapMission.rewardXp}xp ${t(locale, "meet.missionCompleteButton")}`}
                   </button>
                 ) : null}
               </section>
             </>
           ) : (
             <button type="button" className="accept-preview-button" onClick={previewInviteAccept}>
-              초대 수락 미리보기
+              {t(locale, "meet.previewAccept")}
             </button>
           )}
         </section>
@@ -338,7 +343,29 @@ export function MeetView({
   );
 }
 
-function buildSuggestionFeedbackMessage(title: string, action: MeetSuggestionFeedbackAction) {
+function formatHiddenMeetCount(locale: Locale, count: number) {
+  if (locale === "en") {
+    return `${count} hidden suggestion${count === 1 ? "" : "s"}`;
+  }
+
+  return `숨긴 모임 추천 ${count}개`;
+}
+
+function buildSuggestionFeedbackMessage(
+  title: string,
+  action: MeetSuggestionFeedbackAction,
+  locale: Locale
+) {
+  if (locale === "en") {
+    if (action === "pinned") {
+      return `${title} pinned`;
+    }
+    if (action === "later") {
+      return `${title} saved for later`;
+    }
+    return `${title} will be hidden`;
+  }
+
   if (action === "pinned") {
     return `${title}을 고정했어요`;
   }
