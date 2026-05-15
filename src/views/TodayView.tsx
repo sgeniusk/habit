@@ -20,7 +20,7 @@ import {
 import { MetricTile } from "../components/MetricTile";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { RecordRow } from "../components/RecordRow";
-import { personaCatalog } from "../data/personaCatalog";
+import { findPersonaByCategory, personaCatalog } from "../data/personaCatalog";
 import {
   buildJournalDraft,
   buildJournalOpening,
@@ -38,6 +38,7 @@ import {
   type WeatherPermissionState,
   type WeatherSnapshot
 } from "../lib/weatherEngine";
+import { countConsecutiveSnapDays } from "../lib/streakEngine";
 import type { Locale, SnapRecord } from "../types/habit";
 
 const defaultWeatherAdapter = createAutoWeatherAdapter();
@@ -82,7 +83,11 @@ export function TodayView({
   onSnap: () => void;
   weatherAdapter?: WeatherAdapter;
 }) {
-  const featuredPersona = personaCatalog[0];
+  const featuredPersona = findPersonaByCategory(records[0]?.category ?? "study");
+  const streakDays = countConsecutiveSnapDays(records);
+  const featuredPlaceLabel = featuredPersona.place.split("·")[0].trim() || featuredPersona.place;
+  const featuredProgressPercent = Math.max(8, Math.min(98, (featuredPersona.level / 10) * 100));
+  const meetContributionXp = records.length * 4;
   const [journalMode, setJournalMode] = useState<JournalMode>("ai");
   const [journalLine, setJournalLine] = useState("");
   const [journalDrafts, setJournalDrafts] = useState<JournalDraft[]>([]);
@@ -158,7 +163,7 @@ export function TodayView({
         </div>
         <div className="streak-badge">
           <Check size={18} aria-hidden="true" />
-          <span>6일</span>
+          <span>{locale === "ko" ? `${streakDays}일` : `${streakDays}d`}</span>
         </div>
       </div>
 
@@ -271,13 +276,13 @@ export function TodayView({
       </section>
 
       <div className="hero-band outdoor-hero">
-        <PersonaAvatar tone={featuredPersona.tone} accessory="study" />
+        <PersonaAvatar tone={featuredPersona.tone} accessory={featuredPersona.accessory} />
         <div className="hero-copy">
-          <span className="status-pill">대표 페르소나 · 야외</span>
+          <span className="status-pill">{`대표 페르소나 · ${featuredPlaceLabel}`}</span>
           <h2>{featuredPersona.name}</h2>
-          <p>맑은 날씨라 산책 후 도서관으로 향하는 중이에요.</p>
+          <p>{featuredPersona.activity}.</p>
           <div className="progress-track" aria-label={`레벨 ${featuredPersona.level} 진행률`}>
-            <span style={{ width: "68%" }} />
+            <span style={{ width: `${featuredProgressPercent}%` }} />
           </div>
         </div>
       </div>
@@ -372,7 +377,7 @@ export function TodayView({
       <div className="daily-grid">
         <MetricTile label="오늘 스냅" value={`${todayCount}/3`} tone="leaf" />
         <MetricTile label="보유 페르소나" value={`${personaCatalog.length}`} tone="blue" />
-        <MetricTile label="모임 기여" value="+28xp" tone="coral" />
+        <MetricTile label="모임 기여" value={`+${meetContributionXp}xp`} tone="coral" />
       </div>
 
       <section className="insight-band" aria-labelledby="hidden-habit-title">
