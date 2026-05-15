@@ -90,7 +90,35 @@ export type TranslationKey =
   | "insight.confidenceHigh"
   | "insight.confidenceMedium"
   | "insight.confidenceLow"
-  | "insight.evidenceLabel";
+  | "insight.evidenceLabel"
+  | "home.title"
+  | "home.deckCountUnit"
+  | "home.activityEyebrow"
+  | "home.identityRowLabel"
+  | "home.nicknameSubtitle"
+  | "home.roleSubtitle"
+  | "home.nicknameField"
+  | "home.nicknamePlaceholder"
+  | "home.nextLevel"
+  | "home.evolutionLabel"
+  | "home.unlocks"
+  | "home.unlocksEmpty"
+  | "home.appliedDecor"
+  | "home.roomSubtitle"
+  | "home.outfitSubtitle"
+  | "home.roomDecor"
+  | "home.outfitDecor"
+  | "home.voiceTitle"
+  | "home.voiceCute"
+  | "home.voiceCuteDescription"
+  | "home.voiceCalm"
+  | "home.voiceCalmDescription"
+  | "home.personaList"
+  | "home.featuredPrefix"
+  | "home.evolutionPending"
+  | "home.rewardAreaLabel"
+  | "home.progressAreaLabel"
+  | "home.appliedDecorLabel";
 
 const translations: Record<Locale, Record<TranslationKey, string>> = {
   ko: {
@@ -179,7 +207,35 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "insight.confidenceHigh": "높음",
     "insight.confidenceMedium": "보통",
     "insight.confidenceLow": "낮음",
-    "insight.evidenceLabel": "근거"
+    "insight.evidenceLabel": "근거",
+    "home.title": "페르소나의 집",
+    "home.deckCountUnit": "종",
+    "home.activityEyebrow": "지금 하는 일",
+    "home.identityRowLabel": "페르소나 정체성",
+    "home.nicknameSubtitle": "애칭",
+    "home.roleSubtitle": "직업",
+    "home.nicknameField": "페르소나 애칭",
+    "home.nicknamePlaceholder": "예: 곰곰",
+    "home.nextLevel": "다음 레벨까지",
+    "home.evolutionLabel": "진화",
+    "home.unlocks": "해금된 보상",
+    "home.unlocksEmpty": "첫 스냅 보상 대기",
+    "home.appliedDecor": "적용 중인 꾸미기",
+    "home.roomSubtitle": "방",
+    "home.outfitSubtitle": "의상",
+    "home.roomDecor": "방 꾸미기",
+    "home.outfitDecor": "페르소나 꾸미기",
+    "home.voiceTitle": "말투/테마",
+    "home.voiceCute": "귀여운 톤",
+    "home.voiceCuteDescription": "장난스럽고 응원하는 말투",
+    "home.voiceCalm": "차분한 톤",
+    "home.voiceCalmDescription": "담백하고 기록 중심 말투",
+    "home.personaList": "보유 페르소나",
+    "home.featuredPrefix": "대표",
+    "home.evolutionPending": "생활 스냅을 기다리는 중",
+    "home.rewardAreaLabel": "성장 보상",
+    "home.progressAreaLabel": "보상 진행률",
+    "home.appliedDecorLabel": "적용 중인 꾸미기"
   },
   en: {
     "language.label": "Language",
@@ -267,7 +323,35 @@ const translations: Record<Locale, Record<TranslationKey, string>> = {
     "insight.confidenceHigh": "High",
     "insight.confidenceMedium": "Medium",
     "insight.confidenceLow": "Low",
-    "insight.evidenceLabel": "Evidence"
+    "insight.evidenceLabel": "Evidence",
+    "home.title": "Persona home",
+    "home.deckCountUnit": "personas",
+    "home.activityEyebrow": "Now doing",
+    "home.identityRowLabel": "Persona identity",
+    "home.nicknameSubtitle": "Nickname",
+    "home.roleSubtitle": "Role",
+    "home.nicknameField": "Persona nickname",
+    "home.nicknamePlaceholder": "e.g. Curly",
+    "home.nextLevel": "Until next level",
+    "home.evolutionLabel": "Evolution",
+    "home.unlocks": "Unlocked rewards",
+    "home.unlocksEmpty": "Waiting for first snap reward",
+    "home.appliedDecor": "Applied decor",
+    "home.roomSubtitle": "Room",
+    "home.outfitSubtitle": "Outfit",
+    "home.roomDecor": "Room decor",
+    "home.outfitDecor": "Persona decor",
+    "home.voiceTitle": "Voice / theme",
+    "home.voiceCute": "Cute tone",
+    "home.voiceCuteDescription": "Playful and cheering voice",
+    "home.voiceCalm": "Calm tone",
+    "home.voiceCalmDescription": "Reserved and record-led voice",
+    "home.personaList": "Owned personas",
+    "home.featuredPrefix": "Featured",
+    "home.evolutionPending": "Waiting for daily snaps",
+    "home.rewardAreaLabel": "Growth rewards",
+    "home.progressAreaLabel": "Reward progress",
+    "home.appliedDecorLabel": "Applied decor"
   }
 };
 

@@ -1,16 +1,30 @@
 import { Shirt, SlidersHorizontal, Sofa } from "lucide-react";
 import { PersonaAvatar } from "../components/PersonaAvatar";
 import { outfitItems, roomItems } from "../data/personaCatalog";
+import { t, type TranslationKey } from "../lib/i18n";
 import { buildPersonaCompanionLine, buildPersonaIdentity } from "../lib/personaIdentity";
 import type { PersonaSummary } from "../lib/personaEngine";
-import type { PersonaCard, PersonaVoiceMode } from "../types/habit";
+import type { Locale, PersonaCard, PersonaVoiceMode } from "../types/habit";
 
-const voiceModeOptions: { id: PersonaVoiceMode; label: string; description: string }[] = [
-  { id: "cute", label: "귀여운 톤", description: "장난스럽고 응원하는 말투" },
-  { id: "calm", label: "차분한 톤", description: "담백하고 기록 중심 말투" }
+const voiceModeOptions: {
+  id: PersonaVoiceMode;
+  labelKey: TranslationKey;
+  descriptionKey: TranslationKey;
+}[] = [
+  {
+    id: "cute",
+    labelKey: "home.voiceCute",
+    descriptionKey: "home.voiceCuteDescription"
+  },
+  {
+    id: "calm",
+    labelKey: "home.voiceCalm",
+    descriptionKey: "home.voiceCalmDescription"
+  }
 ];
 
 export function HomeView({
+  locale,
   personas,
   personaSummaries,
   activePersona,
@@ -23,6 +37,7 @@ export function HomeView({
   onPersonaNicknameChange,
   onPersonaVoiceModeChange
 }: {
+  locale: Locale;
   personas: PersonaCard[];
   personaSummaries: PersonaSummary[];
   activePersona: PersonaCard;
@@ -65,9 +80,9 @@ export function HomeView({
       <div className="top-strip">
         <div>
           <p className="eyebrow">Home</p>
-          <h1 id="home-title">페르소나의 집</h1>
+          <h1 id="home-title">{t(locale, "home.title")}</h1>
         </div>
-        <span className="deck-count">{personas.length}종</span>
+        <span className="deck-count">{`${personas.length}${t(locale, "home.deckCountUnit")}`}</span>
       </div>
 
       <section className="home-stage" aria-label={activePersona.name}>
@@ -80,57 +95,60 @@ export function HomeView({
           <PersonaAvatar tone={activePersona.tone} accessory={activePersona.accessory} />
         </div>
         <div className="activity-panel">
-          <p className="eyebrow">지금 하는 일</p>
+          <p className="eyebrow">{t(locale, "home.activityEyebrow")}</p>
           <h2 id="activity-title">{activePersona.name}</h2>
           <strong className="nickname-title">{personaIdentity.displayName}</strong>
-          <div className="persona-identity-row" aria-label="페르소나 정체성">
-            <span>애칭 · {personaIdentity.displayName}</span>
-            <span>직업 · {personaIdentity.roleLabel}</span>
+          <div className="persona-identity-row" aria-label={t(locale, "home.identityRowLabel")}>
+            <span>{`${t(locale, "home.nicknameSubtitle")} · ${personaIdentity.displayName}`}</span>
+            <span>{`${t(locale, "home.roleSubtitle")} · ${personaIdentity.roleLabel}`}</span>
           </div>
           <label className="nickname-field">
-            <span>페르소나 애칭</span>
+            <span>{t(locale, "home.nicknameField")}</span>
             <input
-              aria-label="페르소나 애칭"
+              aria-label={t(locale, "home.nicknameField")}
               value={personaNickname}
               onChange={(event) => onPersonaNicknameChange(event.target.value)}
-              placeholder="예: 곰곰"
+              placeholder={t(locale, "home.nicknamePlaceholder")}
             />
           </label>
           <p className="persona-talk">{companionLine}</p>
           <p>{activePersona.activity}</p>
-          <div className="reward-meter" aria-label={`${activePersona.name} 성장 보상`}>
+          <div
+            className="reward-meter"
+            aria-label={`${activePersona.name} ${t(locale, "home.rewardAreaLabel")}`}
+          >
             <div>
               <strong>
                 Lv.{activeLevel} · {activeXp}xp
               </strong>
-              <span>다음 레벨까지 {nextLevelXp}xp</span>
+              <span>{`${t(locale, "home.nextLevel")} ${nextLevelXp}xp`}</span>
             </div>
             <div
               className="progress-track"
-              aria-label={`${activePersona.name} 보상 진행률 ${activeProgress}%`}
+              aria-label={`${activePersona.name} ${t(locale, "home.progressAreaLabel")} ${activeProgress}%`}
             >
               <span style={{ width: `${activeProgress}%` }} />
             </div>
           </div>
-          <strong className="evolution-badge">진화 · {personaIdentity.upgradeLabel}</strong>
+          <strong className="evolution-badge">{`${t(locale, "home.evolutionLabel")} · ${personaIdentity.upgradeLabel}`}</strong>
           <div className="trait-row">
             {(activeSummary?.traits ?? activePersona.tags).slice(0, 4).map((tag) => (
               <span key={tag}>{tag}</span>
             ))}
           </div>
           <div className="reward-unlocks" aria-labelledby="home-unlocks-title">
-            <h3 id="home-unlocks-title">해금된 보상</h3>
+            <h3 id="home-unlocks-title">{t(locale, "home.unlocks")}</h3>
             <div className="item-row">
               {unlockedRewards.length > 0 ? (
                 unlockedRewards.map((item) => <small key={item}>{item}</small>)
               ) : (
-                <small>첫 스냅 보상 대기</small>
+                <small>{t(locale, "home.unlocksEmpty")}</small>
               )}
             </div>
           </div>
-          <div className="decor-applied-row" aria-label="적용 중인 꾸미기">
-            <span>방 · {selectedRoomItem}</span>
-            <span>의상 · {selectedOutfitItem}</span>
+          <div className="decor-applied-row" aria-label={t(locale, "home.appliedDecorLabel")}>
+            <span>{`${t(locale, "home.roomSubtitle")} · ${selectedRoomItem}`}</span>
+            <span>{`${t(locale, "home.outfitSubtitle")} · ${selectedOutfitItem}`}</span>
           </div>
         </div>
       </section>
@@ -139,7 +157,7 @@ export function HomeView({
         <section className="decor-card" aria-labelledby="room-decor-title">
           <div>
             <Sofa size={20} aria-hidden="true" />
-            <h2 id="room-decor-title">방 꾸미기</h2>
+            <h2 id="room-decor-title">{t(locale, "home.roomDecor")}</h2>
           </div>
           <div className="item-row">
             {roomItems.map((item) => (
@@ -158,7 +176,7 @@ export function HomeView({
         <section className="decor-card" aria-labelledby="persona-decor-title">
           <div>
             <Shirt size={20} aria-hidden="true" />
-            <h2 id="persona-decor-title">페르소나 꾸미기</h2>
+            <h2 id="persona-decor-title">{t(locale, "home.outfitDecor")}</h2>
           </div>
           <div className="item-row">
             {outfitItems.map((item) => (
@@ -179,30 +197,34 @@ export function HomeView({
         <section className="decor-card voice-card" aria-labelledby="persona-voice-title">
           <div>
             <SlidersHorizontal size={20} aria-hidden="true" />
-            <h2 id="persona-voice-title">말투/테마</h2>
+            <h2 id="persona-voice-title">{t(locale, "home.voiceTitle")}</h2>
           </div>
           <div className="voice-option-row">
-            {voiceModeOptions.map((option) => (
-              <button
-                key={option.id}
-                type="button"
-                className={
-                  personaVoiceMode === option.id ? "voice-option is-selected" : "voice-option"
-                }
-                aria-label={option.label}
-                aria-pressed={personaVoiceMode === option.id}
-                onClick={() => onPersonaVoiceModeChange(option.id)}
-              >
-                <strong>{option.label}</strong>
-                <small>{option.description}</small>
-              </button>
-            ))}
+            {voiceModeOptions.map((option) => {
+              const label = t(locale, option.labelKey);
+              const description = t(locale, option.descriptionKey);
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  className={
+                    personaVoiceMode === option.id ? "voice-option is-selected" : "voice-option"
+                  }
+                  aria-label={label}
+                  aria-pressed={personaVoiceMode === option.id}
+                  onClick={() => onPersonaVoiceModeChange(option.id)}
+                >
+                  <strong>{label}</strong>
+                  <small>{description}</small>
+                </button>
+              );
+            })}
           </div>
         </section>
       </div>
 
       <section className="choice-section" aria-labelledby="persona-list-title">
-        <h2 id="persona-list-title">보유 페르소나</h2>
+        <h2 id="persona-list-title">{t(locale, "home.personaList")}</h2>
         <div className="persona-list">
           {personas.map((persona) => {
             const summary = getSummaryForPersona(persona);
@@ -215,11 +237,13 @@ export function HomeView({
                 <div className="persona-detail">
                   <div className="persona-heading">
                     <h3>
-                      {persona.id === activePersona.id ? `대표 · ${persona.name}` : persona.name}
+                      {persona.id === activePersona.id
+                        ? `${t(locale, "home.featuredPrefix")} · ${persona.name}`
+                        : persona.name}
                     </h3>
                     <span>Lv.{level}</span>
                   </div>
-                  <p>{summary?.evolution ?? "생활 스냅을 기다리는 중"}</p>
+                  <p>{summary?.evolution ?? t(locale, "home.evolutionPending")}</p>
                   <div className="persona-xp-row">
                     <span>{xp}xp</span>
                     <span>{summary?.unlockedItems.length ?? 0}개 해금</span>

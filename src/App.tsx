@@ -423,6 +423,7 @@ export default function App() {
         )}
         {activeTab === "home" && (
           <HomeView
+            locale={locale}
             personas={personaCatalog}
             personaSummaries={personas}
             activePersona={activeHomePersona}
