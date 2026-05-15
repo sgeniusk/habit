@@ -15,6 +15,7 @@ import {
   normalizeLocale,
   t
 } from "./lib/i18n";
+import { getWebShareAdapter, type ShareAdapter } from "./lib/adapters/share";
 import { sanitizeImageFile } from "./lib/imageSanitizer";
 import {
   loadOnboardingDismissed,
@@ -28,6 +29,8 @@ import {
 import { buildPersonaIdentity, defaultPersonaNicknames } from "./lib/personaIdentity";
 import { buildPersonaSummaries, findHiddenHabitInsights } from "./lib/personaEngine";
 import { buildSnapExportFilename, createSnapExportBlob, downloadSnapBlob } from "./lib/snapExport";
+
+const defaultShareAdapter: ShareAdapter = getWebShareAdapter(downloadSnapBlob);
 import type {
   HabitCategory,
   Locale,
@@ -226,7 +229,13 @@ export default function App() {
         locale
       });
 
-      downloadSnapBlob(blob, buildSnapExportFilename(photoName || "snap"));
+      const filename = buildSnapExportFilename(photoName || "snap");
+      await defaultShareAdapter.shareSnap({
+        blob,
+        filename,
+        title: t(locale, "snap.title"),
+        text: memo || photoName
+      });
       setShareStatus(t(locale, "snap.shareReady"));
     } catch {
       setShareStatus("");
