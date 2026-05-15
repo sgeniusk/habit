@@ -68,6 +68,8 @@ describe("persistence", () => {
     const storage = createMemoryStorage();
 
     expect(loadOnboardingDismissed(storage)).toBe(false);
+    storage.setItem("persona-habit:onboarding-dismissed", "true");
+    expect(loadOnboardingDismissed(storage)).toBe(false);
 
     saveOnboardingDismissed(true, storage);
 

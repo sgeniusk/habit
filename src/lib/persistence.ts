@@ -6,7 +6,7 @@ export const MEET_SUGGESTION_FEEDBACK_STORAGE_KEY = "persona-habit:meet-suggesti
 export const INSIGHT_FEEDBACK_STORAGE_KEY = "persona-habit:insight-feedback";
 export const SNAP_RECORDS_STORAGE_KEY = "persona-habit:snap-records";
 export const USER_PREFERENCES_STORAGE_KEY = "persona-habit:user-preferences";
-export const ONBOARDING_DISMISSED_STORAGE_KEY = "persona-habit:onboarding-dismissed";
+export const ONBOARDING_DISMISSED_STORAGE_KEY = "persona-habit:onboarding-guide-v2-dismissed";
 
 export type InsightFeedbackState = {
   hiddenInsightTitles: string[];
