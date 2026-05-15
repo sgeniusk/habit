@@ -15,8 +15,8 @@ import {
   normalizeLocale,
   t
 } from "./lib/i18n";
+import { getWebImagePickerAdapter, type ImagePickerAdapter } from "./lib/adapters/imagePicker";
 import { getWebShareAdapter, type ShareAdapter } from "./lib/adapters/share";
-import { sanitizeImageFile } from "./lib/imageSanitizer";
 import {
   loadOnboardingDismissed,
   loadSnapRecords,
@@ -29,8 +29,6 @@ import {
 import { buildPersonaIdentity, defaultPersonaNicknames } from "./lib/personaIdentity";
 import { buildPersonaSummaries, findHiddenHabitInsights } from "./lib/personaEngine";
 import { buildSnapExportFilename, createSnapExportBlob, downloadSnapBlob } from "./lib/snapExport";
-
-const defaultShareAdapter: ShareAdapter = getWebShareAdapter(downloadSnapBlob);
 import type {
   HabitCategory,
   Locale,
@@ -48,6 +46,9 @@ import { MeetView } from "./views/MeetView";
 import { ReportView } from "./views/ReportView";
 import { SnapView } from "./views/SnapView";
 import { TodayView } from "./views/TodayView";
+
+const defaultShareAdapter: ShareAdapter = getWebShareAdapter(downloadSnapBlob);
+const defaultImagePicker: ImagePickerAdapter = getWebImagePickerAdapter();
 
 const defaultDecorSelections = Object.fromEntries(
   personaCatalog.map((persona) => [
@@ -179,7 +180,7 @@ export default function App() {
 
     setSavedFeedbackVisible(false);
 
-    if (!file.type.startsWith("image/")) {
+    if (!defaultImagePicker.isImageMimeType(file.type)) {
       setPhotoPreviewUrl("");
       setPhotoName("");
       setPhotoError(t(locale, "snap.imageOnlyError"));
@@ -191,8 +192,8 @@ export default function App() {
     setPhotoName(file.name);
 
     try {
-      const sanitizedDataUrl = await sanitizeImageFile(file);
-      setPhotoPreviewUrl(sanitizedDataUrl);
+      const picked = await defaultImagePicker.processFile(file);
+      setPhotoPreviewUrl(picked.dataUrl);
       setPhotoError("");
       setShareStatus("");
       setShareError("");
