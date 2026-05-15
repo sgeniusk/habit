@@ -76,7 +76,7 @@ Updated: 2026-05-15
 - [x] ImagePickerAdapter — 사진 입력 처리를 sanitizeImageFile 위의 얇은 래퍼로 분리. RN 은 expo-image-picker 로 같은 인터페이스 만족.
 - [x] SnapRenderer — PNG export 와 다운로드 트리거 분리. RenderedSnap 한 호출로 blob + filename 반환. RN 은 expo-image-manipulator 또는 react-native-skia 로 매핑.
 
-### 묶음 3 — UX 마감 묶음 (대부분 완료)
+### 묶음 3 — UX 마감 묶음 (완료)
 
 - [x] `HabitInsight.confidence` 를 영어 enum (high/medium/low) 으로 바꾸고 `insight.evidenceLabel` 키 추가. ReportView 가 locale 별 라벨로 변환.
 - [x] TodayView 의 streak 6일 / hero 활동 문구 / 진행률 / +28xp 모임 기여 하드코딩을 records 기반 derived 값으로 교체. `countConsecutiveSnapDays` 헬퍼 추가.
@@ -84,11 +84,23 @@ Updated: 2026-05-15
 - [x] MeetView 의 한국어 하드코딩 약 30곳을 `meet.*` 키로 분리. feedback/hidden count 헬퍼가 locale 별 자연어 분기.
 - [x] TodayView 의 잔여 한국어 라벨 (저널 모드/메트릭/AI Insight 영역) 을 `today.*` 키로 분리.
 - [x] ReportView 의 잔여 한국어 라벨 (7일 요약/오래된 기억/메모리 필터) 을 `report.*` 키로 분리. softenInsightBody 와 formatMemoryFilterLabel 헬퍼가 locale 별 분기.
-- [ ] PersonaCard.name/activity/place 등 personaCatalog 의 한국어 데이터 분리.
-- [ ] socialEngine 의 모임 제안 title/description/group persona/mission 한국어 데이터 분리.
-- [ ] journalEngine / personaIdentity / memoryEngine 의 한국어 데이터 분리.
-- [ ] App.tsx 의 18개 useState 를 `useSnapForm` / `useUserPreferences` 등 hook 으로 분리 (출시 마감과 직접 관련 없는 내부 정리).
+- [x] PersonaCard.name/activity/place 를 LocalizedString 으로 마이그레이션 + localize 헬퍼 도입.
+- [x] socialEngine 의 MeetSuggestion / Invite / GroupPersona / Mission / Member 한국어 데이터를 LocalizedString 으로 마이그레이션, status 한국어 literal 을 created enum 으로 좁힘.
+- [x] journalEngine / personaIdentity / memoryEngine 의 자연어 출력을 locale 분기로 처리.
+- 보류 (네이티브 전환 시 어차피 재작성) — App.tsx 의 18개 useState hook 분리. M4 화면 RN 포팅 시 같이 정리.
 
-### 묶음 4 ~ 6 — 사용자 결정 대기
+### 묶음 4 — 출시 심사 헤더 (부분 완료)
 
-심사(CSP/처리방침)/백엔드(Supabase)/모니터링(Sentry/PostHog/Expo Notifications) 은 외부 서비스 결정 후 진행한다.
+- [x] vercel.json 에 CSP / X-Content-Type-Options / X-Frame-Options / Referrer-Policy / Permissions-Policy / HSTS 헤더 추가.
+- [ ] 개인정보 처리방침과 이용약관 정적 페이지 작성 (변호사 검토 권장).
+- [ ] iOS/Android `Usage Description` 문구 (NSCameraUsageDescription, NSLocationWhenInUseUsageDescription, NSPhotoLibraryUsageDescription) 초안.
+- [ ] App Store / Google Play Privacy Data Collection 라벨 초안.
+
+### 사용자 인터뷰 키트 (완료)
+
+- [x] [docs/research/2026-05-15-first-flow-interview-kit.md](../research/2026-05-15-first-flow-interview-kit.md) — 모집 기준, 6 단계 인터뷰 흐름, 피드백 시트 양식, 결과 종합 보고 템플릿.
+
+### 묶음 5 ~ 6 — 외부 서비스 결정 대기
+
+- 백엔드: Supabase Auth + Postgres + Storage. RLS 정책.
+- 모니터링/알림: Sentry + 소스맵 업로드, PostHog 이벤트 3 종, Expo Notifications + Edge Function 으로 모임 미션 리마인드.
