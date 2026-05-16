@@ -1,6 +1,8 @@
-# Persona Habit Prototype
+# Formi
 
-생활 스냅을 찍으면 귀여운 페르소나가 성장하고, AI가 내가 모르는 생활 습관까지 발견해 건강한 루틴으로 바꿔주는 앱 프로토타입입니다.
+**Formi** (form + me). 정체성 없는 말랑한 자아가 생활 기록을 통해 형태를 얻어 가는 앱입니다. 생활 스냅을 찍으면 페르소나가 성장하고, AI가 내가 모르는 생활 습관까지 발견해 건강한 루틴으로 바꿔줍니다.
+
+이전 작업명은 Persona Habit 이며 일부 문서에 아직 남아 있습니다.
 
 ## Concept
 
@@ -9,9 +11,15 @@
 - 대표 페르소나의 집, 방 꾸미기, 페르소나 꾸미기, 친구 모임 소셜 루프를 포함합니다.
 - 7일 리포트에서 AI가 장소, 시간, 카테고리 패턴을 분석해 숨은 습관과 건강한 다음 행동을 제안합니다.
 
-## Prototype
+## 저장소 구조
 
-현재 버전은 iOS/Android 앱 출시 전 제품 흐름을 검증하기 위한 모바일 웹 프로토타입입니다.
+- 루트 — iOS/Android 출시 전 제품 흐름을 검증한 모바일 웹 프로토타입 (Vite + React).
+- `mobile/` — Expo (SDK 54) 기반 iOS/Android 네이티브 앱. 현재 활성 개발 대상. 실행법은 [mobile/README.md](mobile/README.md).
+- 도메인 로직 (`src/lib/*` 의 persona/journal/social/memory/weather 등) 은 웹과 네이티브가 공유합니다.
+
+## Prototype (웹)
+
+웹 버전은 iOS/Android 앱 출시 전 제품 흐름을 검증한 모바일 웹 프로토타입입니다.
 
 - Vite
 - React

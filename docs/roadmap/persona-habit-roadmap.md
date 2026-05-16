@@ -1,6 +1,8 @@
-# Persona Habit Roadmap
+# Formi (Persona Habit) Roadmap
 
-Updated: 2026-05-15
+Updated: 2026-05-16
+
+> 제품명이 **Formi** (form + me) 로 확정되었다. "Persona Habit" 은 이전 작업명이며 이 문서 본문에는 아직 남아 있다. iOS/Android 네이티브 앱은 `mobile/` 의 Expo (SDK 54) 프로젝트에서 개발 중이며, 5 화면 포팅 + 카메라/사진/날씨/영속화까지 동작한다.
 
 ## 현재 상태 점검
 
