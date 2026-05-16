@@ -174,7 +174,7 @@ export function HomeScreen() {
             />
           ) : null}
           <View style={styles.roomCharacter}>
-            <FormiAvatar category={activePersona.category} level={activeLevel} size={120} />
+            <FormiAvatar category={activePersona.category} level={activeLevel} size={132} />
           </View>
         </View>
 
@@ -385,7 +385,8 @@ const styles = StyleSheet.create({
   chipText: { color: colors.ink, fontWeight: "800", fontSize: 13 },
   chipTextActive: { color: colors.leaf },
   roomPreview: {
-    height: 220,
+    aspectRatio: 1,
+    width: "100%",
     borderRadius: radii.md,
     overflow: "hidden",
     backgroundColor: colors.background,
@@ -395,23 +396,23 @@ const styles = StyleSheet.create({
   },
   roomCharacter: {
     position: "absolute",
-    bottom: 14,
+    bottom: "8%",
     left: "50%",
-    marginLeft: -60,
-    width: 120,
+    marginLeft: -66,
+    width: 132,
     alignItems: "center"
   },
   decorRug: {
     position: "absolute",
-    bottom: 8,
+    bottom: "5%",
     left: "50%",
-    marginLeft: -82,
-    width: 164,
-    height: 62
+    marginLeft: -94,
+    width: 188,
+    height: 70
   },
-  decorShelf: { position: "absolute", bottom: 18, left: 12, width: 80, height: 98 },
-  decorLamp: { position: "absolute", bottom: 20, right: 12, width: 46, height: 110 },
-  decorPlant: { position: "absolute", bottom: 10, right: 44, width: 54, height: 82 },
+  decorShelf: { position: "absolute", bottom: "10%", left: "5%", width: 96, height: 116 },
+  decorLamp: { position: "absolute", bottom: "11%", right: "5%", width: 56, height: 132 },
+  decorPlant: { position: "absolute", bottom: "5%", right: "17%", width: 62, height: 92 },
   roomPickerLabel: {
     color: colors.muted,
     fontWeight: "800",

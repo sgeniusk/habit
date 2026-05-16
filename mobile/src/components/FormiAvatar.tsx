@@ -1,4 +1,4 @@
-// Formi 캐릭터 아바타. 카테고리 + 레벨로 알맞은 PNG 를 고르고 살아있는 듯한 idle 애니메이션을 준다.
+// Formi 캐릭터 아바타. 카테고리 + 레벨로 PNG 를 고르고, 블롭답게 스쿼시·스트레치 바운스를 준다.
 import { useEffect } from "react";
 import Animated, {
   Easing,
@@ -25,48 +25,48 @@ export function FormiAvatar({
   size = 120,
   breathing = true
 }: FormiAvatarProps) {
-  const scale = useSharedValue(1);
-  const offsetY = useSharedValue(0);
-  const tilt = useSharedValue(0);
+  // lift: 0 바닥 ~ 1 정점. stretch: 음수 납작 ~ 양수 길쭉.
+  const lift = useSharedValue(0);
+  const stretch = useSharedValue(0);
 
   useEffect(() => {
     if (!breathing) {
-      scale.value = 1;
-      offsetY.value = 0;
-      tilt.value = 0;
+      lift.value = 0;
+      stretch.value = 0;
       return;
     }
-    // 숨쉬기 (위아래로 살짝 부풀기)
-    scale.value = withRepeat(
+    // 한 바퀴 2.0초: 웅크림 → 점프 → 정점 → 낙하 → 착지 → 회복 → 휴식
+    lift.value = withRepeat(
       withSequence(
-        withTiming(1.045, { duration: 1700, easing: Easing.inOut(Easing.ease) }),
-        withTiming(1, { duration: 1700, easing: Easing.inOut(Easing.ease) })
+        withTiming(0, { duration: 170 }),
+        withTiming(1, { duration: 330, easing: Easing.out(Easing.quad) }),
+        withTiming(1, { duration: 170 }),
+        withTiming(0, { duration: 300, easing: Easing.in(Easing.quad) }),
+        withTiming(0, { duration: 90 }),
+        withTiming(0, { duration: 240 }),
+        withTiming(0, { duration: 700 })
       ),
       -1
     );
-    // 둥실 떠오르기 (숨쉬기와 다른 주기라 더 자연스럽다)
-    offsetY.value = withRepeat(
+    stretch.value = withRepeat(
       withSequence(
-        withTiming(-size * 0.055, { duration: 2100, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: 2100, easing: Easing.inOut(Easing.ease) })
+        withTiming(-0.55, { duration: 170, easing: Easing.out(Easing.quad) }),
+        withTiming(0.7, { duration: 330, easing: Easing.out(Easing.quad) }),
+        withTiming(0, { duration: 170, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.5, { duration: 300, easing: Easing.in(Easing.quad) }),
+        withTiming(-0.8, { duration: 90, easing: Easing.out(Easing.quad) }),
+        withTiming(0, { duration: 240, easing: Easing.out(Easing.back(2.4)) }),
+        withTiming(0, { duration: 700 })
       ),
       -1
     );
-    // 갸우뚱 (좌우로 살짝 기울기)
-    tilt.value = withRepeat(
-      withSequence(
-        withTiming(2.6, { duration: 2600, easing: Easing.inOut(Easing.ease) }),
-        withTiming(-2.6, { duration: 2600, easing: Easing.inOut(Easing.ease) })
-      ),
-      -1
-    );
-  }, [breathing, scale, offsetY, tilt, size]);
+  }, [breathing, lift, stretch, size]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
-      { translateY: offsetY.value },
-      { scale: scale.value },
-      { rotateZ: `${tilt.value}deg` }
+      { translateY: -lift.value * size * 0.17 },
+      { scaleX: 1 - stretch.value * 0.13 },
+      { scaleY: 1 + stretch.value * 0.15 }
     ]
   }));
 
@@ -76,7 +76,10 @@ export function FormiAvatar({
     <Animated.Image
       source={source}
       resizeMode="contain"
-      style={[{ width: size, height: size }, animatedStyle]}
+      style={[
+        { width: size, height: size, transformOrigin: "50% 100%" },
+        animatedStyle
+      ]}
     />
   );
 }
