@@ -1,6 +1,6 @@
-// Formi 캐릭터 아바타. 4프레임(팔 동작)을 핑퐁으로 돌리되 프레임 사이를 크로스페이드해
-// 적은 프레임으로도 부드럽게 보이게 한다. 그 위에 잔잔한 숨쉬기 transform 을 얹는다.
-import { useEffect, useState } from "react";
+// Formi 캐릭터 아바타. 두 프레임(팔 내림 ⟷ 올림)을 크로스페이드로 오가며
+// 살짝 들썩이고 갸우뚱하는 귀여운 idle 애니메이션을 준다.
+import { useEffect } from "react";
 import { View } from "react-native";
 import Animated, {
   Easing,
@@ -26,9 +26,7 @@ type FormiAvatarProps = {
   breathing?: boolean;
 };
 
-// 프레임 재생 순서 (핑퐁): 팔 내림 → 올림 → 만세 → 내림. 끊김 없이 반복된다.
-const PINGPONG = [0, 1, 2, 3, 2, 1];
-const FRAME_MS = 230;
+const HOLD_MS = 620; // 한 프레임에서 다른 프레임으로 건너가는 시간
 
 export function FormiAvatar({
   category,
@@ -36,17 +34,15 @@ export function FormiAvatar({
   size = 120,
   breathing = true
 }: FormiAvatarProps) {
-  const breath = useSharedValue(0);
-  const fade = useSharedValue(1); // 1 = 현재 프레임만, 0→1 로 직전 프레임이 사라진다
-  const [step, setStep] = useState(0);
-  const [prevStep, setPrevStep] = useState(0);
+  const breath = useSharedValue(0); // 숨쉬기 (위아래 들썩)
+  const wobble = useSharedValue(0); // 좌우 갸우뚱
+  const blend = useSharedValue(0); // 0 = 팔 내린 프레임, 1 = 팔 올린 프레임
 
-  const frames = category ? formiFramesFor(category, level) : formiSeedFrames;
-
-  // 잔잔한 숨쉬기 (발을 바닥에 고정한 채 살짝 부푼다)
   useEffect(() => {
     if (!breathing) {
       breath.value = 0;
+      wobble.value = 0;
+      blend.value = 0;
       return;
     }
     breath.value = withRepeat(
@@ -56,43 +52,39 @@ export function FormiAvatar({
       ),
       -1
     );
-  }, [breathing, breath]);
+    wobble.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 1700, easing: Easing.inOut(Easing.ease) }),
+        withTiming(-1, { duration: 1700, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1
+    );
+    blend.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: HOLD_MS, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration: HOLD_MS, easing: Easing.inOut(Easing.ease) })
+      ),
+      -1
+    );
+  }, [breathing, breath, wobble, blend]);
 
-  // 프레임 핑퐁 루프 + 크로스페이드
-  useEffect(() => {
-    if (!breathing || !frames) {
-      setStep(0);
-      setPrevStep(0);
-      fade.value = 1;
-      return;
-    }
-    let i = 0;
-    const id = setInterval(() => {
-      setPrevStep(i);
-      i = (i + 1) % PINGPONG.length;
-      setStep(i);
-      fade.value = 0;
-      fade.value = withTiming(1, {
-        duration: FRAME_MS * 0.85,
-        easing: Easing.inOut(Easing.ease)
-      });
-    }, FRAME_MS);
-    return () => clearInterval(id);
-  }, [breathing, frames, fade]);
-
-  const breathStyle = useAnimatedStyle(() => ({
+  const bodyStyle = useAnimatedStyle(() => ({
     transform: [
-      { translateY: -breath.value * size * 0.03 },
+      { translateY: -breath.value * size * 0.04 },
+      { rotateZ: `${wobble.value * 2.5}deg` },
       { scaleX: 1 + breath.value * 0.02 },
-      { scaleY: 1 + breath.value * 0.035 }
+      { scaleY: 1 + breath.value * 0.04 }
     ]
   }));
-  const prevStyle = useAnimatedStyle(() => ({ opacity: 1 - fade.value }));
+  const topStyle = useAnimatedStyle(() => ({ opacity: 1 - blend.value }));
 
+  const frames = category ? formiFramesFor(category, level) : formiSeedFrames;
   const fallback =
     category !== undefined ? formiImageFor(category, level) : formiSeedImage;
-  const currentSource = frames ? frames[PINGPONG[step]] ?? frames[0] : fallback;
-  const prevSource = frames ? frames[PINGPONG[prevStep]] ?? frames[0] : fallback;
+  const frameDown = frames ? frames[0] ?? fallback : fallback;
+  const frameUp = frames
+    ? frames[frames.length - 1] ?? frames[0] ?? fallback
+    : fallback;
 
   const imageStyle = {
     width: size,
@@ -103,14 +95,19 @@ export function FormiAvatar({
   return (
     <View style={{ width: size, height: size }}>
       <Animated.Image
-        source={currentSource}
+        source={frameUp}
         resizeMode="contain"
-        style={[imageStyle, breathStyle]}
+        style={[imageStyle, bodyStyle]}
       />
       <Animated.Image
-        source={prevSource}
+        source={frameDown}
         resizeMode="contain"
-        style={[imageStyle, { position: "absolute", top: 0, left: 0 }, breathStyle, prevStyle]}
+        style={[
+          imageStyle,
+          { position: "absolute", top: 0, left: 0 },
+          bodyStyle,
+          topStyle
+        ]}
       />
     </View>
   );
