@@ -7,9 +7,12 @@ Formi 캐릭터 24 종 (씨앗 1 + 변형 18 + 아이콘/스플래시/빈상태 
 ```bash
 cd scripts
 npm install
-export GEMINI_API_KEY=your-google-api-key
+cp .env.example .env
+# .env 파일을 열어 GEMINI_API_KEY=... 한 줄을 채우세요 (한 번만)
 npm run generate
 ```
+
+`.env` 는 git 에 올라가지 않습니다. 한 번 적으면 재실행 때 다시 입력할 필요가 없어요. `.env` 대신 `export GEMINI_API_KEY=...` 를 써도 됩니다.
 
 ## 동작
 

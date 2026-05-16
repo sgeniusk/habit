@@ -71,10 +71,28 @@ const VARIANTS = [
   ["empty", "the character looking up with a curious expression, holding nothing, surrounded by a few soft floating dots representing empty habits waiting to form."]
 ];
 
+// scripts/.env 가 있으면 읽어 process.env 에 주입한다. export 를 매번 안 해도 되도록.
+function loadEnvFile() {
+  const envPath = path.join(import.meta.dirname, ".env");
+  if (!fs.existsSync(envPath)) {
+    return;
+  }
+  for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
+    const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+    if (match && !process.env[match[1]]) {
+      process.env[match[1]] = match[2].trim().replace(/^["']|["']$/g, "");
+    }
+  }
+}
+
 async function main() {
+  loadEnvFile();
   const apiKey = process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY;
   if (!apiKey) {
-    console.error("GEMINI_API_KEY (또는 GOOGLE_API_KEY) 환경변수가 필요해요.");
+    console.error(
+      "GEMINI_API_KEY 가 필요해요. scripts/.env 파일에 GEMINI_API_KEY=... 한 줄을 적거나, " +
+        "터미널에서 export GEMINI_API_KEY=... 하세요."
+    );
     process.exit(1);
   }
 
