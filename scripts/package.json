@@ -8,6 +8,7 @@
     "generate": "node generate-formi-characters.mjs"
   },
   "dependencies": {
-    "@google/genai": "^1.0.0"
+    "@google/genai": "^1.0.0",
+    "pngjs": "^7.0.0"
   }
 }
