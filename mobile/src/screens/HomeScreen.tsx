@@ -3,7 +3,12 @@ import { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Sparkles } from "lucide-react-native";
 
-import { findPersonaByCategory, personaCatalog } from "../data/personaCatalog";
+import {
+  findPersonaByCategory,
+  outfitItems,
+  personaCatalog,
+  roomItems
+} from "../data/personaCatalog";
 import { usePreferences } from "../lib/PreferencesContext";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { localize } from "../lib/i18n";
@@ -17,7 +22,7 @@ import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 
 export function HomeScreen() {
   const { records } = useSnapRecords();
-  const { preferences, setVoiceMode } = usePreferences();
+  const { preferences, setVoiceMode, setRoomItem, setOutfit } = usePreferences();
   const voiceMode = preferences.voiceMode;
 
   const summaries = useMemo(() => buildPersonaSummaries(records), [records]);
@@ -117,6 +122,47 @@ export function HomeScreen() {
             <Text style={styles.toneOptionHint}>담백하고 기록 중심 말투</Text>
           </Pressable>
         </View>
+      </View>
+
+      <View style={styles.toneCard}>
+        <Text style={styles.sectionTitle}>방 꾸미기</Text>
+        <View style={styles.chipRow}>
+          {roomItems.map((item) => (
+            <Pressable
+              key={item}
+              style={[styles.chip, preferences.roomItem === item && styles.chipActive]}
+              onPress={() => setRoomItem(item)}
+            >
+              <Text
+                style={[
+                  styles.chipText,
+                  preferences.roomItem === item && styles.chipTextActive
+                ]}
+              >
+                {item}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+        <Text style={[styles.sectionTitle, styles.decorSecondTitle]}>페르소나 꾸미기</Text>
+        <View style={styles.chipRow}>
+          {outfitItems.map((item) => (
+            <Pressable
+              key={item}
+              style={[styles.chip, preferences.outfit === item && styles.chipActive]}
+              onPress={() => setOutfit(item)}
+            >
+              <Text
+                style={[styles.chipText, preferences.outfit === item && styles.chipTextActive]}
+              >
+                {item}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+        <Text style={styles.decorApplied}>
+          적용 중 · 방 {preferences.roomItem} · 의상 {preferences.outfit}
+        </Text>
       </View>
 
       <View style={styles.collectionHeader}>
@@ -267,5 +313,19 @@ const styles = StyleSheet.create({
   personaCardActivity: { color: colors.muted, fontWeight: "700", fontSize: 12, marginTop: 2 },
   personaCardRight: { alignItems: "flex-end" },
   personaCardLevel: { color: colors.ink, fontWeight: "900", fontSize: 13 },
-  personaCardXp: { color: colors.muted, fontWeight: "800", fontSize: 11 }
+  personaCardXp: { color: colors.muted, fontWeight: "800", fontSize: 11 },
+  chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
+  chip: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: radii.pill,
+    borderWidth: 1,
+    borderColor: colors.line,
+    backgroundColor: colors.white
+  },
+  chipActive: { borderColor: colors.leaf, backgroundColor: colors.leafSoft },
+  chipText: { color: colors.ink, fontWeight: "800", fontSize: 13 },
+  chipTextActive: { color: colors.leaf },
+  decorSecondTitle: { marginTop: spacing.sm },
+  decorApplied: { color: colors.muted, fontWeight: "700", fontSize: 12, marginTop: 4 }
 });

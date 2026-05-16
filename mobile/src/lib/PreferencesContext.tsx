@@ -9,11 +9,15 @@ const PREFERENCES_KEY = "formi:preferences";
 export type Preferences = {
   voiceMode: PersonaVoiceMode;
   insightSoften: boolean;
+  roomItem: string;
+  outfit: string;
 };
 
 const defaultPreferences: Preferences = {
   voiceMode: "cute",
-  insightSoften: true
+  insightSoften: true,
+  roomItem: "원목 책상",
+  outfit: "집중 후드"
 };
 
 type PreferencesContextValue = {
@@ -21,6 +25,8 @@ type PreferencesContextValue = {
   loaded: boolean;
   setVoiceMode(mode: PersonaVoiceMode): void;
   setInsightSoften(value: boolean): void;
+  setRoomItem(item: string): void;
+  setOutfit(item: string): void;
 };
 
 const Context = createContext<PreferencesContextValue | null>(null);
@@ -62,8 +68,18 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     setPreferences((current) => ({ ...current, insightSoften: value }));
   }, []);
 
+  const setRoomItem = useCallback((item: string) => {
+    setPreferences((current) => ({ ...current, roomItem: item }));
+  }, []);
+
+  const setOutfit = useCallback((item: string) => {
+    setPreferences((current) => ({ ...current, outfit: item }));
+  }, []);
+
   return (
-    <Context.Provider value={{ preferences, loaded, setVoiceMode, setInsightSoften }}>
+    <Context.Provider
+      value={{ preferences, loaded, setVoiceMode, setInsightSoften, setRoomItem, setOutfit }}
+    >
       {children}
     </Context.Provider>
   );
@@ -82,7 +98,10 @@ function mergePreferences(raw: string): Preferences {
     const parsed = JSON.parse(raw) as Partial<Preferences>;
     return {
       voiceMode: parsed.voiceMode === "calm" ? "calm" : "cute",
-      insightSoften: typeof parsed.insightSoften === "boolean" ? parsed.insightSoften : true
+      insightSoften: typeof parsed.insightSoften === "boolean" ? parsed.insightSoften : true,
+      roomItem:
+        typeof parsed.roomItem === "string" ? parsed.roomItem : defaultPreferences.roomItem,
+      outfit: typeof parsed.outfit === "string" ? parsed.outfit : defaultPreferences.outfit
     };
   } catch {
     return defaultPreferences;
