@@ -2,8 +2,8 @@
 // 이미지는 expo-file-system 으로 영구 디렉토리에 복사되어 앱 재시작 후에도 남는다.
 import { useState } from "react";
 import {
-  Alert,
   Image,
+  Linking,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -53,6 +53,7 @@ export function SnapScreen() {
   const [proofStamps, setProofStamps] = useState<ProofStampId[]>(["time", "persona"]);
   const [savedToast, setSavedToast] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [permissionNotice, setPermissionNotice] = useState<"camera" | "gallery" | null>(null);
 
   async function handlePickedImage(uri: string) {
     setIsProcessing(true);
@@ -67,9 +68,10 @@ export function SnapScreen() {
   async function pickFromCamera() {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert("카메라 권한이 필요해요", "설정에서 카메라 접근을 허용해 주세요.");
+      setPermissionNotice("camera");
       return;
     }
+    setPermissionNotice(null);
     const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ["images"],
       quality: 0.85,
@@ -84,9 +86,10 @@ export function SnapScreen() {
   async function pickFromGallery() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert("사진첩 권한이 필요해요", "설정에서 사진 접근을 허용해 주세요.");
+      setPermissionNotice("gallery");
       return;
     }
+    setPermissionNotice(null);
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       quality: 0.85,
@@ -159,6 +162,27 @@ export function SnapScreen() {
         </Pressable>
       </View>
       {isProcessing ? <Text style={styles.processingHint}>사진 정리 중...</Text> : null}
+
+      {permissionNotice ? (
+        <View style={styles.permissionNotice}>
+          <Text style={styles.permissionTitle}>
+            {permissionNotice === "camera" ? "카메라 권한이 꺼져 있어요" : "사진첩 권한이 꺼져 있어요"}
+          </Text>
+          <Text style={styles.permissionBody}>
+            {permissionNotice === "camera"
+              ? "설정에서 카메라 접근을 허용하면 바로 촬영할 수 있어요. 권한 없이도 사진첩으로 기록할 수 있어요."
+              : "설정에서 사진 접근을 허용하면 사진첩에서 고를 수 있어요. 권한 없이도 카메라로 기록할 수 있어요."}
+          </Text>
+          <Pressable
+            style={styles.permissionButton}
+            onPress={() => {
+              Linking.openSettings();
+            }}
+          >
+            <Text style={styles.permissionButtonText}>설정 열기</Text>
+          </Pressable>
+        </View>
+      ) : null}
 
       <Text style={styles.sectionTitle}>필터</Text>
       <View style={styles.chipRow}>
@@ -331,6 +355,25 @@ const styles = StyleSheet.create({
   actionText: { color: colors.ink, fontWeight: "900", fontSize: 14 },
   actionPrimaryText: { color: colors.white, fontWeight: "900", fontSize: 14 },
   processingHint: { color: colors.muted, fontWeight: "700", fontSize: 12, marginTop: 4 },
+  permissionNotice: {
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.coralSoft,
+    borderWidth: 1,
+    borderColor: "#ffd2cc",
+    gap: 6
+  },
+  permissionTitle: { color: colors.ink, fontWeight: "900", fontSize: 14 },
+  permissionBody: { color: colors.muted, fontWeight: "700", fontSize: 12, lineHeight: 18 },
+  permissionButton: {
+    alignSelf: "flex-start",
+    marginTop: 2,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: radii.sm,
+    backgroundColor: colors.ink
+  },
+  permissionButtonText: { color: colors.white, fontWeight: "900", fontSize: 12 },
   sectionTitle: { ...typography.h3, color: colors.ink, marginTop: spacing.sm },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   chip: {
