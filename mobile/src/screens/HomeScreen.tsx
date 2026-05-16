@@ -1,5 +1,5 @@
 // 집 탭. 대표 페르소나 영역 + 페르소나 컬렉션 + 말투 톤 토글.
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Sparkles } from "lucide-react-native";
 
@@ -26,13 +26,17 @@ export function HomeScreen() {
   const { preferences, setVoiceMode, setRoomItem, setOutfit } = usePreferences();
   const voiceMode = preferences.voiceMode;
 
+  const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null);
+
   const summaries = useMemo(() => buildPersonaSummaries(records), [records]);
   const featuredPersona = useMemo(
     () => findPersonaByCategory(records[0]?.category ?? "study"),
     [records]
   );
+  const activePersona =
+    personaCatalog.find((persona) => persona.id === selectedPersonaId) ?? featuredPersona;
   const activeSummary = summaries.find(
-    (summary) => summary.archetype === featuredPersona.category
+    (summary) => summary.archetype === activePersona.category
   );
   const activeLevel = activeSummary?.level ?? 1;
   const activeXp = activeSummary?.xp ?? 0;
@@ -42,25 +46,25 @@ export function HomeScreen() {
   const identity = useMemo(
     () =>
       buildPersonaIdentity({
-        category: featuredPersona.category,
-        nickname: defaultPersonaNicknames[featuredPersona.category] ?? "",
+        category: activePersona.category,
+        nickname: defaultPersonaNicknames[activePersona.category] ?? "",
         level: activeLevel,
         xp: activeXp,
         locale: "ko"
       }),
-    [featuredPersona.category, activeLevel, activeXp]
+    [activePersona.category, activeLevel, activeXp]
   );
 
   const companion = useMemo(
     () =>
       buildPersonaCompanionLine({
-        category: featuredPersona.category,
-        nickname: defaultPersonaNicknames[featuredPersona.category] ?? "",
+        category: activePersona.category,
+        nickname: defaultPersonaNicknames[activePersona.category] ?? "",
         level: activeLevel,
         voiceMode,
         locale: "ko"
       }),
-    [featuredPersona.category, activeLevel, voiceMode]
+    [activePersona.category, activeLevel, voiceMode]
   );
 
   return (
@@ -73,14 +77,16 @@ export function HomeScreen() {
       <View style={styles.heroCard}>
         <View style={styles.featuredBadge}>
           <Sparkles size={12} color={colors.ink} />
-          <Text style={styles.featuredBadgeText}>대표</Text>
+          <Text style={styles.featuredBadgeText}>
+            {activePersona.id === featuredPersona.id ? "대표" : "선택"}
+          </Text>
         </View>
         <View style={styles.heroAvatarWrap}>
-          <FormiAvatar category={featuredPersona.category} level={activeLevel} size={150} />
+          <FormiAvatar category={activePersona.category} level={activeLevel} size={150} />
         </View>
-        <Text style={styles.heroName}>{localize(featuredPersona.name, "ko")}</Text>
+        <Text style={styles.heroName}>{localize(activePersona.name, "ko")}</Text>
         <Text style={styles.heroNick}>{identity.displayName}</Text>
-        <Text style={styles.heroActivity}>{localize(featuredPersona.activity, "ko")}</Text>
+        <Text style={styles.heroActivity}>{localize(activePersona.activity, "ko")}</Text>
         <Text style={styles.companionLine}>{companion}</Text>
 
         <View style={styles.rewardMeter}>
@@ -177,12 +183,20 @@ export function HomeScreen() {
         {personaCatalog.map((persona) => {
           const summary = summaries.find((item) => item.archetype === persona.category);
           const isFeatured = persona.id === featuredPersona.id;
+          const isActive = persona.id === activePersona.id;
           return (
-            <View
+            <Pressable
               key={persona.id}
-              style={[styles.personaCard, isFeatured && styles.personaCardFeatured]}
+              style={[styles.personaCard, isActive && styles.personaCardFeatured]}
+              onPress={() => setSelectedPersonaId(persona.id)}
             >
-              <View>
+              <FormiAvatar
+                category={persona.category}
+                level={summary?.level ?? 1}
+                size={52}
+                breathing={false}
+              />
+              <View style={styles.personaCardInfo}>
                 <Text style={styles.personaCardName}>
                   {isFeatured ? "대표 · " : ""}
                   {localize(persona.name, "ko")}
@@ -195,7 +209,7 @@ export function HomeScreen() {
                 <Text style={styles.personaCardLevel}>Lv.{summary?.level ?? 1}</Text>
                 <Text style={styles.personaCardXp}>{summary?.xp ?? 0}xp</Text>
               </View>
-            </View>
+            </Pressable>
           );
         })}
       </View>
@@ -314,6 +328,7 @@ const styles = StyleSheet.create({
     gap: 8
   },
   personaCardFeatured: { borderColor: colors.leaf, backgroundColor: colors.leafSoft },
+  personaCardInfo: { flex: 1 },
   personaCardName: { color: colors.ink, fontWeight: "900", fontSize: 15 },
   personaCardActivity: { color: colors.muted, fontWeight: "700", fontSize: 12, marginTop: 2 },
   personaCardRight: { alignItems: "flex-end" },
