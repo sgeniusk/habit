@@ -8,21 +8,22 @@ import * as path from "node:path";
 const OUT_DIR = path.resolve(import.meta.dirname, "../mobile/assets/formi");
 
 const STRIP_PROMPT =
-  "Create a 4-frame idle animation sprite sheet of this exact Formi " +
-  "character. Four frames placed in a single horizontal row, four equal " +
+  "Create a 6-frame idle animation sprite sheet of this exact Formi " +
+  "character. Six frames placed in a single horizontal row, six equal " +
   "side-by-side cells, on a flat pure WHITE background. Absolutely NO black " +
   "border, NO frame, NO outline boxes or lines around the cells — only the " +
   "characters on plain white. The SAME character appears in every cell — " +
   "identical body shape, identical size, identical position inside each " +
-  "cell, identical colors, accessories and clean outline. Across the four " +
-  "frames the character plays ONE smooth gentle loop, raising and lowering " +
-  "its two tiny arms: frame 1 (left) both little arms resting low at the " +
-  "sides, eyes open; frame 2 both little arms lifted halfway up, eyes open; " +
-  "frame 3 both little arms raised up high in a soft happy stretch, eyes " +
-  "closed in gentle downward-curved happy arcs, tiny smile; frame 4 both " +
-  "little arms lowered back to halfway, eyes open. ONLY the arms and eyes " +
-  "change between frames — do NOT move, resize, rotate or redraw the body. " +
-  "Wide 4:1 image.";
+  "cell, identical colors, accessories and clean outline. Across the six " +
+  "frames the character plays ONE smooth gradual loop, slowly raising its " +
+  "two tiny arms step by step: frame 1 both little arms resting low at the " +
+  "sides, eyes open; frame 2 arms raised a little; frame 3 arms raised " +
+  "about halfway, eyes open; frame 4 arms raised higher, eyes slightly " +
+  "narrowed; frame 5 arms almost fully up, eyes nearly closed; frame 6 " +
+  "both little arms raised up high in a happy stretch, eyes fully closed " +
+  "in gentle downward-curved happy arcs, tiny smile. Each frame is a small " +
+  "smooth step from the previous one. ONLY the arms and eyes change — do " +
+  "NOT move, resize, rotate or redraw the body. Very wide 6:1 image.";
 
 function loadEnvFile() {
   const envPath = path.join(import.meta.dirname, ".env");

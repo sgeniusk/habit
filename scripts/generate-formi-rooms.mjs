@@ -15,35 +15,43 @@ const STYLE =
   "flat pastel colors, gentle minimal shading, cute calm cozy mood, the same " +
   "art style as a kawaii blob character app called Formi";
 
-// 캐릭터가 들어갈 빈 방 배경 (정사각형, 캐릭터/사람 없음)
+// 캐릭터가 들어갈 아늑하게 꾸며진 방 배경 (정사각형, 캐릭터/사람 없음)
 const ROOMS = [
   [
     "room-warm",
-    "A cozy small empty room interior, front view, square composition. Warm " +
-      "cream-colored wall, light wood plank floor, one window on the left with " +
-      "soft warm daylight. No characters, no people, no furniture in the " +
-      "center. Leave the lower-center floor wide open and uncluttered."
+    "A cozy warmly furnished small room interior, front view, square " +
+      "composition. Warm cream walls and light wood floor. A small wooden bed " +
+      "with a soft blanket, a low bookshelf with books and a potted plant, a " +
+      "framed picture on the wall, a warm desk lamp, a window with soft " +
+      "daylight. Cute, lived-in and inviting. Keep the lower-center foreground " +
+      "floor clear and open so a character can stand there. No characters, no people."
   ],
   [
     "room-sage",
-    "A cozy small empty room interior, front view, square composition. Soft " +
-      "sage-green wall, light wood plank floor, one window with gentle " +
-      "daylight. No characters, no people, no furniture in the center. Leave " +
-      "the lower-center floor wide open and uncluttered."
+    "A cozy plant-filled small room interior, front view, square composition. " +
+      "Soft sage-green walls and light wood floor. Several leafy potted plants, " +
+      "a hanging plant, a low shelf with books, a soft floor cushion, a framed " +
+      "botanical picture, a window with greenery outside. Fresh, calm and " +
+      "lived-in. Keep the lower-center foreground floor clear and open so a " +
+      "character can stand there. No characters, no people."
   ],
   [
     "room-blush",
-    "A cozy small empty room interior, front view, square composition. Gentle " +
-      "blush-pink wall, light wood plank floor, one small round window. No " +
-      "characters, no people, no furniture in the center. Leave the " +
-      "lower-center floor wide open and uncluttered."
+    "A cozy cute small room interior, front view, square composition. Soft " +
+      "blush-pink walls and light wood floor. A small bed with a fluffy pink " +
+      "blanket and pillows, a round mirror, a shelf with cute trinkets and a " +
+      "small plant, warm string lights, a window with a soft sky. Sweet, warm " +
+      "and lived-in. Keep the lower-center foreground floor clear and open so " +
+      "a character can stand there. No characters, no people."
   ],
   [
     "room-dusk",
-    "A cozy small empty room interior, front view, square composition. Calm " +
-      "deep warm-taupe wall, warm wood floor, one window with soft dusk light. " +
-      "No characters, no people, no furniture in the center. Leave the " +
-      "lower-center floor wide open and uncluttered."
+    "A cozy calm small room interior in the evening, front view, square " +
+      "composition. Deep warm-taupe walls and warm wood floor. A glowing warm " +
+      "floor lamp and string lights, a small sofa with a blanket, a bookshelf, " +
+      "a potted plant, a framed picture, a window showing a dusk sky. Snug, " +
+      "warm and lived-in. Keep the lower-center foreground floor clear and " +
+      "open so a character can stand there. No characters, no people."
   ]
 ];
 

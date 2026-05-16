@@ -1,6 +1,7 @@
-// Formi 캐릭터 아바타. 4프레임(팔 동작) 스프라이트를 핑퐁으로 돌려 idle 애니메이션을 만들고,
-// 그 위에 잔잔한 숨쉬기 transform 을 얹는다.
+// Formi 캐릭터 아바타. 4프레임(팔 동작)을 핑퐁으로 돌리되 프레임 사이를 크로스페이드해
+// 적은 프레임으로도 부드럽게 보이게 한다. 그 위에 잔잔한 숨쉬기 transform 을 얹는다.
 import { useEffect, useState } from "react";
+import { View } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -27,7 +28,7 @@ type FormiAvatarProps = {
 
 // 프레임 재생 순서 (핑퐁): 팔 내림 → 올림 → 만세 → 내림. 끊김 없이 반복된다.
 const PINGPONG = [0, 1, 2, 3, 2, 1];
-const FRAME_MS = 240;
+const FRAME_MS = 230;
 
 export function FormiAvatar({
   category,
@@ -36,11 +37,13 @@ export function FormiAvatar({
   breathing = true
 }: FormiAvatarProps) {
   const breath = useSharedValue(0);
+  const fade = useSharedValue(1); // 1 = 현재 프레임만, 0→1 로 직전 프레임이 사라진다
   const [step, setStep] = useState(0);
+  const [prevStep, setPrevStep] = useState(0);
 
   const frames = category ? formiFramesFor(category, level) : formiSeedFrames;
 
-  // 잔잔한 숨쉬기 (발을 바닥에 고정한 채 살짝 부풀고 떠오른다)
+  // 잔잔한 숨쉬기 (발을 바닥에 고정한 채 살짝 부푼다)
   useEffect(() => {
     if (!breathing) {
       breath.value = 0;
@@ -48,50 +51,67 @@ export function FormiAvatar({
     }
     breath.value = withRepeat(
       withSequence(
-        withTiming(1, { duration: 1400, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: 1400, easing: Easing.inOut(Easing.ease) })
+        withTiming(1, { duration: 1500, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration: 1500, easing: Easing.inOut(Easing.ease) })
       ),
       -1
     );
   }, [breathing, breath]);
 
-  // 프레임 핑퐁 루프
+  // 프레임 핑퐁 루프 + 크로스페이드
   useEffect(() => {
     if (!breathing || !frames) {
       setStep(0);
+      setPrevStep(0);
+      fade.value = 1;
       return;
     }
     let i = 0;
     const id = setInterval(() => {
+      setPrevStep(i);
       i = (i + 1) % PINGPONG.length;
       setStep(i);
+      fade.value = 0;
+      fade.value = withTiming(1, {
+        duration: FRAME_MS * 0.85,
+        easing: Easing.inOut(Easing.ease)
+      });
     }, FRAME_MS);
     return () => clearInterval(id);
-  }, [breathing, frames]);
+  }, [breathing, frames, fade]);
 
-  const animatedStyle = useAnimatedStyle(() => ({
+  const breathStyle = useAnimatedStyle(() => ({
     transform: [
       { translateY: -breath.value * size * 0.03 },
       { scaleX: 1 + breath.value * 0.02 },
       { scaleY: 1 + breath.value * 0.035 }
     ]
   }));
+  const prevStyle = useAnimatedStyle(() => ({ opacity: 1 - fade.value }));
 
-  const frameIndex = PINGPONG[step] ?? 0;
-  const source = frames
-    ? frames[frameIndex] ?? frames[0]
-    : category
-      ? formiImageFor(category, level)
-      : formiSeedImage;
+  const fallback =
+    category !== undefined ? formiImageFor(category, level) : formiSeedImage;
+  const currentSource = frames ? frames[PINGPONG[step]] ?? frames[0] : fallback;
+  const prevSource = frames ? frames[PINGPONG[prevStep]] ?? frames[0] : fallback;
+
+  const imageStyle = {
+    width: size,
+    height: size,
+    transformOrigin: "50% 100%" as const
+  };
 
   return (
-    <Animated.Image
-      source={source}
-      resizeMode="contain"
-      style={[
-        { width: size, height: size, transformOrigin: "50% 100%" },
-        animatedStyle
-      ]}
-    />
+    <View style={{ width: size, height: size }}>
+      <Animated.Image
+        source={currentSource}
+        resizeMode="contain"
+        style={[imageStyle, breathStyle]}
+      />
+      <Animated.Image
+        source={prevSource}
+        resizeMode="contain"
+        style={[imageStyle, { position: "absolute", top: 0, left: 0 }, breathStyle, prevStyle]}
+      />
+    </View>
   );
 }
