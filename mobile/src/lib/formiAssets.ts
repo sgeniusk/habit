@@ -36,102 +36,121 @@ const images = {
   "item-shelf": require("../../assets/formi/item-shelf.png")
 } as const;
 
-// 깜빡임 애니메이션 프레임 (f0 눈 뜸 · f1 반쯤 · f2 눈 감음). 한 시트에서 잘라 프레임끼리 정렬을 맞췄다.
+// idle 애니메이션 프레임 (f0 팔 내림 · f1 반쯤 · f2 올림 · f3 만세+눈감음). 한 시트에서 잘라 정렬을 맞췄다.
 const frameSets = {
   seed: [
     require("../../assets/formi/seed-f0.png"),
     require("../../assets/formi/seed-f1.png"),
-    require("../../assets/formi/seed-f2.png")
+    require("../../assets/formi/seed-f2.png"),
+    require("../../assets/formi/seed-f3.png")
   ],
   "study-sprout": [
     require("../../assets/formi/study-sprout-f0.png"),
     require("../../assets/formi/study-sprout-f1.png"),
-    require("../../assets/formi/study-sprout-f2.png")
+    require("../../assets/formi/study-sprout-f2.png"),
+    require("../../assets/formi/study-sprout-f3.png")
   ],
   "study-identity": [
     require("../../assets/formi/study-identity-f0.png"),
     require("../../assets/formi/study-identity-f1.png"),
-    require("../../assets/formi/study-identity-f2.png")
+    require("../../assets/formi/study-identity-f2.png"),
+    require("../../assets/formi/study-identity-f3.png")
   ],
   "study-master": [
     require("../../assets/formi/study-master-f0.png"),
     require("../../assets/formi/study-master-f1.png"),
-    require("../../assets/formi/study-master-f2.png")
+    require("../../assets/formi/study-master-f2.png"),
+    require("../../assets/formi/study-master-f3.png")
   ],
   "exercise-sprout": [
     require("../../assets/formi/exercise-sprout-f0.png"),
     require("../../assets/formi/exercise-sprout-f1.png"),
-    require("../../assets/formi/exercise-sprout-f2.png")
+    require("../../assets/formi/exercise-sprout-f2.png"),
+    require("../../assets/formi/exercise-sprout-f3.png")
   ],
   "exercise-identity": [
     require("../../assets/formi/exercise-identity-f0.png"),
     require("../../assets/formi/exercise-identity-f1.png"),
-    require("../../assets/formi/exercise-identity-f2.png")
+    require("../../assets/formi/exercise-identity-f2.png"),
+    require("../../assets/formi/exercise-identity-f3.png")
   ],
   "exercise-master": [
     require("../../assets/formi/exercise-master-f0.png"),
     require("../../assets/formi/exercise-master-f1.png"),
-    require("../../assets/formi/exercise-master-f2.png")
+    require("../../assets/formi/exercise-master-f2.png"),
+    require("../../assets/formi/exercise-master-f3.png")
   ],
   "meal-sprout": [
     require("../../assets/formi/meal-sprout-f0.png"),
     require("../../assets/formi/meal-sprout-f1.png"),
-    require("../../assets/formi/meal-sprout-f2.png")
+    require("../../assets/formi/meal-sprout-f2.png"),
+    require("../../assets/formi/meal-sprout-f3.png")
   ],
   "meal-identity": [
     require("../../assets/formi/meal-identity-f0.png"),
     require("../../assets/formi/meal-identity-f1.png"),
-    require("../../assets/formi/meal-identity-f2.png")
+    require("../../assets/formi/meal-identity-f2.png"),
+    require("../../assets/formi/meal-identity-f3.png")
   ],
   "meal-master": [
     require("../../assets/formi/meal-master-f0.png"),
     require("../../assets/formi/meal-master-f1.png"),
-    require("../../assets/formi/meal-master-f2.png")
+    require("../../assets/formi/meal-master-f2.png"),
+    require("../../assets/formi/meal-master-f3.png")
   ],
   "reading-sprout": [
     require("../../assets/formi/reading-sprout-f0.png"),
     require("../../assets/formi/reading-sprout-f1.png"),
-    require("../../assets/formi/reading-sprout-f2.png")
+    require("../../assets/formi/reading-sprout-f2.png"),
+    require("../../assets/formi/reading-sprout-f3.png")
   ],
   "reading-identity": [
     require("../../assets/formi/reading-identity-f0.png"),
     require("../../assets/formi/reading-identity-f1.png"),
-    require("../../assets/formi/reading-identity-f2.png")
+    require("../../assets/formi/reading-identity-f2.png"),
+    require("../../assets/formi/reading-identity-f3.png")
   ],
   "reading-master": [
     require("../../assets/formi/reading-master-f0.png"),
     require("../../assets/formi/reading-master-f1.png"),
-    require("../../assets/formi/reading-master-f2.png")
+    require("../../assets/formi/reading-master-f2.png"),
+    require("../../assets/formi/reading-master-f3.png")
   ],
   "cleaning-sprout": [
     require("../../assets/formi/cleaning-sprout-f0.png"),
     require("../../assets/formi/cleaning-sprout-f1.png"),
-    require("../../assets/formi/cleaning-sprout-f2.png")
+    require("../../assets/formi/cleaning-sprout-f2.png"),
+    require("../../assets/formi/cleaning-sprout-f3.png")
   ],
   "cleaning-identity": [
     require("../../assets/formi/cleaning-identity-f0.png"),
     require("../../assets/formi/cleaning-identity-f1.png"),
-    require("../../assets/formi/cleaning-identity-f2.png")
+    require("../../assets/formi/cleaning-identity-f2.png"),
+    require("../../assets/formi/cleaning-identity-f3.png")
   ],
   "cleaning-master": [
     require("../../assets/formi/cleaning-master-f0.png"),
     require("../../assets/formi/cleaning-master-f1.png"),
-    require("../../assets/formi/cleaning-master-f2.png")
+    require("../../assets/formi/cleaning-master-f2.png"),
+    require("../../assets/formi/cleaning-master-f3.png")
   ],
   "selfcare-sprout": [
     require("../../assets/formi/selfcare-sprout-f0.png"),
     require("../../assets/formi/selfcare-sprout-f1.png"),
-    require("../../assets/formi/selfcare-sprout-f2.png")
+    require("../../assets/formi/selfcare-sprout-f2.png"),
+    require("../../assets/formi/selfcare-sprout-f3.png")
   ],
   "selfcare-identity": [
     require("../../assets/formi/selfcare-identity-f0.png"),
     require("../../assets/formi/selfcare-identity-f1.png"),
-    require("../../assets/formi/selfcare-identity-f2.png")
+    require("../../assets/formi/selfcare-identity-f2.png"),
+    require("../../assets/formi/selfcare-identity-f3.png")
   ],
   "selfcare-master": [
     require("../../assets/formi/selfcare-master-f0.png"),
     require("../../assets/formi/selfcare-master-f1.png"),
-    require("../../assets/formi/selfcare-master-f2.png")
+    require("../../assets/formi/selfcare-master-f2.png"),
+    require("../../assets/formi/selfcare-master-f3.png")
   ]
 } as const;
 

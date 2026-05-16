@@ -1,5 +1,5 @@
-// Formi 깜빡임 애니메이션 스프라이트 시트를 한 장으로 생성한다.
-// 한 이미지 안에 3프레임 (눈 뜸 / 반쯤 / 감음) 을 같이 그리게 해서 프레임끼리 일관되게 만든다.
+// Formi idle 애니메이션 스프라이트 시트를 한 장으로 생성한다.
+// 한 이미지 안에 4프레임 (팔 동작 루프) 을 같이 그리게 해서 프레임끼리 일관되게 만든다.
 // 사용법: cd scripts && node generate-formi-strip.mjs [name ...]   (기본: seed)
 import { GoogleGenAI } from "@google/genai";
 import * as fs from "node:fs";
@@ -8,16 +8,21 @@ import * as path from "node:path";
 const OUT_DIR = path.resolve(import.meta.dirname, "../mobile/assets/formi");
 
 const STRIP_PROMPT =
-  "Create a 3-frame blink animation sprite sheet of this exact Formi " +
-  "character. Three frames placed in a single horizontal row, three equal " +
-  "side-by-side cells, on a flat pure white background. The SAME character " +
-  "appears in every cell — identical body shape, identical size, identical " +
-  "position inside each cell, identical colors, accessories and clean " +
-  "outline. The ONLY thing that changes between the three frames is the " +
-  "eyes: frame 1 (left) eyes fully open and normal, frame 2 (middle) eyes " +
-  "half closed, frame 3 (right) eyes fully closed as gentle downward-curved " +
-  "happy closed-eye arcs. Do NOT move, resize, rotate or redraw the " +
-  "character between frames — only the eyes change. Wide 3:1 image.";
+  "Create a 4-frame idle animation sprite sheet of this exact Formi " +
+  "character. Four frames placed in a single horizontal row, four equal " +
+  "side-by-side cells, on a flat pure WHITE background. Absolutely NO black " +
+  "border, NO frame, NO outline boxes or lines around the cells — only the " +
+  "characters on plain white. The SAME character appears in every cell — " +
+  "identical body shape, identical size, identical position inside each " +
+  "cell, identical colors, accessories and clean outline. Across the four " +
+  "frames the character plays ONE smooth gentle loop, raising and lowering " +
+  "its two tiny arms: frame 1 (left) both little arms resting low at the " +
+  "sides, eyes open; frame 2 both little arms lifted halfway up, eyes open; " +
+  "frame 3 both little arms raised up high in a soft happy stretch, eyes " +
+  "closed in gentle downward-curved happy arcs, tiny smile; frame 4 both " +
+  "little arms lowered back to halfway, eyes open. ONLY the arms and eyes " +
+  "change between frames — do NOT move, resize, rotate or redraw the body. " +
+  "Wide 4:1 image.";
 
 function loadEnvFile() {
   const envPath = path.join(import.meta.dirname, ".env");
@@ -57,8 +62,10 @@ async function main() {
   const names = process.argv.slice(2);
   if (names.length === 0) names.push("seed");
 
-  for (const name of names) {
-    const basePath = path.join(OUT_DIR, `${name}.png`);
+  for (const arg of names) {
+    // "out=ref" 형식이면 ref 이미지를 기준으로 out-strip 을 만든다 (책상 없는 버전 등).
+    const [name, refName] = arg.includes("=") ? arg.split("=") : [arg, arg];
+    const basePath = path.join(OUT_DIR, `${refName}.png`);
     const target = path.join(OUT_DIR, `${name}-strip.png`);
     if (!fs.existsSync(basePath)) {
       console.warn(`base 없음, 건너뜀: ${name}.png`);

@@ -1,4 +1,5 @@
-// Formi 캐릭터 아바타. 프레임(눈 뜸/감음)을 번갈아 깜빡이고, 블롭답게 스쿼시·스트레치 바운스를 준다.
+// Formi 캐릭터 아바타. 4프레임(팔 동작) 스프라이트를 핑퐁으로 돌려 idle 애니메이션을 만들고,
+// 그 위에 잔잔한 숨쉬기 transform 을 얹는다.
 import { useEffect, useState } from "react";
 import Animated, {
   Easing,
@@ -24,97 +25,61 @@ type FormiAvatarProps = {
   breathing?: boolean;
 };
 
+// 프레임 재생 순서 (핑퐁): 팔 내림 → 올림 → 만세 → 내림. 끊김 없이 반복된다.
+const PINGPONG = [0, 1, 2, 3, 2, 1];
+const FRAME_MS = 240;
+
 export function FormiAvatar({
   category,
   level = 1,
   size = 120,
   breathing = true
 }: FormiAvatarProps) {
-  // lift: 0 바닥 ~ 1 정점. stretch: 음수 납작 ~ 양수 길쭉.
-  const lift = useSharedValue(0);
-  const stretch = useSharedValue(0);
-  // frame: 0 눈 뜸, 1 반쯤, 2 눈 감음
-  const [frame, setFrame] = useState(0);
+  const breath = useSharedValue(0);
+  const [step, setStep] = useState(0);
 
   const frames = category ? formiFramesFor(category, level) : formiSeedFrames;
 
-  // 바운스 (transform): 웅크림 → 점프 → 정점 → 낙하 → 착지 → 회복 → 휴식
+  // 잔잔한 숨쉬기 (발을 바닥에 고정한 채 살짝 부풀고 떠오른다)
   useEffect(() => {
     if (!breathing) {
-      lift.value = 0;
-      stretch.value = 0;
+      breath.value = 0;
       return;
     }
-    lift.value = withRepeat(
+    breath.value = withRepeat(
       withSequence(
-        withTiming(0, { duration: 170 }),
-        withTiming(1, { duration: 330, easing: Easing.out(Easing.quad) }),
-        withTiming(1, { duration: 170 }),
-        withTiming(0, { duration: 300, easing: Easing.in(Easing.quad) }),
-        withTiming(0, { duration: 90 }),
-        withTiming(0, { duration: 240 }),
-        withTiming(0, { duration: 700 })
+        withTiming(1, { duration: 1400, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0, { duration: 1400, easing: Easing.inOut(Easing.ease) })
       ),
       -1
     );
-    stretch.value = withRepeat(
-      withSequence(
-        withTiming(-0.55, { duration: 170, easing: Easing.out(Easing.quad) }),
-        withTiming(0.7, { duration: 330, easing: Easing.out(Easing.quad) }),
-        withTiming(0, { duration: 170, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0.5, { duration: 300, easing: Easing.in(Easing.quad) }),
-        withTiming(-0.8, { duration: 90, easing: Easing.out(Easing.quad) }),
-        withTiming(0, { duration: 240, easing: Easing.out(Easing.back(2.4)) }),
-        withTiming(0, { duration: 700 })
-      ),
-      -1
-    );
-  }, [breathing, lift, stretch, size]);
+  }, [breathing, breath]);
 
-  // 깜빡임 (프레임 교체): 가만히 있다 가끔 0 → 1 → 2 → 1 → 0
+  // 프레임 핑퐁 루프
   useEffect(() => {
     if (!breathing || !frames) {
-      setFrame(0);
+      setStep(0);
       return;
     }
-    let cancelled = false;
-    const timers: ReturnType<typeof setTimeout>[] = [];
-    const after = (ms: number, fn: () => void) => {
-      timers.push(
-        setTimeout(() => {
-          if (!cancelled) fn();
-        }, ms)
-      );
-    };
-    const loop = () => {
-      const delay = 2400 + Math.random() * 2400;
-      after(delay, () => {
-        setFrame(1);
-        after(70, () => setFrame(2));
-        after(170, () => setFrame(1));
-        after(240, () => {
-          setFrame(0);
-          loop();
-        });
-      });
-    };
-    loop();
-    return () => {
-      cancelled = true;
-      timers.forEach(clearTimeout);
-    };
+    let i = 0;
+    const id = setInterval(() => {
+      i = (i + 1) % PINGPONG.length;
+      setStep(i);
+    }, FRAME_MS);
+    return () => clearInterval(id);
   }, [breathing, frames]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
-      { translateY: -lift.value * size * 0.17 },
-      { scaleX: 1 - stretch.value * 0.13 },
-      { scaleY: 1 + stretch.value * 0.15 }
+      { translateY: -breath.value * size * 0.03 },
+      { scaleX: 1 + breath.value * 0.02 },
+      { scaleY: 1 + breath.value * 0.035 }
     ]
   }));
 
+  const frameIndex = PINGPONG[step] ?? 0;
   const source = frames
-    ? frames[frame] ?? frames[0]
+    ? frames[frameIndex] ?? frames[0]
     : category
       ? formiImageFor(category, level)
       : formiSeedImage;
