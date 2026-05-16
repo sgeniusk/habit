@@ -171,9 +171,15 @@ function main() {
     console.error(`${name}: 캐릭터를 못 찾음`);
     process.exit(1);
   }
-  // 가장 큰 덩어리 기준으로 캐릭터 프레임만 추린다 (테두리 선·잡티 제거).
+  // 가장 큰 덩어리 기준으로 캐릭터 프레임만 추린다 (테두리 선·잡티·빈 칸 제거).
+  // 캐릭터는 bbox 를 어느 정도 채우지만, 셀 테두리 박스는 얇은 링이라 채움 비율이 낮다.
   const maxSize = comps.reduce((m, c) => Math.max(m, c.size), 0);
-  const chars = comps.filter((c) => c.size >= maxSize * KEEP_RATIO);
+  const chars = comps.filter((c) => {
+    if (c.size < maxSize * KEEP_RATIO) return false;
+    const area = (c.maxX - c.minX + 1) * (c.maxY - c.minY + 1);
+    const fill = c.size / area;
+    return fill >= 0.22;
+  });
 
   // 행 우선 정렬 (centroidY 로 행 묶고, 행 안에서 x 순).
   const avgH =

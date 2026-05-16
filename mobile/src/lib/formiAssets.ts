@@ -1,5 +1,7 @@
 // Formi 캐릭터 PNG 매핑. RN 은 동적 require 가 안 되므로 모든 자산을 정적으로 등록한다.
 import type { HabitCategory } from "../types/habit";
+// idle 애니메이션 프레임 묶음 (캐릭터 시트에서 잘라낸 N프레임). build-frame-manifest.mjs 가 생성한다.
+import { frameSets } from "./formiFrames";
 
 export type FormiStage = "seed" | "sprout" | "identity" | "master";
 
@@ -26,133 +28,16 @@ const images = {
   "selfcare-sprout": require("../../assets/formi/selfcare-sprout.png"),
   "selfcare-identity": require("../../assets/formi/selfcare-identity.png"),
   "selfcare-master": require("../../assets/formi/selfcare-master.png"),
-  "room-warm": require("../../assets/formi/room-warm.png"),
-  "room-sage": require("../../assets/formi/room-sage.png"),
-  "room-blush": require("../../assets/formi/room-blush.png"),
-  "room-dusk": require("../../assets/formi/room-dusk.png"),
+  "room-warm": require("../../assets/formi/room-warm-v2.png"),
+  "room-sage": require("../../assets/formi/room-sage-v2.png"),
+  "room-blush": require("../../assets/formi/room-blush-v2.png"),
+  "room-dusk": require("../../assets/formi/room-dusk-v2.png"),
   "item-plant": require("../../assets/formi/item-plant.png"),
   "item-lamp": require("../../assets/formi/item-lamp.png"),
   "item-rug": require("../../assets/formi/item-rug.png"),
   "item-shelf": require("../../assets/formi/item-shelf.png")
 } as const;
 
-// idle 애니메이션 프레임 (f0 팔 내림 · f1 반쯤 · f2 올림 · f3 만세+눈감음). 한 시트에서 잘라 정렬을 맞췄다.
-const frameSets = {
-  seed: [
-    require("../../assets/formi/seed-f0.png"),
-    require("../../assets/formi/seed-f1.png"),
-    require("../../assets/formi/seed-f2.png"),
-    require("../../assets/formi/seed-f3.png")
-  ],
-  "study-sprout": [
-    require("../../assets/formi/study-sprout-f0.png"),
-    require("../../assets/formi/study-sprout-f1.png"),
-    require("../../assets/formi/study-sprout-f2.png"),
-    require("../../assets/formi/study-sprout-f3.png")
-  ],
-  "study-identity": [
-    require("../../assets/formi/study-identity-f0.png"),
-    require("../../assets/formi/study-identity-f1.png"),
-    require("../../assets/formi/study-identity-f2.png"),
-    require("../../assets/formi/study-identity-f3.png")
-  ],
-  "study-master": [
-    require("../../assets/formi/study-master-f0.png"),
-    require("../../assets/formi/study-master-f1.png"),
-    require("../../assets/formi/study-master-f2.png"),
-    require("../../assets/formi/study-master-f3.png")
-  ],
-  "exercise-sprout": [
-    require("../../assets/formi/exercise-sprout-f0.png"),
-    require("../../assets/formi/exercise-sprout-f1.png"),
-    require("../../assets/formi/exercise-sprout-f2.png"),
-    require("../../assets/formi/exercise-sprout-f3.png")
-  ],
-  "exercise-identity": [
-    require("../../assets/formi/exercise-identity-f0.png"),
-    require("../../assets/formi/exercise-identity-f1.png"),
-    require("../../assets/formi/exercise-identity-f2.png"),
-    require("../../assets/formi/exercise-identity-f3.png")
-  ],
-  "exercise-master": [
-    require("../../assets/formi/exercise-master-f0.png"),
-    require("../../assets/formi/exercise-master-f1.png"),
-    require("../../assets/formi/exercise-master-f2.png"),
-    require("../../assets/formi/exercise-master-f3.png")
-  ],
-  "meal-sprout": [
-    require("../../assets/formi/meal-sprout-f0.png"),
-    require("../../assets/formi/meal-sprout-f1.png"),
-    require("../../assets/formi/meal-sprout-f2.png"),
-    require("../../assets/formi/meal-sprout-f3.png")
-  ],
-  "meal-identity": [
-    require("../../assets/formi/meal-identity-f0.png"),
-    require("../../assets/formi/meal-identity-f1.png"),
-    require("../../assets/formi/meal-identity-f2.png"),
-    require("../../assets/formi/meal-identity-f3.png")
-  ],
-  "meal-master": [
-    require("../../assets/formi/meal-master-f0.png"),
-    require("../../assets/formi/meal-master-f1.png"),
-    require("../../assets/formi/meal-master-f2.png"),
-    require("../../assets/formi/meal-master-f3.png")
-  ],
-  "reading-sprout": [
-    require("../../assets/formi/reading-sprout-f0.png"),
-    require("../../assets/formi/reading-sprout-f1.png"),
-    require("../../assets/formi/reading-sprout-f2.png"),
-    require("../../assets/formi/reading-sprout-f3.png")
-  ],
-  "reading-identity": [
-    require("../../assets/formi/reading-identity-f0.png"),
-    require("../../assets/formi/reading-identity-f1.png"),
-    require("../../assets/formi/reading-identity-f2.png"),
-    require("../../assets/formi/reading-identity-f3.png")
-  ],
-  "reading-master": [
-    require("../../assets/formi/reading-master-f0.png"),
-    require("../../assets/formi/reading-master-f1.png"),
-    require("../../assets/formi/reading-master-f2.png"),
-    require("../../assets/formi/reading-master-f3.png")
-  ],
-  "cleaning-sprout": [
-    require("../../assets/formi/cleaning-sprout-f0.png"),
-    require("../../assets/formi/cleaning-sprout-f1.png"),
-    require("../../assets/formi/cleaning-sprout-f2.png"),
-    require("../../assets/formi/cleaning-sprout-f3.png")
-  ],
-  "cleaning-identity": [
-    require("../../assets/formi/cleaning-identity-f0.png"),
-    require("../../assets/formi/cleaning-identity-f1.png"),
-    require("../../assets/formi/cleaning-identity-f2.png"),
-    require("../../assets/formi/cleaning-identity-f3.png")
-  ],
-  "cleaning-master": [
-    require("../../assets/formi/cleaning-master-f0.png"),
-    require("../../assets/formi/cleaning-master-f1.png"),
-    require("../../assets/formi/cleaning-master-f2.png"),
-    require("../../assets/formi/cleaning-master-f3.png")
-  ],
-  "selfcare-sprout": [
-    require("../../assets/formi/selfcare-sprout-f0.png"),
-    require("../../assets/formi/selfcare-sprout-f1.png"),
-    require("../../assets/formi/selfcare-sprout-f2.png"),
-    require("../../assets/formi/selfcare-sprout-f3.png")
-  ],
-  "selfcare-identity": [
-    require("../../assets/formi/selfcare-identity-f0.png"),
-    require("../../assets/formi/selfcare-identity-f1.png"),
-    require("../../assets/formi/selfcare-identity-f2.png"),
-    require("../../assets/formi/selfcare-identity-f3.png")
-  ],
-  "selfcare-master": [
-    require("../../assets/formi/selfcare-master-f0.png"),
-    require("../../assets/formi/selfcare-master-f1.png"),
-    require("../../assets/formi/selfcare-master-f2.png"),
-    require("../../assets/formi/selfcare-master-f3.png")
-  ]
-} as const;
 
 // PNG 가 없는 카테고리 (hobby) 는 가장 가까운 카테고리로 대체한다.
 const categoryFallback: Record<HabitCategory, HabitCategory> = {
@@ -182,7 +67,7 @@ export function formiImageFor(category: HabitCategory, level: number) {
   return images[key] ?? images.seed;
 }
 
-// 깜빡임 애니메이션 프레임 묶음 [눈 뜸, 반쯤, 눈 감음] 을 돌려준다.
+// 카테고리/레벨에 맞는 idle 애니메이션 프레임 묶음을 돌려준다.
 export function formiFramesFor(category: HabitCategory, level: number) {
   const stage = stageForLevel(level);
   if (stage === "seed") {

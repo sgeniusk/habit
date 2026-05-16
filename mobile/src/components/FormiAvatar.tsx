@@ -1,6 +1,6 @@
-// Formi 캐릭터 아바타. 단일 이미지로 두 프레임(팔 내림 ⟷ 올림)을 깔끔하게 번갈아 보여주고,
+// Formi 캐릭터 아바타. 캐릭터 시트에서 잘라낸 N프레임을 단일 이미지로 핑퐁 재생하고,
 // 그 위에 살짝 들썩이고 갸우뚱하는 transform 을 얹어 귀여운 idle 을 만든다.
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -25,7 +25,16 @@ type FormiAvatarProps = {
   breathing?: boolean;
 };
 
-const SWAP_MS = 480; // 두 프레임을 번갈아 보여주는 간격
+const FRAME_MS = 120; // 프레임 한 칸 넘어가는 간격
+
+// [0,1,...,n-1,n-2,...,1] 핑퐁 순서를 만든다.
+function buildPingPong(length: number): number[] {
+  if (length <= 1) return [0];
+  const seq: number[] = [];
+  for (let i = 0; i < length; i++) seq.push(i);
+  for (let i = length - 2; i > 0; i--) seq.push(i);
+  return seq;
+}
 
 export function FormiAvatar({
   category,
@@ -35,7 +44,13 @@ export function FormiAvatar({
 }: FormiAvatarProps) {
   const breath = useSharedValue(0); // 숨쉬기 (위아래 들썩)
   const wobble = useSharedValue(0); // 좌우 갸우뚱
-  const [alt, setAlt] = useState(false); // false = 팔 내린 프레임, true = 팔 올린 프레임
+  const [tick, setTick] = useState(0);
+
+  const frames = category ? formiFramesFor(category, level) : formiSeedFrames;
+  const sequence = useMemo(
+    () => buildPingPong(frames ? frames.length : 1),
+    [frames]
+  );
 
   useEffect(() => {
     if (!breathing) {
@@ -59,31 +74,31 @@ export function FormiAvatar({
     );
   }, [breathing, breath, wobble]);
 
-  // 두 프레임을 깔끔하게 번갈아 (겹침 없는 단일 이미지 교체)
+  // 프레임 핑퐁 (겹침 없는 단일 이미지 교체)
   useEffect(() => {
-    if (!breathing) {
-      setAlt(false);
+    if (!breathing || sequence.length <= 1) {
+      setTick(0);
       return;
     }
-    const id = setInterval(() => setAlt((a) => !a), SWAP_MS);
+    const id = setInterval(() => setTick((t) => t + 1), FRAME_MS);
     return () => clearInterval(id);
-  }, [breathing]);
+  }, [breathing, sequence]);
 
   const bodyStyle = useAnimatedStyle(() => ({
     transform: [
-      { translateY: -breath.value * size * 0.04 },
-      { rotateZ: `${wobble.value * 2.5}deg` },
+      { translateY: -breath.value * size * 0.035 },
+      { rotateZ: `${wobble.value * 2}deg` },
       { scaleX: 1 + breath.value * 0.02 },
-      { scaleY: 1 + breath.value * 0.04 }
+      { scaleY: 1 + breath.value * 0.035 }
     ]
   }));
 
-  const frames = category ? formiFramesFor(category, level) : formiSeedFrames;
   const fallback =
     category !== undefined ? formiImageFor(category, level) : formiSeedImage;
   let source = fallback;
   if (frames && frames.length > 0) {
-    source = (alt ? frames[frames.length - 1] : frames[0]) ?? frames[0];
+    const idx = sequence[tick % sequence.length] ?? 0;
+    source = frames[idx] ?? frames[0];
   }
 
   return (
