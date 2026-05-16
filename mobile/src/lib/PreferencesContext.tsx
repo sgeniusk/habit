@@ -11,13 +11,17 @@ export type Preferences = {
   insightSoften: boolean;
   roomItem: string;
   outfit: string;
+  roomScene: string;
+  roomDecor: string[];
 };
 
 const defaultPreferences: Preferences = {
   voiceMode: "cute",
   insightSoften: true,
   roomItem: "원목 책상",
-  outfit: "집중 후드"
+  outfit: "집중 후드",
+  roomScene: "room-warm",
+  roomDecor: ["item-plant", "item-rug"]
 };
 
 type PreferencesContextValue = {
@@ -27,6 +31,8 @@ type PreferencesContextValue = {
   setInsightSoften(value: boolean): void;
   setRoomItem(item: string): void;
   setOutfit(item: string): void;
+  setRoomScene(scene: string): void;
+  toggleRoomDecor(decor: string): void;
 };
 
 const Context = createContext<PreferencesContextValue | null>(null);
@@ -76,9 +82,31 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     setPreferences((current) => ({ ...current, outfit: item }));
   }, []);
 
+  const setRoomScene = useCallback((scene: string) => {
+    setPreferences((current) => ({ ...current, roomScene: scene }));
+  }, []);
+
+  const toggleRoomDecor = useCallback((decor: string) => {
+    setPreferences((current) => ({
+      ...current,
+      roomDecor: current.roomDecor.includes(decor)
+        ? current.roomDecor.filter((item) => item !== decor)
+        : [...current.roomDecor, decor]
+    }));
+  }, []);
+
   return (
     <Context.Provider
-      value={{ preferences, loaded, setVoiceMode, setInsightSoften, setRoomItem, setOutfit }}
+      value={{
+        preferences,
+        loaded,
+        setVoiceMode,
+        setInsightSoften,
+        setRoomItem,
+        setOutfit,
+        setRoomScene,
+        toggleRoomDecor
+      }}
     >
       {children}
     </Context.Provider>
@@ -101,7 +129,12 @@ function mergePreferences(raw: string): Preferences {
       insightSoften: typeof parsed.insightSoften === "boolean" ? parsed.insightSoften : true,
       roomItem:
         typeof parsed.roomItem === "string" ? parsed.roomItem : defaultPreferences.roomItem,
-      outfit: typeof parsed.outfit === "string" ? parsed.outfit : defaultPreferences.outfit
+      outfit: typeof parsed.outfit === "string" ? parsed.outfit : defaultPreferences.outfit,
+      roomScene:
+        typeof parsed.roomScene === "string" ? parsed.roomScene : defaultPreferences.roomScene,
+      roomDecor: Array.isArray(parsed.roomDecor)
+        ? parsed.roomDecor.filter((item): item is string => typeof item === "string")
+        : defaultPreferences.roomDecor
     };
   } catch {
     return defaultPreferences;

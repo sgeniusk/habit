@@ -52,7 +52,7 @@ const VARIANTS = [
   // 식단
   ["meal-sprout", "give it a small wooden spoon in one tiny hand and a round apple beside the body, calm look at the spoon."],
   ["meal-identity", "dress it in a tiny apron with one pocket, holding a clear glass of water, a small green leaf garnish on the head."],
-  ["meal-master", "place it in a tiny pastel kitchen with a wooden cutting board and a half-packed lunchbox, more human chef proportions, warm focused expression."],
+  ["meal-master", "dress it in a chef apron and a tiny chef hat, holding a wooden spoon in one hand and a small bowl in the other tiny hand, warm focused expression. Single centered character only, no kitchen, no room, no furniture, flat pure white background, gentle shadow."],
   // 독서
   ["reading-sprout", "lean a slightly oversized closed book against the body with a thin bookmark ribbon, one tiny hand touching the book gently."],
   ["reading-identity", "dress it in a soft knit vest, holding a paperback in both small hands, a tiny pair of round reading glasses, calm absorbed look."],
@@ -60,11 +60,11 @@ const VARIANTS = [
   // 정리
   ["cleaning-sprout", "give it a single small label sticker held between two tiny hands and a folded cloth beside the body, neat curious expression."],
   ["cleaning-identity", "dress it in a small pocket apron with three tiny labeled pockets, holding a folded cloth, tidy proud expression."],
-  ["cleaning-master", "place it in a small tidy room with three labeled storage boxes and a folded blanket, soft sunlight, calm satisfied smile."],
+  ["cleaning-master", "dress it in a pocket apron, holding a neatly folded blanket in both arms, two small labeled boxes stacked beside it, tidy satisfied smile. Single centered character only, no room, no walls, no floor scene, flat pure white background, gentle shadow."],
   // 셀프케어
   ["selfcare-sprout", "give it a small steaming cup held in tiny hands, eyes softly closed in a calm breath, gentle warm aura."],
   ["selfcare-identity", "give it a soft sleeping cap and a small blanket draped around the body, holding the warm cup, relaxed sitting posture."],
-  ["selfcare-master", "seat it on a small cushion in a cozy corner with a tiny side table, the warm cup, a folded yoga mat behind, peaceful breath expression."],
+  ["selfcare-master", "give it a soft sleeping cap and a small blanket draped around the shoulders, holding a warm steaming cup in both tiny hands, eyes softly closed, peaceful smile. Single centered character only, no room, no furniture, flat pure white background, gentle shadow."],
   // 추가 자산
   ["icon", "show only the head and small smile, centered, a single tiny mint-green dot accent on top, bold clean outline, vibrant flat white background, recognizable at tiny size, no accessories — app icon style."],
   ["splash", "the character floating gently, calm off-white background fading to soft green below, no accessories, gentle floating shadow — splash screen style."],

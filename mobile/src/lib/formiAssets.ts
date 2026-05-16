@@ -25,7 +25,15 @@ const images = {
   "cleaning-master": require("../../assets/formi/cleaning-master.png"),
   "selfcare-sprout": require("../../assets/formi/selfcare-sprout.png"),
   "selfcare-identity": require("../../assets/formi/selfcare-identity.png"),
-  "selfcare-master": require("../../assets/formi/selfcare-master.png")
+  "selfcare-master": require("../../assets/formi/selfcare-master.png"),
+  "room-warm": require("../../assets/formi/room-warm.png"),
+  "room-sage": require("../../assets/formi/room-sage.png"),
+  "room-blush": require("../../assets/formi/room-blush.png"),
+  "room-dusk": require("../../assets/formi/room-dusk.png"),
+  "item-plant": require("../../assets/formi/item-plant.png"),
+  "item-lamp": require("../../assets/formi/item-lamp.png"),
+  "item-rug": require("../../assets/formi/item-rug.png"),
+  "item-shelf": require("../../assets/formi/item-shelf.png")
 } as const;
 
 // PNG 가 없는 카테고리 (hobby) 는 가장 가까운 카테고리로 대체한다.
@@ -58,3 +66,31 @@ export function formiImageFor(category: HabitCategory, level: number) {
 
 export const formiSeedImage = images.seed;
 export const formiEmptyImage = images.empty;
+
+// 방 배경 (캐릭터가 그 위에 선다)
+export type RoomScene = { id: string; label: string };
+export const roomScenes: RoomScene[] = [
+  { id: "room-warm", label: "따뜻한 방" },
+  { id: "room-sage", label: "세이지 방" },
+  { id: "room-blush", label: "블러시 방" },
+  { id: "room-dusk", label: "노을 방" }
+];
+
+// 방 꾸미기 아이템 (방 배경 위에 얹는다)
+export type RoomDecor = { id: string; label: string };
+export const roomDecors: RoomDecor[] = [
+  { id: "item-rug", label: "러그" },
+  { id: "item-shelf", label: "책장" },
+  { id: "item-plant", label: "화분" },
+  { id: "item-lamp", label: "조명" }
+];
+
+export function roomImageFor(sceneId: string) {
+  const key = sceneId as keyof typeof images;
+  return images[key] ?? images["room-warm"];
+}
+
+export function decorImageFor(decorId: string) {
+  const key = decorId as keyof typeof images;
+  return images[key] ?? images["item-plant"];
+}

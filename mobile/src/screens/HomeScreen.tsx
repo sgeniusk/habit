@@ -1,15 +1,16 @@
 // 집 탭. 대표 페르소나 영역 + 페르소나 컬렉션 + 말투 톤 토글.
 import { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Sparkles } from "lucide-react-native";
 
 import { FormiAvatar } from "../components/FormiAvatar";
+import { findPersonaByCategory, personaCatalog } from "../data/personaCatalog";
 import {
-  findPersonaByCategory,
-  outfitItems,
-  personaCatalog,
-  roomItems
-} from "../data/personaCatalog";
+  decorImageFor,
+  roomDecors,
+  roomImageFor,
+  roomScenes
+} from "../lib/formiAssets";
 import { usePreferences } from "../lib/PreferencesContext";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { localize } from "../lib/i18n";
@@ -23,8 +24,10 @@ import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 
 export function HomeScreen() {
   const { records } = useSnapRecords();
-  const { preferences, setVoiceMode, setRoomItem, setOutfit } = usePreferences();
+  const { preferences, setVoiceMode, setRoomScene, toggleRoomDecor } = usePreferences();
   const voiceMode = preferences.voiceMode;
+  const roomScene = preferences.roomScene;
+  const roomDecor = preferences.roomDecor;
 
   const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null);
 
@@ -136,43 +139,78 @@ export function HomeScreen() {
 
       <View style={styles.toneCard}>
         <Text style={styles.sectionTitle}>방 꾸미기</Text>
+        <View style={styles.roomPreview}>
+          <Image
+            source={roomImageFor(roomScene)}
+            style={StyleSheet.absoluteFill}
+            resizeMode="cover"
+          />
+          {roomDecor.includes("item-rug") ? (
+            <Image
+              source={decorImageFor("item-rug")}
+              style={styles.decorRug}
+              resizeMode="contain"
+            />
+          ) : null}
+          {roomDecor.includes("item-shelf") ? (
+            <Image
+              source={decorImageFor("item-shelf")}
+              style={styles.decorShelf}
+              resizeMode="contain"
+            />
+          ) : null}
+          {roomDecor.includes("item-lamp") ? (
+            <Image
+              source={decorImageFor("item-lamp")}
+              style={styles.decorLamp}
+              resizeMode="contain"
+            />
+          ) : null}
+          {roomDecor.includes("item-plant") ? (
+            <Image
+              source={decorImageFor("item-plant")}
+              style={styles.decorPlant}
+              resizeMode="contain"
+            />
+          ) : null}
+          <View style={styles.roomCharacter}>
+            <FormiAvatar category={activePersona.category} level={activeLevel} size={120} />
+          </View>
+        </View>
+
+        <Text style={styles.roomPickerLabel}>방 배경</Text>
         <View style={styles.chipRow}>
-          {roomItems.map((item) => (
+          {roomScenes.map((scene) => (
             <Pressable
-              key={item}
-              style={[styles.chip, preferences.roomItem === item && styles.chipActive]}
-              onPress={() => setRoomItem(item)}
+              key={scene.id}
+              style={[styles.chip, roomScene === scene.id && styles.chipActive]}
+              onPress={() => setRoomScene(scene.id)}
             >
-              <Text
-                style={[
-                  styles.chipText,
-                  preferences.roomItem === item && styles.chipTextActive
-                ]}
-              >
-                {item}
+              <Text style={[styles.chipText, roomScene === scene.id && styles.chipTextActive]}>
+                {scene.label}
               </Text>
             </Pressable>
           ))}
         </View>
-        <Text style={[styles.sectionTitle, styles.decorSecondTitle]}>페르소나 꾸미기</Text>
+
+        <Text style={styles.roomPickerLabel}>꾸미기 아이템</Text>
         <View style={styles.chipRow}>
-          {outfitItems.map((item) => (
-            <Pressable
-              key={item}
-              style={[styles.chip, preferences.outfit === item && styles.chipActive]}
-              onPress={() => setOutfit(item)}
-            >
-              <Text
-                style={[styles.chipText, preferences.outfit === item && styles.chipTextActive]}
+          {roomDecors.map((decor) => {
+            const on = roomDecor.includes(decor.id);
+            return (
+              <Pressable
+                key={decor.id}
+                style={[styles.chip, on && styles.chipActive]}
+                onPress={() => toggleRoomDecor(decor.id)}
               >
-                {item}
-              </Text>
-            </Pressable>
-          ))}
+                <Text style={[styles.chipText, on && styles.chipTextActive]}>
+                  {on ? "✓ " : ""}
+                  {decor.label}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
-        <Text style={styles.decorApplied}>
-          적용 중 · 방 {preferences.roomItem} · 의상 {preferences.outfit}
-        </Text>
       </View>
 
       <View style={styles.collectionHeader}>
@@ -346,6 +384,38 @@ const styles = StyleSheet.create({
   chipActive: { borderColor: colors.leaf, backgroundColor: colors.leafSoft },
   chipText: { color: colors.ink, fontWeight: "800", fontSize: 13 },
   chipTextActive: { color: colors.leaf },
-  decorSecondTitle: { marginTop: spacing.sm },
-  decorApplied: { color: colors.muted, fontWeight: "700", fontSize: 12, marginTop: 4 }
+  roomPreview: {
+    height: 220,
+    borderRadius: radii.md,
+    overflow: "hidden",
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.line,
+    position: "relative"
+  },
+  roomCharacter: {
+    position: "absolute",
+    bottom: 14,
+    left: "50%",
+    marginLeft: -60,
+    width: 120,
+    alignItems: "center"
+  },
+  decorRug: {
+    position: "absolute",
+    bottom: 8,
+    left: "50%",
+    marginLeft: -82,
+    width: 164,
+    height: 62
+  },
+  decorShelf: { position: "absolute", bottom: 18, left: 12, width: 80, height: 98 },
+  decorLamp: { position: "absolute", bottom: 20, right: 12, width: 46, height: 110 },
+  decorPlant: { position: "absolute", bottom: 10, right: 44, width: 54, height: 82 },
+  roomPickerLabel: {
+    color: colors.muted,
+    fontWeight: "800",
+    fontSize: 12,
+    marginTop: 6
+  }
 });
