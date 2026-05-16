@@ -1,7 +1,6 @@
-// Formi 캐릭터 아바타. 두 프레임(팔 내림 ⟷ 올림)을 크로스페이드로 오가며
-// 살짝 들썩이고 갸우뚱하는 귀여운 idle 애니메이션을 준다.
-import { useEffect } from "react";
-import { View } from "react-native";
+// Formi 캐릭터 아바타. 단일 이미지로 두 프레임(팔 내림 ⟷ 올림)을 깔끔하게 번갈아 보여주고,
+// 그 위에 살짝 들썩이고 갸우뚱하는 transform 을 얹어 귀여운 idle 을 만든다.
+import { useEffect, useState } from "react";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -26,7 +25,7 @@ type FormiAvatarProps = {
   breathing?: boolean;
 };
 
-const HOLD_MS = 620; // 한 프레임에서 다른 프레임으로 건너가는 시간
+const SWAP_MS = 480; // 두 프레임을 번갈아 보여주는 간격
 
 export function FormiAvatar({
   category,
@@ -36,13 +35,12 @@ export function FormiAvatar({
 }: FormiAvatarProps) {
   const breath = useSharedValue(0); // 숨쉬기 (위아래 들썩)
   const wobble = useSharedValue(0); // 좌우 갸우뚱
-  const blend = useSharedValue(0); // 0 = 팔 내린 프레임, 1 = 팔 올린 프레임
+  const [alt, setAlt] = useState(false); // false = 팔 내린 프레임, true = 팔 올린 프레임
 
   useEffect(() => {
     if (!breathing) {
       breath.value = 0;
       wobble.value = 0;
-      blend.value = 0;
       return;
     }
     breath.value = withRepeat(
@@ -59,14 +57,17 @@ export function FormiAvatar({
       ),
       -1
     );
-    blend.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: HOLD_MS, easing: Easing.inOut(Easing.ease) }),
-        withTiming(0, { duration: HOLD_MS, easing: Easing.inOut(Easing.ease) })
-      ),
-      -1
-    );
-  }, [breathing, breath, wobble, blend]);
+  }, [breathing, breath, wobble]);
+
+  // 두 프레임을 깔끔하게 번갈아 (겹침 없는 단일 이미지 교체)
+  useEffect(() => {
+    if (!breathing) {
+      setAlt(false);
+      return;
+    }
+    const id = setInterval(() => setAlt((a) => !a), SWAP_MS);
+    return () => clearInterval(id);
+  }, [breathing]);
 
   const bodyStyle = useAnimatedStyle(() => ({
     transform: [
@@ -76,39 +77,23 @@ export function FormiAvatar({
       { scaleY: 1 + breath.value * 0.04 }
     ]
   }));
-  const topStyle = useAnimatedStyle(() => ({ opacity: 1 - blend.value }));
 
   const frames = category ? formiFramesFor(category, level) : formiSeedFrames;
   const fallback =
     category !== undefined ? formiImageFor(category, level) : formiSeedImage;
-  const frameDown = frames ? frames[0] ?? fallback : fallback;
-  const frameUp = frames
-    ? frames[frames.length - 1] ?? frames[0] ?? fallback
-    : fallback;
-
-  const imageStyle = {
-    width: size,
-    height: size,
-    transformOrigin: "50% 100%" as const
-  };
+  let source = fallback;
+  if (frames && frames.length > 0) {
+    source = (alt ? frames[frames.length - 1] : frames[0]) ?? frames[0];
+  }
 
   return (
-    <View style={{ width: size, height: size }}>
-      <Animated.Image
-        source={frameUp}
-        resizeMode="contain"
-        style={[imageStyle, bodyStyle]}
-      />
-      <Animated.Image
-        source={frameDown}
-        resizeMode="contain"
-        style={[
-          imageStyle,
-          { position: "absolute", top: 0, left: 0 },
-          bodyStyle,
-          topStyle
-        ]}
-      />
-    </View>
+    <Animated.Image
+      source={source}
+      resizeMode="contain"
+      style={[
+        { width: size, height: size, transformOrigin: "50% 100%" as const },
+        bodyStyle
+      ]}
+    />
   );
 }
