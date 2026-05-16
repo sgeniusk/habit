@@ -1,0 +1,13 @@
+{
+  "name": "formi-asset-scripts",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Formi 캐릭터 자산을 Nano Banana (Gemini) 로 생성하는 일회성 스크립트. web/mobile 본체와 분리.",
+  "scripts": {
+    "generate": "node generate-formi-characters.mjs"
+  },
+  "dependencies": {
+    "@google/genai": "^1.0.0"
+  }
+}
