@@ -11,6 +11,16 @@ import * as path from "node:path";
 
 const OUT_DIR = path.resolve(import.meta.dirname, "../mobile/assets/formi");
 const SEED_PATH = path.join(OUT_DIR, "seed.png");
+// 사용자가 Midjourney 등에서 만든 원본을 여기에 두면 그림자/표정을 정규화해 seed.png 로 만든다.
+const RAW_SEED_PATH = path.join(OUT_DIR, "raw-seed.png");
+
+const NORMALIZE_PROMPT =
+  "Take this Formi character and clean it into its identity-less seed form. " +
+  "Remove the drop shadow completely. Make the face fully calm and neutral, " +
+  "almost expressionless — no smile, this is the very first form before any " +
+  "habit. Keep the soft blob body shape, the warm off-white color with the " +
+  "gentle pink gradient at the bottom, the tiny arms and feet, and the " +
+  "hand-drawn clean outline exactly the same. Pure white background, no shadow.";
 
 const BASE_STYLE =
   "soft blob-like lifestyle persona character named Formi, not an animal, not " +
@@ -73,17 +83,26 @@ async function main() {
   const model = "gemini-2.5-flash-image";
 
   let seedBase64 = readImageBase64(SEED_PATH);
-  if (!seedBase64) {
-    console.log("seed.png 가 없어 텍스트로 씨앗 캐릭터를 먼저 생성해요...");
-    seedBase64 = await generate(ai, model, [{ text: SEED_PROMPT }]);
+  if (seedBase64) {
+    console.log("기존 seed.png 를 기준 캐릭터로 사용해요.");
+  } else {
+    const rawSeed = readImageBase64(RAW_SEED_PATH);
+    if (rawSeed) {
+      console.log("raw-seed.png 를 정규화해요 (그림자 제거 + 표정 중립화)...");
+      seedBase64 = await generate(ai, model, [
+        { inlineData: { mimeType: "image/png", data: rawSeed } },
+        { text: NORMALIZE_PROMPT }
+      ]);
+    } else {
+      console.log("seed.png / raw-seed.png 가 없어 텍스트로 씨앗을 생성해요...");
+      seedBase64 = await generate(ai, model, [{ text: SEED_PROMPT }]);
+    }
     if (!seedBase64) {
       console.error("씨앗 캐릭터 생성 실패. API 키와 모델 접근 권한을 확인해 주세요.");
       process.exit(1);
     }
     saveImage(SEED_PATH, seedBase64);
     console.log("저장: seed.png");
-  } else {
-    console.log("기존 seed.png 를 기준 캐릭터로 사용해요.");
   }
 
   for (const [name, change] of VARIANTS) {

@@ -14,9 +14,10 @@ npm run generate
 ## 동작
 
 1. `GEMINI_API_KEY` (또는 `GOOGLE_API_KEY`) 환경변수를 읽습니다.
-2. `mobile/assets/formi/seed.png` 가 있으면 그것을 **기준 캐릭터**로 사용합니다.
-   - 없으면 텍스트 프롬프트로 씨앗 캐릭터를 먼저 생성해 `seed.png` 로 저장합니다.
-   - 키 캐릭터를 Midjourney 등으로 직접 만들고 싶으면, 그 PNG 를 `seed.png` 로 두고 실행하세요.
+2. 씨앗 캐릭터 (`mobile/assets/formi/seed.png`) 를 다음 우선순위로 준비합니다.
+   - `seed.png` 가 이미 있으면 그대로 기준 캐릭터로 사용합니다.
+   - 없고 `raw-seed.png` 가 있으면, 그림자 제거 + 표정 중립화로 **정규화**해 `seed.png` 를 만듭니다. Midjourney 등에서 만든 원본 (그림자/웃음이 있어도) 을 `raw-seed.png` 로 두면 됩니다.
+   - 둘 다 없으면 텍스트 프롬프트로 씨앗을 생성합니다.
 3. `seed.png` 를 입력 이미지로, 23 변형을 "이 캐릭터를 유지하면서 X 만 바꿔라" 편집 프롬프트로 생성합니다.
 4. 결과를 `mobile/assets/formi/<name>.png` 로 저장합니다.
 5. 이미 존재하는 파일은 건너뜁니다 — 실패한 항목만 재실행으로 다시 시도할 수 있습니다.
