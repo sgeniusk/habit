@@ -36,6 +36,105 @@ const images = {
   "item-shelf": require("../../assets/formi/item-shelf.png")
 } as const;
 
+// 깜빡임 애니메이션 프레임 (f0 눈 뜸 · f1 반쯤 · f2 눈 감음). 한 시트에서 잘라 프레임끼리 정렬을 맞췄다.
+const frameSets = {
+  seed: [
+    require("../../assets/formi/seed-f0.png"),
+    require("../../assets/formi/seed-f1.png"),
+    require("../../assets/formi/seed-f2.png")
+  ],
+  "study-sprout": [
+    require("../../assets/formi/study-sprout-f0.png"),
+    require("../../assets/formi/study-sprout-f1.png"),
+    require("../../assets/formi/study-sprout-f2.png")
+  ],
+  "study-identity": [
+    require("../../assets/formi/study-identity-f0.png"),
+    require("../../assets/formi/study-identity-f1.png"),
+    require("../../assets/formi/study-identity-f2.png")
+  ],
+  "study-master": [
+    require("../../assets/formi/study-master-f0.png"),
+    require("../../assets/formi/study-master-f1.png"),
+    require("../../assets/formi/study-master-f2.png")
+  ],
+  "exercise-sprout": [
+    require("../../assets/formi/exercise-sprout-f0.png"),
+    require("../../assets/formi/exercise-sprout-f1.png"),
+    require("../../assets/formi/exercise-sprout-f2.png")
+  ],
+  "exercise-identity": [
+    require("../../assets/formi/exercise-identity-f0.png"),
+    require("../../assets/formi/exercise-identity-f1.png"),
+    require("../../assets/formi/exercise-identity-f2.png")
+  ],
+  "exercise-master": [
+    require("../../assets/formi/exercise-master-f0.png"),
+    require("../../assets/formi/exercise-master-f1.png"),
+    require("../../assets/formi/exercise-master-f2.png")
+  ],
+  "meal-sprout": [
+    require("../../assets/formi/meal-sprout-f0.png"),
+    require("../../assets/formi/meal-sprout-f1.png"),
+    require("../../assets/formi/meal-sprout-f2.png")
+  ],
+  "meal-identity": [
+    require("../../assets/formi/meal-identity-f0.png"),
+    require("../../assets/formi/meal-identity-f1.png"),
+    require("../../assets/formi/meal-identity-f2.png")
+  ],
+  "meal-master": [
+    require("../../assets/formi/meal-master-f0.png"),
+    require("../../assets/formi/meal-master-f1.png"),
+    require("../../assets/formi/meal-master-f2.png")
+  ],
+  "reading-sprout": [
+    require("../../assets/formi/reading-sprout-f0.png"),
+    require("../../assets/formi/reading-sprout-f1.png"),
+    require("../../assets/formi/reading-sprout-f2.png")
+  ],
+  "reading-identity": [
+    require("../../assets/formi/reading-identity-f0.png"),
+    require("../../assets/formi/reading-identity-f1.png"),
+    require("../../assets/formi/reading-identity-f2.png")
+  ],
+  "reading-master": [
+    require("../../assets/formi/reading-master-f0.png"),
+    require("../../assets/formi/reading-master-f1.png"),
+    require("../../assets/formi/reading-master-f2.png")
+  ],
+  "cleaning-sprout": [
+    require("../../assets/formi/cleaning-sprout-f0.png"),
+    require("../../assets/formi/cleaning-sprout-f1.png"),
+    require("../../assets/formi/cleaning-sprout-f2.png")
+  ],
+  "cleaning-identity": [
+    require("../../assets/formi/cleaning-identity-f0.png"),
+    require("../../assets/formi/cleaning-identity-f1.png"),
+    require("../../assets/formi/cleaning-identity-f2.png")
+  ],
+  "cleaning-master": [
+    require("../../assets/formi/cleaning-master-f0.png"),
+    require("../../assets/formi/cleaning-master-f1.png"),
+    require("../../assets/formi/cleaning-master-f2.png")
+  ],
+  "selfcare-sprout": [
+    require("../../assets/formi/selfcare-sprout-f0.png"),
+    require("../../assets/formi/selfcare-sprout-f1.png"),
+    require("../../assets/formi/selfcare-sprout-f2.png")
+  ],
+  "selfcare-identity": [
+    require("../../assets/formi/selfcare-identity-f0.png"),
+    require("../../assets/formi/selfcare-identity-f1.png"),
+    require("../../assets/formi/selfcare-identity-f2.png")
+  ],
+  "selfcare-master": [
+    require("../../assets/formi/selfcare-master-f0.png"),
+    require("../../assets/formi/selfcare-master-f1.png"),
+    require("../../assets/formi/selfcare-master-f2.png")
+  ]
+} as const;
+
 // PNG 가 없는 카테고리 (hobby) 는 가장 가까운 카테고리로 대체한다.
 const categoryFallback: Record<HabitCategory, HabitCategory> = {
   study: "study",
@@ -64,6 +163,18 @@ export function formiImageFor(category: HabitCategory, level: number) {
   return images[key] ?? images.seed;
 }
 
+// 깜빡임 애니메이션 프레임 묶음 [눈 뜸, 반쯤, 눈 감음] 을 돌려준다.
+export function formiFramesFor(category: HabitCategory, level: number) {
+  const stage = stageForLevel(level);
+  if (stage === "seed") {
+    return frameSets.seed;
+  }
+  const mappedCategory = categoryFallback[category] ?? "selfcare";
+  const key = `${mappedCategory}-${stage}` as keyof typeof frameSets;
+  return frameSets[key] ?? frameSets.seed;
+}
+
+export const formiSeedFrames = frameSets.seed;
 export const formiSeedImage = images.seed;
 export const formiEmptyImage = images.empty;
 
