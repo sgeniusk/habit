@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { CheckCircle2, Clipboard as ClipboardIcon, Sparkles, Trophy, UserPlus, Users } from "lucide-react-native";
 
+import { FormiAvatar } from "../components/FormiAvatar";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { localize } from "../lib/i18n";
 import {
@@ -75,8 +76,13 @@ export function MeetScreen() {
       </View>
 
       <View style={styles.heroBand}>
-        <Text style={styles.heroEyebrow}>같이 하면 더 오래 가요</Text>
-        <Text style={styles.heroTitle}>스냅으로 만드는 모임</Text>
+        <View style={styles.heroBandRow}>
+          <FormiAvatar category={records[0]?.category ?? "study"} level={4} size={84} />
+          <View style={styles.heroBandTexts}>
+            <Text style={styles.heroEyebrow}>같이 하면 더 오래 가요</Text>
+            <Text style={styles.heroTitle}>스냅으로 만드는 모임</Text>
+          </View>
+        </View>
         <Text style={styles.heroBody}>
           반복되는 생활 스냅을 읽어 비슷한 리듬의 친구와 묶어줘요. 압박이 아니라 같이 돌아오는
           장치예요.
@@ -215,8 +221,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mint,
     borderWidth: 1,
     borderColor: "#b7dbbf",
-    gap: 4
+    gap: 8
   },
+  heroBandRow: { flexDirection: "row", alignItems: "center", gap: 12 },
+  heroBandTexts: { flex: 1, gap: 2 },
   heroEyebrow: { ...typography.eyebrow, color: colors.leaf, textTransform: "uppercase" },
   heroTitle: { ...typography.h2, color: colors.ink, marginTop: 4 },
   heroBody: { ...typography.body, color: colors.ink },

@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
+import { FormiAvatar } from "../components/FormiAvatar";
 import { usePreferences } from "../lib/PreferencesContext";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { buildMemoryCurations, type MemoryCuration } from "../lib/memoryEngine";
@@ -57,6 +58,17 @@ export function ReportScreen() {
 
       {reportMode === "weekly" ? (
         <>
+          <View style={styles.personaBand}>
+            <FormiAvatar
+              category={summaries[0]?.archetype ?? "study"}
+              level={summaries[0]?.level ?? 1}
+              size={96}
+            />
+            <Text style={styles.personaBandText}>
+              대표 페르소나가 Lv.{summaries[0]?.level ?? 1} 까지 자랐어요.
+            </Text>
+          </View>
+
           <View style={styles.summaryRow}>
             <SummaryTile label="주간 스냅" value={`${records.length}`} tone="leaf" />
             <SummaryTile label="대표 성장" value={`Lv.${summaries[0]?.level ?? 1}`} tone="coral" />
@@ -223,6 +235,16 @@ const styles = StyleSheet.create({
     fontSize: 11,
     overflow: "hidden"
   },
+  personaBand: {
+    alignItems: "center",
+    gap: 4,
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.mint,
+    borderWidth: 1,
+    borderColor: "#b7dbbf"
+  },
+  personaBandText: { color: colors.ink, fontWeight: "800", fontSize: 13 },
   summaryRow: { flexDirection: "row", gap: 8 },
   summaryTile: {
     flex: 1,

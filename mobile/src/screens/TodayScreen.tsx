@@ -3,10 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { Check, CloudRain, MapPin, Snowflake, Sun, Wind } from "lucide-react-native";
 
+import { FormiAvatar } from "../components/FormiAvatar";
 import { findPersonaByCategory } from "../data/personaCatalog";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { buildAdvisories } from "../lib/advisory";
 import { localize } from "../lib/i18n";
+import { buildPersonaSummaries } from "../lib/personaEngine";
 import { countConsecutiveSnapDays } from "../lib/streakEngine";
 import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 import { demoWeather, fetchWeatherSnapshot, type WeatherSnapshot } from "../lib/weather";
@@ -49,6 +51,9 @@ export function TodayScreen() {
     () => findPersonaByCategory(records[0]?.category ?? "study"),
     [records]
   );
+  const summaries = useMemo(() => buildPersonaSummaries(records), [records]);
+  const featuredLevel =
+    summaries.find((summary) => summary.archetype === featuredPersona.category)?.level ?? 1;
   const streakDays = useMemo(() => countConsecutiveSnapDays(records), [records]);
   const advisories = useMemo(
     () => buildAdvisories(weather, featuredPersona.category),
@@ -109,6 +114,7 @@ export function TodayScreen() {
       ) : null}
 
       <View style={styles.heroBand}>
+        <FormiAvatar category={featuredPersona.category} level={featuredLevel} size={132} />
         <Text style={styles.statusPill}>
           대표 페르소나 · {featuredPlace.split("·")[0].trim()}
         </Text>
@@ -237,15 +243,15 @@ const styles = StyleSheet.create({
   advisoryMessage: { color: colors.ink, fontWeight: "700", fontSize: 13, lineHeight: 19 },
   heroBand: {
     padding: spacing.lg,
-    minHeight: 150,
     borderRadius: radii.lg,
     backgroundColor: colors.mint,
     borderWidth: 1,
     borderColor: "#b7dbbf",
-    gap: 6
+    gap: 6,
+    alignItems: "center"
   },
   statusPill: {
-    alignSelf: "flex-start",
+    marginTop: 4,
     paddingVertical: 4,
     paddingHorizontal: 10,
     borderRadius: radii.pill,
@@ -257,8 +263,14 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     overflow: "hidden"
   },
-  heroName: { color: colors.ink, fontWeight: "900", fontSize: 22, marginTop: 8 },
-  heroActivity: { color: colors.ink, fontWeight: "700", fontSize: 14 },
+  heroName: {
+    color: colors.ink,
+    fontWeight: "900",
+    fontSize: 22,
+    marginTop: 4,
+    textAlign: "center"
+  },
+  heroActivity: { color: colors.ink, fontWeight: "700", fontSize: 14, textAlign: "center" },
   timeline: {
     padding: spacing.lg,
     borderRadius: radii.lg,

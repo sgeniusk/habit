@@ -14,6 +14,7 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { Camera, Image as ImageIcon } from "lucide-react-native";
 
+import { FormiAvatar } from "../components/FormiAvatar";
 import {
   categoryOptions,
   filterOptions,
@@ -136,6 +137,7 @@ export function SnapScreen() {
           <Image source={{ uri: pickedUri }} style={styles.previewImage} resizeMode="cover" />
         ) : (
           <View style={styles.previewPlaceholder}>
+            <FormiAvatar category={category} level={3} size={108} />
             <Text style={styles.previewPlaceholderTitle}>사진을 골라 시작해요</Text>
             <Text style={styles.previewPlaceholderBody}>카메라로 찍거나 사진첩에서 한 컷.</Text>
           </View>

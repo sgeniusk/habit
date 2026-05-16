@@ -4,12 +4,12 @@
     "slug": "formi",
     "version": "0.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/formi/icon.png",
     "scheme": "formi",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/formi/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#f4f7e8"
     },
@@ -28,7 +28,7 @@
     "android": {
       "package": "app.formi.mobile",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/formi/icon.png",
         "backgroundColor": "#f4f7e8"
       },
       "permissions": [

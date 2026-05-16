@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Sparkles } from "lucide-react-native";
 
+import { FormiAvatar } from "../components/FormiAvatar";
 import {
   findPersonaByCategory,
   outfitItems,
@@ -73,6 +74,9 @@ export function HomeScreen() {
         <View style={styles.featuredBadge}>
           <Sparkles size={12} color={colors.ink} />
           <Text style={styles.featuredBadgeText}>대표</Text>
+        </View>
+        <View style={styles.heroAvatarWrap}>
+          <FormiAvatar category={featuredPersona.category} level={activeLevel} size={150} />
         </View>
         <Text style={styles.heroName}>{localize(featuredPersona.name, "ko")}</Text>
         <Text style={styles.heroNick}>{identity.displayName}</Text>
@@ -224,6 +228,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gold
   },
   featuredBadgeText: { color: colors.ink, fontWeight: "900", fontSize: 11, overflow: "hidden" },
+  heroAvatarWrap: { alignItems: "center", marginVertical: 4 },
   heroName: { ...typography.h2, color: colors.ink, marginTop: 6 },
   heroNick: { color: colors.leaf, fontWeight: "900", fontSize: 14 },
   heroActivity: { ...typography.body, color: colors.muted, marginTop: 2 },
