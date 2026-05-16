@@ -1,6 +1,23 @@
 # Formi Mobile (Expo)
 
-iOS/Android 출시를 위한 Expo React Native 앱입니다. 앱 이름은 **Formi** (form + me). 정체성 없는 말랑한 자아가 생활 기록으로 형태를 얻어 가는 컨셉. 현재는 5 탭 빈 화면 셋업 단계. 도메인 로직은 `../src/lib/*` (web 코드) 의 순수 함수를 점진적으로 가져옵니다.
+iOS/Android 출시를 위한 Expo React Native 앱입니다. 앱 이름은 **Formi** (form + me). 정체성 없는 말랑한 자아가 생활 기록으로 형태를 얻어 가는 컨셉. 도메인 로직은 `src/lib/*` 에 web 코드를 복사해 공유합니다.
+
+## 진행 상태 (2026-05-16)
+
+- [x] Expo SDK 54 셋업, 5 탭 bottom navigation
+- [x] 도메인 로직 9 모듈 (persona/journal/social/memory/persona-identity/weather/streak/i18n/image-sanitizer) + types/data 복사
+- [x] 5 화면 RN 포팅 (오늘/스냅/집/모임/리포트)
+- [x] 카메라 + 사진첩 (expo-image-picker), 인증 도장/필터/스티커, 카테고리/장소/메모
+- [x] 사진 영구 저장 (expo-file-system), AsyncStorage 영속화, 5 화면 공유 records context
+- [x] 위치 날씨 + 미세먼지/자외선 (Open-Meteo) + 페르소나 챙김 알림
+- [x] SafeArea (노치/Dynamic Island), ErrorBoundary
+- [x] user preferences (말투/톤) 영속화, 권한 거부 inline 안내
+- [x] EAS 빌드 설정 (eas.json)
+- [ ] Formi 캐릭터 PNG 24 종 통합 (Midjourney 생성 대기 — `docs/design/2026-05-16-formi-character-prompts.md`)
+- [ ] FormiAvatar 컴포넌트 + react-native-reanimated 숨쉬기 애니메이션
+- [ ] 앱 아이콘 / 스플래시 (`assets/`)
+- [ ] EAS Build 첫 실행 (Apple Developer 가입 후)
+- [ ] 백엔드 / 인증 (Supabase 등 외부 결정 후)
 
 ## 실행
 
