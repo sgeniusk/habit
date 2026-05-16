@@ -1,7 +1,8 @@
 // 리포트 탭. AI 인사이트 카드 (근거 라인 상단 + 기본 톤 순한 표현 + 토글).
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
+import { usePreferences } from "../lib/PreferencesContext";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
 import {
   buildPersonaSummaries,
@@ -13,7 +14,8 @@ import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 
 export function ReportScreen() {
   const { records } = useSnapRecords();
-  const [softenAll, setSoftenAll] = useState(true);
+  const { preferences, setInsightSoften } = usePreferences();
+  const softenAll = preferences.insightSoften;
 
   const summaries = useMemo(() => buildPersonaSummaries(records), [records]);
   const insights = useMemo(() => findHiddenHabitInsights(records), [records]);
@@ -36,7 +38,7 @@ export function ReportScreen() {
         <Text style={styles.sectionTitle}>AI가 발견한 숨은 습관</Text>
         <Pressable
           style={[styles.toneToggle, softenAll && styles.toneToggleActive]}
-          onPress={() => setSoftenAll((current) => !current)}
+          onPress={() => setInsightSoften(!softenAll)}
         >
           <Text style={[styles.toneToggleText, softenAll && styles.toneToggleTextActive]}>
             AI 톤

@@ -1,9 +1,10 @@
-// Formi 네이티브 앱 진입점. SafeAreaProvider + SnapRecordsProvider 위에 5 탭 bottom navigation.
+// Formi 네이티브 앱 진입점. SafeArea + Preferences + SnapRecords Provider 위에 5 탭 bottom navigation.
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
+import { PreferencesProvider } from "./src/lib/PreferencesContext";
 import { SnapRecordsProvider } from "./src/lib/SnapRecordsContext";
 import { HomeScreen } from "./src/screens/HomeScreen";
 import { MeetScreen } from "./src/screens/MeetScreen";
@@ -16,26 +17,28 @@ const Tab = createBottomTabNavigator();
 export default function App() {
   return (
     <SafeAreaProvider>
-      <SnapRecordsProvider>
-        <NavigationContainer>
-          <StatusBar style="auto" />
-          <Tab.Navigator
-            initialRouteName="Today"
-            screenOptions={{
-              headerStyle: { backgroundColor: "#f4f7e8" },
-              tabBarStyle: { backgroundColor: "#ffffff", borderTopColor: "#d8e2d1" },
-              tabBarActiveTintColor: "#2f9d65",
-              tabBarInactiveTintColor: "#667267"
-            }}
-          >
-            <Tab.Screen name="Today" component={TodayScreen} options={{ title: "오늘" }} />
-            <Tab.Screen name="Snap" component={SnapScreen} options={{ title: "스냅" }} />
-            <Tab.Screen name="Home" component={HomeScreen} options={{ title: "집" }} />
-            <Tab.Screen name="Meet" component={MeetScreen} options={{ title: "모임" }} />
-            <Tab.Screen name="Report" component={ReportScreen} options={{ title: "리포트" }} />
-          </Tab.Navigator>
-        </NavigationContainer>
-      </SnapRecordsProvider>
+      <PreferencesProvider>
+        <SnapRecordsProvider>
+          <NavigationContainer>
+            <StatusBar style="auto" />
+            <Tab.Navigator
+              initialRouteName="Today"
+              screenOptions={{
+                headerStyle: { backgroundColor: "#f4f7e8" },
+                tabBarStyle: { backgroundColor: "#ffffff", borderTopColor: "#d8e2d1" },
+                tabBarActiveTintColor: "#2f9d65",
+                tabBarInactiveTintColor: "#667267"
+              }}
+            >
+              <Tab.Screen name="Today" component={TodayScreen} options={{ title: "오늘" }} />
+              <Tab.Screen name="Snap" component={SnapScreen} options={{ title: "스냅" }} />
+              <Tab.Screen name="Home" component={HomeScreen} options={{ title: "집" }} />
+              <Tab.Screen name="Meet" component={MeetScreen} options={{ title: "모임" }} />
+              <Tab.Screen name="Report" component={ReportScreen} options={{ title: "리포트" }} />
+            </Tab.Navigator>
+          </NavigationContainer>
+        </SnapRecordsProvider>
+      </PreferencesProvider>
     </SafeAreaProvider>
   );
 }

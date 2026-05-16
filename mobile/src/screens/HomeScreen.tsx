@@ -1,9 +1,10 @@
 // 집 탭. 대표 페르소나 영역 + 페르소나 컬렉션 + 말투 톤 토글.
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Sparkles } from "lucide-react-native";
 
 import { findPersonaByCategory, personaCatalog } from "../data/personaCatalog";
+import { usePreferences } from "../lib/PreferencesContext";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { localize } from "../lib/i18n";
 import { buildPersonaSummaries } from "../lib/personaEngine";
@@ -13,11 +14,11 @@ import {
   defaultPersonaNicknames
 } from "../lib/personaIdentity";
 import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
-import type { PersonaVoiceMode } from "../types/habit";
 
 export function HomeScreen() {
   const { records } = useSnapRecords();
-  const [voiceMode, setVoiceMode] = useState<PersonaVoiceMode>("cute");
+  const { preferences, setVoiceMode } = usePreferences();
+  const voiceMode = preferences.voiceMode;
 
   const summaries = useMemo(() => buildPersonaSummaries(records), [records]);
   const featuredPersona = useMemo(
