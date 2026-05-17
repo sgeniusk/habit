@@ -1,8 +1,8 @@
 // 오늘 탭. streak + 대표 페르소나 + 위치 날씨/미세먼지/자외선 + 페르소나 챙김 알림.
 import { useEffect, useMemo, useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Check, CloudRain, MapPin, Snowflake, Sun, Wind } from "lucide-react-native";
+import { Check, CloudRain, MapPin, Snowflake, Sun, Wind, X } from "lucide-react-native";
 
 import { FormiAvatar } from "../components/FormiAvatar";
 import { findPersonaByCategory } from "../data/personaCatalog";
@@ -13,6 +13,7 @@ import { buildPersonaSummaries } from "../lib/personaEngine";
 import { countConsecutiveSnapDays } from "../lib/streakEngine";
 import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 import { demoWeather, fetchWeatherSnapshot, type WeatherSnapshot } from "../lib/weather";
+import type { ProofStampId, SnapRecord } from "../types/habit";
 
 const categoryLabelsKo: Record<string, string> = {
   study: "공부",
@@ -32,10 +33,40 @@ const conditionLabelsKo: Record<WeatherSnapshot["condition"], string> = {
   unknown: "날씨"
 };
 
+const placeLabelsKo: Record<string, string> = {
+  home: "집",
+  library: "도서관",
+  school: "학교",
+  cafe: "카페",
+  gym: "헬스장",
+  restaurant: "식당",
+  outdoors: "야외",
+  other: "기타"
+};
+
+const proofStampLabelsKo: Record<ProofStampId, string> = {
+  time: "시간",
+  count: "횟수",
+  persona: "페르소나"
+};
+
+function formatRecordDate(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) {
+    return "기록 시각 미상";
+  }
+  let hour = date.getHours();
+  const minute = date.getMinutes().toString().padStart(2, "0");
+  const ampm = hour < 12 ? "오전" : "오후";
+  hour = hour % 12 || 12;
+  return `${date.getMonth() + 1}월 ${date.getDate()}일 ${ampm} ${hour}:${minute}`;
+}
+
 export function TodayScreen() {
   const { records } = useSnapRecords();
   const navigation = useNavigation();
   const [weather, setWeather] = useState<WeatherSnapshot>(demoWeather);
+  const [selectedRecord, setSelectedRecord] = useState<SnapRecord | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -135,7 +166,11 @@ export function TodayScreen() {
           </Text>
         ) : (
           records.slice(0, 5).map((record) => (
-            <View key={record.id} style={styles.recordRow}>
+            <Pressable
+              key={record.id}
+              style={({ pressed }) => [styles.recordRow, pressed && styles.recordRowPressed]}
+              onPress={() => setSelectedRecord(record)}
+            >
               {record.imageUrl ? (
                 <Image source={{ uri: record.imageUrl }} style={styles.recordThumb} />
               ) : (
@@ -153,11 +188,86 @@ export function TodayScreen() {
                   {record.memo ?? "스냅 기록"}
                 </Text>
               </View>
-            </View>
+            </Pressable>
           ))
         )}
       </View>
+
+      <RecordDetailModal record={selectedRecord} onClose={() => setSelectedRecord(null)} />
     </ScrollView>
+  );
+}
+
+function RecordDetailModal({
+  record,
+  onClose
+}: {
+  record: SnapRecord | null;
+  onClose: () => void;
+}) {
+  return (
+    <Modal
+      visible={record !== null}
+      transparent
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <Pressable style={styles.modalBackdrop} onPress={onClose}>
+        <Pressable style={styles.modalCard} onPress={() => {}}>
+          {record ? (
+            <>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>
+                  {categoryLabelsKo[record.category] ?? record.category} 스냅
+                </Text>
+                <Pressable style={styles.modalClose} onPress={onClose} hitSlop={8}>
+                  <X size={18} color={colors.muted} />
+                </Pressable>
+              </View>
+              {record.imageUrl ? (
+                <Image
+                  source={{ uri: record.imageUrl }}
+                  style={styles.modalImage}
+                  resizeMode="cover"
+                />
+              ) : (
+                <View style={[styles.modalImage, styles.modalImageEmpty]}>
+                  <Text style={styles.modalImageEmptyText}>사진 없이 남긴 기록</Text>
+                </View>
+              )}
+              <Text style={styles.modalDate}>{formatRecordDate(record.createdAt)}</Text>
+              {record.memo ? (
+                <Text style={styles.modalMemo}>{record.memo}</Text>
+              ) : null}
+              <View style={styles.modalMetaRow}>
+                <ModalMeta label="장소" value={placeLabelsKo[record.placeType] ?? record.placeType} />
+                <ModalMeta label="필터" value={record.filter ?? "기본"} />
+                <ModalMeta label="스티커" value={record.sticker ?? "없음"} />
+              </View>
+              {(record.proofStamps ?? []).length > 0 ? (
+                <View style={styles.modalStampRow}>
+                  <Text style={styles.modalStampLabel}>인증 도장</Text>
+                  {(record.proofStamps ?? []).map((stamp) => (
+                    <Text key={stamp} style={styles.modalStamp}>
+                      {proofStampLabelsKo[stamp] ?? stamp}
+                    </Text>
+                  ))}
+                </View>
+              ) : null}
+            </>
+          ) : null}
+        </Pressable>
+      </Pressable>
+    </Modal>
+  );
+}
+
+function ModalMeta({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.modalMeta}>
+      <Text style={styles.modalMetaLabel}>{label}</Text>
+      <Text style={styles.modalMetaValue}>{value}</Text>
+    </View>
   );
 }
 
@@ -324,5 +434,73 @@ const styles = StyleSheet.create({
     fontSize: 11,
     overflow: "hidden"
   },
-  recordMemo: { color: colors.ink, fontWeight: "700", fontSize: 13 }
+  recordMemo: { color: colors.ink, fontWeight: "700", fontSize: 13 },
+  recordRowPressed: { opacity: 0.6 },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(20, 26, 22, 0.55)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.lg
+  },
+  modalCard: {
+    width: "100%",
+    maxWidth: 360,
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    backgroundColor: colors.white,
+    gap: spacing.sm
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between"
+  },
+  modalTitle: { ...typography.h3, color: colors.ink },
+  modalClose: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.background
+  },
+  modalImage: {
+    width: "100%",
+    aspectRatio: 1,
+    borderRadius: radii.md,
+    backgroundColor: colors.background
+  },
+  modalImageEmpty: { alignItems: "center", justifyContent: "center" },
+  modalImageEmptyText: { color: colors.muted, fontWeight: "700", fontSize: 13 },
+  modalDate: { color: colors.muted, fontWeight: "800", fontSize: 12 },
+  modalMemo: { color: colors.ink, fontWeight: "700", fontSize: 14, lineHeight: 20 },
+  modalMetaRow: { flexDirection: "row", gap: 8 },
+  modalMeta: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderRadius: radii.md,
+    backgroundColor: colors.background,
+    gap: 3
+  },
+  modalMetaLabel: { color: colors.muted, fontWeight: "800", fontSize: 10 },
+  modalMetaValue: { color: colors.ink, fontWeight: "900", fontSize: 12 },
+  modalStampRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 6
+  },
+  modalStampLabel: { color: colors.muted, fontWeight: "800", fontSize: 11 },
+  modalStamp: {
+    paddingVertical: 3,
+    paddingHorizontal: 9,
+    borderRadius: radii.pill,
+    backgroundColor: colors.leafSoft,
+    color: colors.leaf,
+    fontWeight: "900",
+    fontSize: 11,
+    overflow: "hidden"
+  }
 });
