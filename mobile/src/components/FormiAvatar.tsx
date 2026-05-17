@@ -25,7 +25,8 @@ type FormiAvatarProps = {
   breathing?: boolean;
 };
 
-const FRAME_MS = 120; // 프레임 한 칸 넘어가는 간격
+const CYCLE_MS = 1400; // 핑퐁 한 바퀴에 걸리는 시간 (프레임 수와 무관하게 일정하게 유지)
+const MIN_FRAME_MS = 80; // 프레임 한 칸 최소 간격
 
 // [0,1,...,n-1,n-2,...,1] 핑퐁 순서를 만든다.
 function buildPingPong(length: number): number[] {
@@ -80,7 +81,9 @@ export function FormiAvatar({
       setTick(0);
       return;
     }
-    const id = setInterval(() => setTick((t) => t + 1), FRAME_MS);
+    // 프레임 수와 무관하게 한 바퀴 시간을 일정하게 (캐릭터마다 속도가 달라지지 않게)
+    const frameMs = Math.max(MIN_FRAME_MS, Math.round(CYCLE_MS / sequence.length));
+    const id = setInterval(() => setTick((t) => t + 1), frameMs);
     return () => clearInterval(id);
   }, [breathing, sequence]);
 
