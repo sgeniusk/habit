@@ -46,7 +46,7 @@ const proofStampOptions: { id: ProofStampId; label: string }[] = [
 ];
 
 export function SnapScreen() {
-  const { addRecord } = useSnapRecords();
+  const { records, addRecord } = useSnapRecords();
   const [pickedUri, setPickedUri] = useState<string | null>(null);
   const [category, setCategory] = useState<HabitCategory>("study");
   const [place, setPlace] = useState<PlaceType>("library");
@@ -144,6 +144,21 @@ export function SnapScreen() {
     }
   }
 
+  function stampText(stamp: ProofStampId): string {
+    if (stamp === "time") {
+      const now = new Date();
+      let hour = now.getHours();
+      const minute = now.getMinutes().toString().padStart(2, "0");
+      const ampm = hour < 12 ? "오전" : "오후";
+      hour = hour % 12 || 12;
+      return `${ampm} ${hour}:${minute}`;
+    }
+    if (stamp === "count") {
+      return `#${records.length + 1}`;
+    }
+    return categoryOptions.find((option) => option.id === category)?.label ?? "페르소나";
+  }
+
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <Text style={styles.eyebrow}>Snap</Text>
@@ -170,6 +185,15 @@ export function SnapScreen() {
         {pickedUri ? (
           <View style={styles.previewBadge}>
             <Text style={styles.previewBadgeText}>{selectedSticker}</Text>
+          </View>
+        ) : null}
+        {pickedUri && proofStamps.length > 0 ? (
+          <View style={styles.previewStamps}>
+            {proofStamps.map((stamp) => (
+              <Text key={stamp} style={styles.previewStamp}>
+                {stampText(stamp)}
+              </Text>
+            ))}
           </View>
         ) : null}
       </View>
@@ -371,6 +395,27 @@ const styles = StyleSheet.create({
     borderColor: colors.ink
   },
   previewBadgeText: { color: colors.ink, fontWeight: "900", fontSize: 13 },
+  previewStamps: {
+    position: "absolute",
+    bottom: 12,
+    left: 12,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+    maxWidth: "78%"
+  },
+  previewStamp: {
+    paddingVertical: 4,
+    paddingHorizontal: 9,
+    borderRadius: radii.sm,
+    backgroundColor: "rgba(255, 255, 255, 0.92)",
+    borderWidth: 1,
+    borderColor: colors.ink,
+    color: colors.ink,
+    fontWeight: "900",
+    fontSize: 11,
+    overflow: "hidden"
+  },
   actionRow: { flexDirection: "row", gap: 10 },
   actionButton: {
     flex: 1,
