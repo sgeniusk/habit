@@ -345,6 +345,6 @@ const styles = StyleSheet.create({
   },
   trayItemActive: { borderColor: colors.leaf, backgroundColor: colors.leafSoft },
   traySwatch: { width: 26, height: 26, borderRadius: 6 },
-  trayLabel: { color: colors.ink, fontWeight: "800", fontSize: 11 },
+  trayLabel: { color: colors.ink, fontWeight: "600", fontSize: 11 },
   trayLabelActive: { color: colors.leaf }
 });

@@ -266,8 +266,8 @@ const styles = StyleSheet.create({
   cardTitle: { ...typography.h3, color: colors.ink },
   cardBody: { ...typography.body, color: colors.muted },
   signalRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  signalLabel: { color: colors.ink, fontWeight: "800", fontSize: 12 },
-  signalMatch: { color: colors.leaf, fontWeight: "900", fontSize: 12 },
+  signalLabel: { color: colors.ink, fontWeight: "600", fontSize: 12 },
+  signalMatch: { color: colors.leaf, fontWeight: "700", fontSize: 12 },
   primaryButton: {
     marginTop: 4,
     flexDirection: "row",
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     backgroundColor: colors.ink
   },
-  primaryButtonText: { color: colors.white, fontWeight: "900", fontSize: 14 },
+  primaryButtonText: { color: colors.white, fontWeight: "700", fontSize: 14 },
   secondaryButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.line
   },
-  secondaryButtonText: { color: colors.ink, fontWeight: "900", fontSize: 13 },
+  secondaryButtonText: { color: colors.ink, fontWeight: "700", fontSize: 13 },
   outlineButton: {
     paddingVertical: 11,
     borderRadius: radii.md,
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.leafSoft,
     alignItems: "center"
   },
-  outlineButtonText: { color: colors.leaf, fontWeight: "900", fontSize: 13 },
+  outlineButtonText: { color: colors.leaf, fontWeight: "700", fontSize: 13 },
   sessionCard: {
     padding: spacing.lg,
     borderRadius: radii.lg,
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   memberRow: { flexDirection: "row", alignItems: "center", gap: 6 },
-  memberText: { color: colors.ink, fontWeight: "800", fontSize: 13 },
+  memberText: { color: colors.ink, fontWeight: "600", fontSize: 13 },
   groupPersonaCard: {
     padding: spacing.md,
     borderRadius: radii.md,
@@ -325,8 +325,8 @@ const styles = StyleSheet.create({
     gap: 4
   },
   groupPersonaHeader: { flexDirection: "row", alignItems: "center", gap: 6 },
-  groupPersonaName: { color: colors.ink, fontWeight: "900", fontSize: 14 },
-  groupPersonaLevel: { color: colors.ink, fontWeight: "900", fontSize: 13 },
+  groupPersonaName: { color: colors.ink, fontWeight: "700", fontSize: 14 },
+  groupPersonaLevel: { color: colors.ink, fontWeight: "700", fontSize: 13 },
   groupPersonaMood: { color: colors.muted, fontWeight: "700", fontSize: 12 },
   progressTrack: {
     height: 10,
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     borderColor: "#cce8d0",
     gap: 6
   },
-  missionTitle: { color: colors.ink, fontWeight: "900", fontSize: 14 },
+  missionTitle: { color: colors.ink, fontWeight: "700", fontSize: 14 },
   missionBody: { color: colors.muted, fontWeight: "700", fontSize: 12, lineHeight: 18 },
   missionDone: {
     padding: spacing.md,
@@ -355,11 +355,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#cce8d0"
   },
-  missionDoneText: { color: colors.leaf, fontWeight: "900", fontSize: 13 },
+  missionDoneText: { color: colors.leaf, fontWeight: "700", fontSize: 13 },
   toast: {
     padding: spacing.md,
     borderRadius: radii.md,
     backgroundColor: colors.ink
   },
-  toastText: { color: colors.white, fontWeight: "900", fontSize: 13 }
+  toastText: { color: colors.white, fontWeight: "700", fontSize: 13 }
 });

@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   modeButtonActive: { backgroundColor: colors.leafSoft },
-  modeButtonText: { color: colors.muted, fontWeight: "800", fontSize: 13 },
+  modeButtonText: { color: colors.muted, fontWeight: "600", fontSize: 13 },
   modeButtonTextActive: { color: colors.leaf },
   memoryIntro: { ...typography.body, color: colors.muted },
   tagRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     backgroundColor: colors.background,
     color: colors.muted,
-    fontWeight: "800",
+    fontWeight: "600",
     fontSize: 11,
     overflow: "hidden"
   },
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#b7dbbf"
   },
-  personaBandText: { color: colors.ink, fontWeight: "800", fontSize: 13 },
+  personaBandText: { color: colors.ink, fontWeight: "600", fontSize: 13 },
   summaryRow: { flexDirection: "row", gap: 8 },
   summaryTile: {
     flex: 1,
@@ -254,8 +254,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     gap: 2
   },
-  summaryValue: { color: colors.ink, fontWeight: "900", fontSize: 18 },
-  summaryLabel: { color: colors.muted, fontWeight: "800", fontSize: 11 },
+  summaryValue: { color: colors.ink, fontWeight: "700", fontSize: 18 },
+  summaryLabel: { color: colors.muted, fontWeight: "600", fontSize: 11 },
   insightHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -275,9 +275,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white
   },
   toneToggleActive: { borderColor: colors.leaf, backgroundColor: colors.leafSoft },
-  toneToggleText: { color: colors.muted, fontWeight: "800", fontSize: 11 },
+  toneToggleText: { color: colors.muted, fontWeight: "600", fontSize: 11 },
   toneToggleTextActive: { color: colors.leaf },
-  toneToggleValue: { color: colors.muted, fontWeight: "900", fontSize: 11 },
+  toneToggleValue: { color: colors.muted, fontWeight: "700", fontSize: 11 },
   toneToggleValueActive: { color: colors.leaf },
   insightCard: {
     padding: spacing.md,
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: radii.sm,
     fontSize: 11,
-    fontWeight: "900",
+    fontWeight: "700",
     overflow: "hidden"
   },
   evidenceRow: {
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   },
   evidenceLabel: {
     color: colors.muted,
-    fontWeight: "900",
+    fontWeight: "700",
     fontSize: 11,
     paddingVertical: 2,
     paddingHorizontal: 6,
@@ -318,5 +318,5 @@ const styles = StyleSheet.create({
   },
   evidenceText: { flex: 1, color: colors.ink, fontWeight: "700", fontSize: 12 },
   insightBody: { ...typography.body, color: colors.muted },
-  insightRec: { color: colors.ink, fontWeight: "900", fontSize: 13 }
+  insightRec: { color: colors.ink, fontWeight: "700", fontSize: 13 }
 });

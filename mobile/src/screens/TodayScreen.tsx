@@ -316,10 +316,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.line
   },
-  streakBadgeText: { color: colors.ink, fontWeight: "900", fontSize: 13 },
+  streakBadgeText: { color: colors.ink, fontWeight: "700", fontSize: 13 },
   heroCta: { padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.ink, ...shadows.card },
   heroCtaPressed: { opacity: 0.88 },
-  heroCtaTitle: { color: colors.white, fontWeight: "900", fontSize: 16 },
+  heroCtaTitle: { color: colors.white, fontWeight: "700", fontSize: 16 },
   heroCtaHint: { color: "rgba(255,255,255,0.78)", fontWeight: "700", fontSize: 12, marginTop: 4 },
   metricsCard: {
     padding: spacing.md,
@@ -338,9 +338,9 @@ const styles = StyleSheet.create({
     gap: 2
   },
   metricAccent: { backgroundColor: colors.coralSoft },
-  metricValue: { color: colors.ink, fontWeight: "900", fontSize: 15 },
+  metricValue: { color: colors.ink, fontWeight: "700", fontSize: 15 },
   metricValueAccent: { color: colors.coral },
-  metricLabel: { color: colors.muted, fontWeight: "800", fontSize: 10 },
+  metricLabel: { color: colors.muted, fontWeight: "600", fontSize: 10 },
   advisoryList: { gap: spacing.sm },
   advisory: {
     padding: spacing.md,
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: 3
   },
-  advisoryPersona: { color: colors.ink, fontWeight: "900", fontSize: 12 },
+  advisoryPersona: { color: colors.ink, fontWeight: "700", fontSize: 12 },
   advisoryMessage: { color: colors.ink, fontWeight: "700", fontSize: 13, lineHeight: 19 },
   heroBand: {
     padding: spacing.lg,
@@ -369,12 +369,12 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     color: colors.ink,
     fontSize: 12,
-    fontWeight: "800",
+    fontWeight: "600",
     overflow: "hidden"
   },
   heroName: {
     color: colors.ink,
-    fontWeight: "900",
+    fontWeight: "700",
     fontSize: 22,
     marginTop: 4,
     textAlign: "center"
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     backgroundColor: colors.leafSoft,
     color: colors.leaf,
-    fontWeight: "900",
+    fontWeight: "700",
     fontSize: 11,
     overflow: "hidden"
   },
@@ -470,8 +470,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.ink
   },
-  modalStickerText: { color: colors.ink, fontWeight: "900", fontSize: 12 },
-  modalDate: { color: colors.muted, fontWeight: "800", fontSize: 12 },
+  modalStickerText: { color: colors.ink, fontWeight: "700", fontSize: 12 },
+  modalDate: { color: colors.muted, fontWeight: "600", fontSize: 12 },
   modalMemo: { color: colors.ink, fontWeight: "700", fontSize: 14, lineHeight: 20 },
   modalMetaRow: { flexDirection: "row", gap: 8 },
   modalMeta: {
@@ -482,22 +482,22 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     gap: 3
   },
-  modalMetaLabel: { color: colors.muted, fontWeight: "800", fontSize: 10 },
-  modalMetaValue: { color: colors.ink, fontWeight: "900", fontSize: 12 },
+  modalMetaLabel: { color: colors.muted, fontWeight: "600", fontSize: 10 },
+  modalMetaValue: { color: colors.ink, fontWeight: "700", fontSize: 12 },
   modalStampRow: {
     flexDirection: "row",
     alignItems: "center",
     flexWrap: "wrap",
     gap: 6
   },
-  modalStampLabel: { color: colors.muted, fontWeight: "800", fontSize: 11 },
+  modalStampLabel: { color: colors.muted, fontWeight: "600", fontSize: 11 },
   modalStamp: {
     paddingVertical: 3,
     paddingHorizontal: 9,
     borderRadius: radii.pill,
     backgroundColor: colors.leafSoft,
     color: colors.leaf,
-    fontWeight: "900",
+    fontWeight: "700",
     fontSize: 11,
     overflow: "hidden"
   }

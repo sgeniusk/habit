@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     gap: 6,
     padding: spacing.xl
   },
-  previewPlaceholderTitle: { color: colors.ink, fontWeight: "900", fontSize: 18 },
+  previewPlaceholderTitle: { color: colors.ink, fontWeight: "700", fontSize: 18 },
   previewPlaceholderBody: {
     color: colors.muted,
     fontWeight: "700",
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.ink
   },
-  previewBadgeText: { color: colors.ink, fontWeight: "900", fontSize: 13 },
+  previewBadgeText: { color: colors.ink, fontWeight: "700", fontSize: 13 },
   previewStamps: {
     position: "absolute",
     bottom: 12,
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.ink,
     color: colors.ink,
-    fontWeight: "900",
+    fontWeight: "700",
     fontSize: 11,
     overflow: "hidden"
   },
@@ -430,8 +430,8 @@ const styles = StyleSheet.create({
     borderColor: colors.line
   },
   actionPrimary: { backgroundColor: colors.ink, borderColor: colors.ink },
-  actionText: { color: colors.ink, fontWeight: "900", fontSize: 14 },
-  actionPrimaryText: { color: colors.white, fontWeight: "900", fontSize: 14 },
+  actionText: { color: colors.ink, fontWeight: "700", fontSize: 14 },
+  actionPrimaryText: { color: colors.white, fontWeight: "700", fontSize: 14 },
   processingHint: { color: colors.muted, fontWeight: "700", fontSize: 12, marginTop: 4 },
   permissionNotice: {
     padding: spacing.md,
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
     borderColor: "#ffd2cc",
     gap: 6
   },
-  permissionTitle: { color: colors.ink, fontWeight: "900", fontSize: 14 },
+  permissionTitle: { color: colors.ink, fontWeight: "700", fontSize: 14 },
   permissionBody: { color: colors.muted, fontWeight: "700", fontSize: 12, lineHeight: 18 },
   permissionButton: {
     alignSelf: "flex-start",
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.sm,
     backgroundColor: colors.ink
   },
-  permissionButtonText: { color: colors.white, fontWeight: "900", fontSize: 12 },
+  permissionButtonText: { color: colors.white, fontWeight: "700", fontSize: 12 },
   sectionTitle: { ...typography.h3, color: colors.ink, marginTop: spacing.sm },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   chip: {
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white
   },
   chipActive: { borderColor: colors.leaf, backgroundColor: colors.leafSoft },
-  chipText: { color: colors.ink, fontWeight: "800", fontSize: 13 },
+  chipText: { color: colors.ink, fontWeight: "600", fontSize: 13 },
   chipTextActive: { color: colors.leaf },
   memoInput: {
     minHeight: 80,
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
     ...shadows.card
   },
   saveButtonPressed: { opacity: 0.85 },
-  saveButtonText: { color: colors.white, fontWeight: "900", fontSize: 15 },
+  saveButtonText: { color: colors.white, fontWeight: "700", fontSize: 15 },
   toast: {
     marginTop: spacing.sm,
     padding: spacing.md,
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     borderColor: "#cce8d0",
     gap: 10
   },
-  toastText: { color: colors.leaf, fontWeight: "900", fontSize: 13 },
+  toastText: { color: colors.leaf, fontWeight: "700", fontSize: 13 },
   shareButton: {
     alignSelf: "flex-start",
     paddingVertical: 9,
@@ -505,5 +505,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.leaf
   },
   shareButtonPressed: { opacity: 0.85 },
-  shareButtonText: { color: colors.white, fontWeight: "900", fontSize: 13 }
+  shareButtonText: { color: colors.white, fontWeight: "700", fontSize: 13 }
 });

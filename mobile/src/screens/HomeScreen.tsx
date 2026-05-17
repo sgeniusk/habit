@@ -201,10 +201,10 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     backgroundColor: colors.gold
   },
-  featuredBadgeText: { color: colors.ink, fontWeight: "900", fontSize: 11, overflow: "hidden" },
+  featuredBadgeText: { color: colors.ink, fontWeight: "700", fontSize: 11, overflow: "hidden" },
   heroAvatarWrap: { alignItems: "center", marginVertical: 4 },
   heroName: { ...typography.h2, color: colors.ink, marginTop: 6 },
-  heroNick: { color: colors.leaf, fontWeight: "900", fontSize: 14 },
+  heroNick: { color: colors.leaf, fontWeight: "700", fontSize: 14 },
   heroActivity: { ...typography.body, color: colors.muted, marginTop: 2 },
   companionLine: {
     marginTop: spacing.sm,
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     backgroundColor: colors.leafSoft,
     color: colors.ink,
-    fontWeight: "800",
+    fontWeight: "600",
     fontSize: 13,
     lineHeight: 19
   },
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     gap: 6
   },
-  rewardLevel: { color: colors.ink, fontWeight: "900", fontSize: 14 },
+  rewardLevel: { color: colors.ink, fontWeight: "700", fontSize: 14 },
   progressTrack: {
     height: 10,
     borderRadius: radii.pill,
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     overflow: "hidden"
   },
   progressFill: { height: "100%", backgroundColor: colors.leaf },
-  rewardEvolution: { color: colors.leaf, fontWeight: "900", fontSize: 12 },
+  rewardEvolution: { color: colors.leaf, fontWeight: "700", fontSize: 12 },
   rewardChips: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginTop: 6 },
   rewardChip: {
     paddingVertical: 4,
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     borderRadius: radii.pill,
     backgroundColor: colors.leafSoft,
     color: colors.leaf,
-    fontWeight: "900",
+    fontWeight: "700",
     fontSize: 11,
     overflow: "hidden"
   },
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     gap: 4
   },
   toneOptionActive: { borderColor: colors.leaf, backgroundColor: colors.leafSoft },
-  toneOptionTitle: { color: colors.ink, fontWeight: "900", fontSize: 14 },
+  toneOptionTitle: { color: colors.ink, fontWeight: "700", fontSize: 14 },
   toneOptionTitleActive: { color: colors.leaf },
   toneOptionHint: { color: colors.muted, fontWeight: "700", fontSize: 11 },
   collectionHeader: {
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: spacing.sm
   },
-  collectionCount: { color: colors.muted, fontWeight: "800", fontSize: 12 },
+  collectionCount: { color: colors.muted, fontWeight: "600", fontSize: 12 },
   collectionList: { gap: spacing.sm },
   personaCard: {
     flexDirection: "row",
@@ -289,11 +289,11 @@ const styles = StyleSheet.create({
   },
   personaCardFeatured: { borderColor: colors.leaf, backgroundColor: colors.leafSoft },
   personaCardInfo: { flex: 1 },
-  personaCardName: { color: colors.ink, fontWeight: "900", fontSize: 15 },
+  personaCardName: { color: colors.ink, fontWeight: "700", fontSize: 15 },
   personaCardActivity: { color: colors.muted, fontWeight: "700", fontSize: 12, marginTop: 2 },
   personaCardRight: { alignItems: "flex-end" },
-  personaCardLevel: { color: colors.ink, fontWeight: "900", fontSize: 13 },
-  personaCardXp: { color: colors.muted, fontWeight: "800", fontSize: 11 },
+  personaCardLevel: { color: colors.ink, fontWeight: "700", fontSize: 13 },
+  personaCardXp: { color: colors.muted, fontWeight: "600", fontSize: 11 },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   chip: {
     paddingVertical: 6,
@@ -304,6 +304,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white
   },
   chipActive: { borderColor: colors.leaf, backgroundColor: colors.leafSoft },
-  chipText: { color: colors.ink, fontWeight: "800", fontSize: 13 },
+  chipText: { color: colors.ink, fontWeight: "600", fontSize: 13 },
   chipTextActive: { color: colors.leaf }
 });

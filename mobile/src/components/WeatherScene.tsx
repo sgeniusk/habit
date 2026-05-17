@@ -282,8 +282,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffd66a"
   },
   overlay: { position: "absolute", left: 18, bottom: 16, gap: 2 },
-  temp: { fontWeight: "900", fontSize: 38, lineHeight: 42 },
-  condition: { fontWeight: "900", fontSize: 15 },
+  temp: { fontWeight: "700", fontSize: 38, lineHeight: 42 },
+  condition: { fontWeight: "700", fontSize: 15 },
   placeRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 },
-  place: { fontWeight: "800", fontSize: 12 }
+  place: { fontWeight: "600", fontSize: 12 }
 });
