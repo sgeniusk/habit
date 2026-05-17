@@ -142,7 +142,8 @@ function InsightCard({ insight, softened }: { insight: HabitInsight; softened: b
   const body = softened ? softenBody(insight.body) : insight.body;
 
   return (
-    <View style={styles.insightCard}>
+    <View style={styles.insightTerra}>
+      <Text style={styles.insightLabel}>AI가 발견한 패턴</Text>
       <View style={styles.insightTop}>
         <Text style={styles.insightTitle}>{insight.title}</Text>
         <Text style={[styles.confidenceBadge, confidenceStyle(insight.confidence)]}>
@@ -177,9 +178,9 @@ function SummaryTile({
 }
 
 function tileToneStyle(tone: "leaf" | "coral" | "blue") {
-  if (tone === "coral") return { backgroundColor: colors.coralSoft, borderColor: "#ffd7d1" };
-  if (tone === "blue") return { backgroundColor: "#eef2ff", borderColor: "#cbd5fb" };
-  return { backgroundColor: colors.leafSoft, borderColor: "#cce8d0" };
+  if (tone === "coral") return { backgroundColor: colors.coralSoft, borderColor: "#f0d0c8" };
+  if (tone === "blue") return { backgroundColor: colors.sky, borderColor: "#bcd6e6" };
+  return { backgroundColor: colors.leafSoft, borderColor: colors.mint };
 }
 
 function confidenceLabel(value: HabitInsightConfidence) {
@@ -190,8 +191,8 @@ function confidenceLabel(value: HabitInsightConfidence) {
 
 function confidenceStyle(value: HabitInsightConfidence) {
   if (value === "high") return { backgroundColor: colors.leafSoft, color: colors.leaf };
-  if (value === "low") return { backgroundColor: "#eef2ff", color: colors.blue };
-  return { backgroundColor: colors.coralSoft, color: colors.coral };
+  if (value === "low") return { backgroundColor: colors.sky, color: colors.blue };
+  return { backgroundColor: colors.white, color: colors.coral };
 }
 
 function softenBody(body: string) {
@@ -287,6 +288,19 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     gap: 8,
     ...shadows.card
+  },
+  insightTerra: {
+    padding: spacing.lg,
+    borderRadius: radii.xl,
+    backgroundColor: colors.coralSoft,
+    borderWidth: 1,
+    borderColor: "#f0d0c8",
+    gap: 8
+  },
+  insightLabel: {
+    ...typography.eyebrow,
+    color: colors.coral,
+    textTransform: "uppercase"
   },
   insightTop: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8 },
   insightTitle: { ...typography.h3, color: colors.ink, flex: 1 },
