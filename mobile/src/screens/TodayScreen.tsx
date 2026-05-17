@@ -177,7 +177,7 @@ export function TodayScreen() {
                   <Text style={[styles.recordCategory, { color: tint }]}>
                     {categoryLabelsKo[record.category] ?? record.category}
                   </Text>
-                  <Text style={styles.recordMemo} numberOfLines={2}>
+                  <Text style={styles.recordMemo} numberOfLines={1}>
                     {record.memo ?? "스냅 기록"}
                   </Text>
                   <Text style={styles.recordMeta}>{formatRecordDate(record.createdAt)}</Text>
@@ -410,6 +410,7 @@ const styles = StyleSheet.create({
   recordCard: {
     flexDirection: "row",
     alignItems: "stretch",
+    height: 80,
     backgroundColor: colors.white,
     borderRadius: radii.lg,
     overflow: "hidden",
@@ -417,7 +418,8 @@ const styles = StyleSheet.create({
   },
   recordBar: { width: 4 },
   recordThumb: {
-    width: 58,
+    width: 64,
+    height: 80,
     backgroundColor: colors.background,
     overflow: "hidden"
   },
