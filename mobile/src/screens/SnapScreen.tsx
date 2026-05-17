@@ -6,6 +6,7 @@ import {
   Linking,
   Pressable,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   TextInput,
@@ -53,11 +54,14 @@ export function SnapScreen() {
   const [selectedSticker, setSelectedSticker] = useState(stickerOptions[0]);
   const [proofStamps, setProofStamps] = useState<ProofStampId[]>(["time", "persona"]);
   const [savedToast, setSavedToast] = useState("");
+  const [savedCategory, setSavedCategory] = useState<HabitCategory | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [permissionNotice, setPermissionNotice] = useState<"camera" | "gallery" | null>(null);
 
   async function handlePickedImage(uri: string) {
     setIsProcessing(true);
+    setSavedToast("");
+    setSavedCategory(null);
     try {
       const persisted = await persistPickedImage(uri);
       setPickedUri(persisted);
@@ -123,8 +127,20 @@ export function SnapScreen() {
     addRecord(record);
     setPickedUri(null);
     setMemo("");
+    setSavedCategory(category);
     setSavedToast("스냅이 저장됐어요. 페르소나가 자라요.");
-    setTimeout(() => setSavedToast(""), 2200);
+  }
+
+  async function shareSnap() {
+    const label =
+      categoryOptions.find((option) => option.id === savedCategory)?.label ?? "오늘";
+    try {
+      await Share.share({
+        message: `오늘 ${label} 한 컷을 Formi에 남겼어요. 생활 스냅이 모여 나만의 페르소나로 자라요 🌱`
+      });
+    } catch {
+      // 공유 취소나 실패는 조용히 넘어간다.
+    }
   }
 
   return (
@@ -285,6 +301,12 @@ export function SnapScreen() {
       {savedToast ? (
         <View style={styles.toast}>
           <Text style={styles.toastText}>{savedToast}</Text>
+          <Pressable
+            style={({ pressed }) => [styles.shareButton, pressed && styles.shareButtonPressed]}
+            onPress={shareSnap}
+          >
+            <Text style={styles.shareButtonText}>공유하기</Text>
+          </Pressable>
         </View>
       ) : null}
     </ScrollView>
@@ -417,7 +439,17 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     backgroundColor: colors.leafSoft,
     borderWidth: 1,
-    borderColor: "#cce8d0"
+    borderColor: "#cce8d0",
+    gap: 10
   },
-  toastText: { color: colors.leaf, fontWeight: "900", fontSize: 13 }
+  toastText: { color: colors.leaf, fontWeight: "900", fontSize: 13 },
+  shareButton: {
+    alignSelf: "flex-start",
+    paddingVertical: 9,
+    paddingHorizontal: 18,
+    borderRadius: radii.sm,
+    backgroundColor: colors.leaf
+  },
+  shareButtonPressed: { opacity: 0.85 },
+  shareButtonText: { color: colors.white, fontWeight: "900", fontSize: 13 }
 });

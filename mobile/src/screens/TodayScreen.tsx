@@ -1,6 +1,7 @@
 // 오늘 탭. streak + 대표 페르소나 + 위치 날씨/미세먼지/자외선 + 페르소나 챙김 알림.
 import { useEffect, useMemo, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { Check, CloudRain, MapPin, Snowflake, Sun, Wind } from "lucide-react-native";
 
 import { FormiAvatar } from "../components/FormiAvatar";
@@ -33,6 +34,7 @@ const conditionLabelsKo: Record<WeatherSnapshot["condition"], string> = {
 
 export function TodayScreen() {
   const { records } = useSnapRecords();
+  const navigation = useNavigation();
   const [weather, setWeather] = useState<WeatherSnapshot>(demoWeather);
 
   useEffect(() => {
@@ -76,10 +78,13 @@ export function TodayScreen() {
         </View>
       </View>
 
-      <View style={styles.heroCta}>
+      <Pressable
+        style={({ pressed }) => [styles.heroCta, pressed && styles.heroCtaPressed]}
+        onPress={() => navigation.navigate("Snap" as never)}
+      >
         <Text style={styles.heroCtaTitle}>오늘의 한 컷 남기기</Text>
         <Text style={styles.heroCtaHint}>지금 한 컷 남기면 페르소나가 바로 자라요.</Text>
-      </View>
+      </Pressable>
 
       <View style={styles.weatherCard}>
         <View style={styles.weatherTop}>
@@ -204,6 +209,7 @@ const styles = StyleSheet.create({
   },
   streakBadgeText: { color: colors.ink, fontWeight: "900", fontSize: 13 },
   heroCta: { padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.ink, ...shadows.card },
+  heroCtaPressed: { opacity: 0.88 },
   heroCtaTitle: { color: colors.white, fontWeight: "900", fontSize: 16 },
   heroCtaHint: { color: "rgba(255,255,255,0.78)", fontWeight: "700", fontSize: 12, marginTop: 4 },
   weatherCard: {
