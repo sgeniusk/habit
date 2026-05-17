@@ -110,7 +110,7 @@ export function MeetScreen() {
       </View>
 
       {topSuggestion ? (
-        <View style={styles.card}>
+        <View style={[styles.card, styles.suggestCard]}>
           <View style={styles.cardHeader}>
             <Sparkles size={16} color={colors.leaf} />
             <Text style={styles.cardEyebrow}>AI 모임 제안</Text>
@@ -260,6 +260,11 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     gap: spacing.sm,
     ...shadows.card
+  },
+  suggestCard: {
+    backgroundColor: colors.leafSoft,
+    borderColor: colors.mint,
+    borderRadius: radii.xl
   },
   cardHeader: { flexDirection: "row", alignItems: "center", gap: 6 },
   cardEyebrow: { ...typography.eyebrow, color: colors.leaf, textTransform: "uppercase" },
