@@ -13,6 +13,7 @@ export type Preferences = {
   outfit: string;
   roomScene: string;
   roomDecor: string[];
+  roomMood: string;
 };
 
 const defaultPreferences: Preferences = {
@@ -21,7 +22,8 @@ const defaultPreferences: Preferences = {
   roomItem: "원목 책상",
   outfit: "집중 후드",
   roomScene: "room-warm",
-  roomDecor: ["item-plant", "item-rug"]
+  roomDecor: ["item-plant", "item-rug"],
+  roomMood: "day"
 };
 
 type PreferencesContextValue = {
@@ -33,6 +35,7 @@ type PreferencesContextValue = {
   setOutfit(item: string): void;
   setRoomScene(scene: string): void;
   toggleRoomDecor(decor: string): void;
+  setRoomMood(mood: string): void;
 };
 
 const Context = createContext<PreferencesContextValue | null>(null);
@@ -95,6 +98,10 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const setRoomMood = useCallback((mood: string) => {
+    setPreferences((current) => ({ ...current, roomMood: mood }));
+  }, []);
+
   return (
     <Context.Provider
       value={{
@@ -105,7 +112,8 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         setRoomItem,
         setOutfit,
         setRoomScene,
-        toggleRoomDecor
+        toggleRoomDecor,
+        setRoomMood
       }}
     >
       {children}
@@ -134,7 +142,9 @@ function mergePreferences(raw: string): Preferences {
         typeof parsed.roomScene === "string" ? parsed.roomScene : defaultPreferences.roomScene,
       roomDecor: Array.isArray(parsed.roomDecor)
         ? parsed.roomDecor.filter((item): item is string => typeof item === "string")
-        : defaultPreferences.roomDecor
+        : defaultPreferences.roomDecor,
+      roomMood:
+        typeof parsed.roomMood === "string" ? parsed.roomMood : defaultPreferences.roomMood
     };
   } catch {
     return defaultPreferences;
