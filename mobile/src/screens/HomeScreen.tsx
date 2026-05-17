@@ -70,6 +70,11 @@ export function HomeScreen() {
         <Text style={styles.title}>페르소나의 집</Text>
       </View>
 
+      <View style={styles.toneCard}>
+        <Text style={styles.sectionTitle}>페르소나의 방</Text>
+        <IsoRoom category={activePersona.category} level={activeLevel} />
+      </View>
+
       <View style={styles.heroCard}>
         <View style={styles.featuredBadge}>
           <Sparkles size={12} color={colors.ink} />
@@ -128,11 +133,6 @@ export function HomeScreen() {
             <Text style={styles.toneOptionHint}>담백하고 기록 중심 말투</Text>
           </Pressable>
         </View>
-      </View>
-
-      <View style={styles.toneCard}>
-        <Text style={styles.sectionTitle}>페르소나의 방</Text>
-        <IsoRoom category={activePersona.category} level={activeLevel} />
       </View>
 
       <View style={styles.collectionHeader}>
