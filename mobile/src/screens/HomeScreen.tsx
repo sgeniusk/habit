@@ -1,11 +1,11 @@
 // 집 탭. 대표 페르소나 영역 + 페르소나 컬렉션 + 말투 톤 토글.
 import { useMemo, useState } from "react";
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Sparkles } from "lucide-react-native";
 
 import { FormiAvatar } from "../components/FormiAvatar";
+import { IsoRoom } from "../components/IsoRoom";
 import { findPersonaByCategory, personaCatalog } from "../data/personaCatalog";
-import { roomImageFor, roomScenes } from "../lib/formiAssets";
 import { usePreferences } from "../lib/PreferencesContext";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { localize } from "../lib/i18n";
@@ -17,24 +17,10 @@ import {
 } from "../lib/personaIdentity";
 import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 
-// 방 분위기 (조명) — 방 위에 얹는 반투명 색 오버레이
-const roomMoods = [
-  { id: "day", label: "낮" },
-  { id: "dusk", label: "노을" },
-  { id: "night", label: "밤" }
-];
-const moodOverlay: Record<string, string | null> = {
-  day: null,
-  dusk: "rgba(255, 146, 64, 0.22)",
-  night: "rgba(24, 32, 72, 0.42)"
-};
-
 export function HomeScreen() {
   const { records } = useSnapRecords();
-  const { preferences, setVoiceMode, setRoomScene, setRoomMood } = usePreferences();
+  const { preferences, setVoiceMode } = usePreferences();
   const voiceMode = preferences.voiceMode;
-  const roomScene = preferences.roomScene;
-  const roomMood = preferences.roomMood;
 
   const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null);
 
@@ -145,53 +131,8 @@ export function HomeScreen() {
       </View>
 
       <View style={styles.toneCard}>
-        <Text style={styles.sectionTitle}>방 꾸미기</Text>
-        <View style={styles.roomPreview}>
-          <Image
-            source={roomImageFor(roomScene)}
-            style={StyleSheet.absoluteFill}
-            resizeMode="cover"
-          />
-          <View style={styles.roomCharacter}>
-            <FormiAvatar category={activePersona.category} level={activeLevel} size={132} />
-          </View>
-          {moodOverlay[roomMood] ? (
-            <View
-              style={[StyleSheet.absoluteFill, { backgroundColor: moodOverlay[roomMood]! }]}
-              pointerEvents="none"
-            />
-          ) : null}
-        </View>
-
-        <Text style={styles.roomPickerLabel}>방 배경</Text>
-        <View style={styles.chipRow}>
-          {roomScenes.map((scene) => (
-            <Pressable
-              key={scene.id}
-              style={[styles.chip, roomScene === scene.id && styles.chipActive]}
-              onPress={() => setRoomScene(scene.id)}
-            >
-              <Text style={[styles.chipText, roomScene === scene.id && styles.chipTextActive]}>
-                {scene.label}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
-
-        <Text style={styles.roomPickerLabel}>분위기</Text>
-        <View style={styles.chipRow}>
-          {roomMoods.map((mood) => (
-            <Pressable
-              key={mood.id}
-              style={[styles.chip, roomMood === mood.id && styles.chipActive]}
-              onPress={() => setRoomMood(mood.id)}
-            >
-              <Text style={[styles.chipText, roomMood === mood.id && styles.chipTextActive]}>
-                {mood.label}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
+        <Text style={styles.sectionTitle}>페르소나의 방</Text>
+        <IsoRoom category={activePersona.category} level={activeLevel} />
       </View>
 
       <View style={styles.collectionHeader}>
@@ -364,29 +305,5 @@ const styles = StyleSheet.create({
   },
   chipActive: { borderColor: colors.leaf, backgroundColor: colors.leafSoft },
   chipText: { color: colors.ink, fontWeight: "800", fontSize: 13 },
-  chipTextActive: { color: colors.leaf },
-  roomPreview: {
-    aspectRatio: 1,
-    width: "100%",
-    borderRadius: radii.md,
-    overflow: "hidden",
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.line,
-    position: "relative"
-  },
-  roomCharacter: {
-    position: "absolute",
-    bottom: "8%",
-    left: "50%",
-    marginLeft: -66,
-    width: 132,
-    alignItems: "center"
-  },
-  roomPickerLabel: {
-    color: colors.muted,
-    fontWeight: "800",
-    fontSize: 12,
-    marginTop: 6
-  }
+  chipTextActive: { color: colors.leaf }
 });
