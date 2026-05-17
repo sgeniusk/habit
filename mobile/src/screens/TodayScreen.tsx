@@ -2,9 +2,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Check, CloudRain, MapPin, Snowflake, Sun, Wind, X } from "lucide-react-native";
+import { Check, X } from "lucide-react-native";
 
 import { FormiAvatar } from "../components/FormiAvatar";
+import { WeatherScene } from "../components/WeatherScene";
 import { findPersonaByCategory } from "../data/personaCatalog";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { buildAdvisories } from "../lib/advisory";
@@ -23,14 +24,6 @@ const categoryLabelsKo: Record<string, string> = {
   cleaning: "정리",
   selfcare: "셀프케어",
   hobby: "취미"
-};
-
-const conditionLabelsKo: Record<WeatherSnapshot["condition"], string> = {
-  clear: "맑음",
-  cloudy: "흐림",
-  rain: "비",
-  snow: "눈",
-  unknown: "날씨"
 };
 
 const placeLabelsKo: Record<string, string> = {
@@ -117,19 +110,8 @@ export function TodayScreen() {
         <Text style={styles.heroCtaHint}>지금 한 컷 남기면 페르소나가 바로 자라요.</Text>
       </Pressable>
 
-      <View style={styles.weatherCard}>
-        <View style={styles.weatherTop}>
-          <WeatherIcon condition={weather.condition} />
-          <View style={styles.weatherTexts}>
-            <Text style={styles.weatherTemp}>
-              {weather.temperatureC}도 · {conditionLabelsKo[weather.condition]}
-            </Text>
-            <View style={styles.weatherPlaceRow}>
-              <MapPin size={12} color={colors.muted} />
-              <Text style={styles.weatherPlace}>{weather.placeLabel}</Text>
-            </View>
-          </View>
-        </View>
+      <WeatherScene weather={weather} />
+      <View style={styles.metricsCard}>
         <View style={styles.weatherMetrics}>
           <WeatherMetric label="습도" value={`${weather.humidity}%`} />
           <WeatherMetric label="자외선" value={`${weather.uvIndex}`} accent={weather.uvIndex >= 6} />
@@ -271,19 +253,6 @@ function ModalMeta({ label, value }: { label: string; value: string }) {
   );
 }
 
-function WeatherIcon({ condition }: { condition: WeatherSnapshot["condition"] }) {
-  if (condition === "rain") {
-    return <CloudRain size={26} color={colors.blue} />;
-  }
-  if (condition === "snow") {
-    return <Snowflake size={26} color={colors.blue} />;
-  }
-  if (condition === "cloudy") {
-    return <Wind size={26} color={colors.muted} />;
-  }
-  return <Sun size={26} color={colors.gold} />;
-}
-
 function WeatherMetric({
   label,
   value,
@@ -333,19 +302,13 @@ const styles = StyleSheet.create({
   heroCtaPressed: { opacity: 0.88 },
   heroCtaTitle: { color: colors.white, fontWeight: "900", fontSize: 16 },
   heroCtaHint: { color: "rgba(255,255,255,0.78)", fontWeight: "700", fontSize: 12, marginTop: 4 },
-  weatherCard: {
-    padding: spacing.lg,
+  metricsCard: {
+    padding: spacing.md,
     borderRadius: radii.lg,
     backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.line,
-    gap: spacing.md
+    borderColor: colors.line
   },
-  weatherTop: { flexDirection: "row", alignItems: "center", gap: 12 },
-  weatherTexts: { gap: 2 },
-  weatherTemp: { color: colors.ink, fontWeight: "900", fontSize: 16 },
-  weatherPlaceRow: { flexDirection: "row", alignItems: "center", gap: 4 },
-  weatherPlace: { color: colors.muted, fontWeight: "700", fontSize: 12 },
   weatherMetrics: { flexDirection: "row", gap: 6 },
   metric: {
     flex: 1,
