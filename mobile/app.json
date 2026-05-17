@@ -42,7 +42,8 @@
       "expo-image-picker",
       "expo-location",
       "expo-notifications",
-      "expo-asset"
+      "expo-asset",
+      "expo-web-browser"
     ],
     "extra": {
       "router": {}

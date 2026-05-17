@@ -6,8 +6,10 @@ import { Sparkles } from "lucide-react-native";
 import { FormiAvatar } from "../components/FormiAvatar";
 import { IsoRoom } from "../components/IsoRoom";
 import { findPersonaByCategory, personaCatalog } from "../data/personaCatalog";
+import { useAuth } from "../lib/AuthContext";
 import { usePreferences } from "../lib/PreferencesContext";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
+import { isSupabaseConfigured } from "../lib/supabase";
 import { localize } from "../lib/i18n";
 import { buildPersonaSummaries } from "../lib/personaEngine";
 import {
@@ -20,6 +22,7 @@ import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 export function HomeScreen() {
   const { records } = useSnapRecords();
   const { preferences, setVoiceMode } = usePreferences();
+  const { isLoggedIn, signInWithKakao, signOut } = useAuth();
   const voiceMode = preferences.voiceMode;
 
   const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null);
@@ -134,6 +137,40 @@ export function HomeScreen() {
           </Pressable>
         </View>
       </View>
+
+      {isSupabaseConfigured ? (
+        <View style={styles.accountCard}>
+          {isLoggedIn ? (
+            <>
+              <View style={styles.accountText}>
+                <Text style={styles.accountTitle}>로그인됨</Text>
+                <Text style={styles.accountHint}>기록이 계정에 안전하게 보관돼요.</Text>
+              </View>
+              <Pressable
+                style={({ pressed }) => [styles.signOutButton, pressed && styles.pressed]}
+                onPress={signOut}
+              >
+                <Text style={styles.signOutText}>로그아웃</Text>
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <View style={styles.accountText}>
+                <Text style={styles.accountTitle}>기록을 안전하게</Text>
+                <Text style={styles.accountHint}>
+                  카카오로 로그인하면 폰을 바꿔도 페르소나가 따라와요.
+                </Text>
+              </View>
+              <Pressable
+                style={({ pressed }) => [styles.kakaoButton, pressed && styles.pressed]}
+                onPress={signInWithKakao}
+              >
+                <Text style={styles.kakaoButtonText}>카카오로 로그인</Text>
+              </Pressable>
+            </>
+          )}
+        </View>
+      ) : null}
 
       <View style={styles.collectionHeader}>
         <Text style={styles.sectionTitle}>보유 페르소나</Text>
@@ -253,6 +290,35 @@ const styles = StyleSheet.create({
     borderColor: colors.line,
     gap: spacing.sm
   },
+  accountCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.line
+  },
+  accountText: { flex: 1, gap: 2 },
+  accountTitle: { color: colors.ink, fontWeight: "600", fontSize: 14 },
+  accountHint: { color: colors.muted, fontWeight: "400", fontSize: 11, lineHeight: 16 },
+  kakaoButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: radii.sm,
+    backgroundColor: "#FEE500"
+  },
+  kakaoButtonText: { color: "#191600", fontWeight: "700", fontSize: 13 },
+  signOutButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: radii.sm,
+    borderWidth: 1,
+    borderColor: colors.line
+  },
+  signOutText: { color: colors.muted, fontWeight: "600", fontSize: 13 },
+  pressed: { opacity: 0.85 },
   sectionTitle: { ...typography.h3, color: colors.ink },
   toneRow: { flexDirection: "row", gap: 8 },
   toneOption: {

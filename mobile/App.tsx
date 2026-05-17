@@ -5,6 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { ErrorBoundary } from "./src/components/ErrorBoundary";
+import { AuthProvider } from "./src/lib/AuthContext";
 import { PreferencesProvider } from "./src/lib/PreferencesContext";
 import { SnapRecordsProvider } from "./src/lib/SnapRecordsContext";
 import { HomeScreen } from "./src/screens/HomeScreen";
@@ -20,6 +21,7 @@ export default function App() {
     <ErrorBoundary>
       <SafeAreaProvider>
         <PreferencesProvider>
+          <AuthProvider>
           <SnapRecordsProvider>
             <NavigationContainer>
               <StatusBar style="auto" />
@@ -40,6 +42,7 @@ export default function App() {
               </Tab.Navigator>
             </NavigationContainer>
           </SnapRecordsProvider>
+          </AuthProvider>
         </PreferencesProvider>
       </SafeAreaProvider>
     </ErrorBoundary>
