@@ -1,6 +1,6 @@
 // 오늘 탭. streak + 대표 페르소나 + 위치 날씨/미세먼지/자외선 + 페르소나 챙김 알림.
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Check, CloudRain, MapPin, Snowflake, Sun, Wind } from "lucide-react-native";
 
@@ -136,12 +136,23 @@ export function TodayScreen() {
         ) : (
           records.slice(0, 5).map((record) => (
             <View key={record.id} style={styles.recordRow}>
-              <Text style={styles.recordCategory}>
-                {categoryLabelsKo[record.category] ?? record.category}
-              </Text>
-              <Text style={styles.recordMemo} numberOfLines={1}>
-                {record.memo ?? "스냅 기록"}
-              </Text>
+              {record.imageUrl ? (
+                <Image source={{ uri: record.imageUrl }} style={styles.recordThumb} />
+              ) : (
+                <View style={[styles.recordThumb, styles.recordThumbEmpty]}>
+                  <Text style={styles.recordThumbEmoji}>
+                    {record.sticker?.split(" ")[0] ?? "🌱"}
+                  </Text>
+                </View>
+              )}
+              <View style={styles.recordBody}>
+                <Text style={styles.recordCategory}>
+                  {categoryLabelsKo[record.category] ?? record.category}
+                </Text>
+                <Text style={styles.recordMemo} numberOfLines={1}>
+                  {record.memo ?? "스냅 기록"}
+                </Text>
+              </View>
             </View>
           ))
         )}
@@ -288,7 +299,22 @@ const styles = StyleSheet.create({
   sectionTitle: { ...typography.h3, color: colors.ink },
   timelineEmpty: { color: colors.muted, fontWeight: "700", fontSize: 13 },
   recordRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  recordThumb: {
+    width: 46,
+    height: 46,
+    borderRadius: radii.md,
+    backgroundColor: colors.background
+  },
+  recordThumbEmpty: {
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.line
+  },
+  recordThumbEmoji: { fontSize: 20 },
+  recordBody: { flex: 1, gap: 3 },
   recordCategory: {
+    alignSelf: "flex-start",
     paddingVertical: 3,
     paddingHorizontal: 8,
     borderRadius: radii.pill,
@@ -298,5 +324,5 @@ const styles = StyleSheet.create({
     fontSize: 11,
     overflow: "hidden"
   },
-  recordMemo: { flex: 1, color: colors.ink, fontWeight: "700", fontSize: 13 }
+  recordMemo: { color: colors.ink, fontWeight: "700", fontSize: 13 }
 });
