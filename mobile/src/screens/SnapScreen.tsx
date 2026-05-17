@@ -23,6 +23,7 @@ import {
   stickerOptions
 } from "../data/personaCatalog";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
+import { filterOverlay } from "../lib/snapFilters";
 import { persistPickedImage } from "../lib/imagePersistence";
 import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 import type { HabitCategory, PlaceType, ProofStampId, SnapRecord } from "../types/habit";
@@ -150,7 +151,15 @@ export function SnapScreen() {
 
       <View style={styles.preview}>
         {pickedUri ? (
-          <Image source={{ uri: pickedUri }} style={styles.previewImage} resizeMode="cover" />
+          <>
+            <Image source={{ uri: pickedUri }} style={styles.previewImage} resizeMode="cover" />
+            {filterOverlay(selectedFilter) ? (
+              <View
+                style={[StyleSheet.absoluteFill, filterOverlay(selectedFilter)!]}
+                pointerEvents="none"
+              />
+            ) : null}
+          </>
         ) : (
           <View style={styles.previewPlaceholder}>
             <FormiAvatar category={category} level={3} size={108} />

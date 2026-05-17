@@ -11,6 +11,7 @@ import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { buildAdvisories } from "../lib/advisory";
 import { localize } from "../lib/i18n";
 import { buildPersonaSummaries } from "../lib/personaEngine";
+import { filterOverlay } from "../lib/snapFilters";
 import { countConsecutiveSnapDays } from "../lib/streakEngine";
 import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 import { demoWeather, fetchWeatherSnapshot, type WeatherSnapshot } from "../lib/weather";
@@ -154,7 +155,15 @@ export function TodayScreen() {
               onPress={() => setSelectedRecord(record)}
             >
               {record.imageUrl ? (
-                <Image source={{ uri: record.imageUrl }} style={styles.recordThumb} />
+                <View style={styles.recordThumb}>
+                  <Image
+                    source={{ uri: record.imageUrl }}
+                    style={styles.recordThumbImage}
+                  />
+                  {filterOverlay(record.filter) ? (
+                    <View style={[StyleSheet.absoluteFill, filterOverlay(record.filter)!]} />
+                  ) : null}
+                </View>
               ) : (
                 <View style={[styles.recordThumb, styles.recordThumbEmpty]}>
                   <Text style={styles.recordThumbEmoji}>
@@ -207,11 +216,21 @@ function RecordDetailModal({
                 </Pressable>
               </View>
               {record.imageUrl ? (
-                <Image
-                  source={{ uri: record.imageUrl }}
-                  style={styles.modalImage}
-                  resizeMode="cover"
-                />
+                <View style={styles.modalImage}>
+                  <Image
+                    source={{ uri: record.imageUrl }}
+                    style={styles.modalImageInner}
+                    resizeMode="cover"
+                  />
+                  {filterOverlay(record.filter) ? (
+                    <View style={[StyleSheet.absoluteFill, filterOverlay(record.filter)!]} />
+                  ) : null}
+                  {record.sticker ? (
+                    <View style={styles.modalSticker}>
+                      <Text style={styles.modalStickerText}>{record.sticker}</Text>
+                    </View>
+                  ) : null}
+                </View>
               ) : (
                 <View style={[styles.modalImage, styles.modalImageEmpty]}>
                   <Text style={styles.modalImageEmptyText}>사진 없이 남긴 기록</Text>
@@ -376,8 +395,10 @@ const styles = StyleSheet.create({
     width: 46,
     height: 46,
     borderRadius: radii.md,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
+    overflow: "hidden"
   },
+  recordThumbImage: { width: "100%", height: "100%" },
   recordThumbEmpty: {
     alignItems: "center",
     justifyContent: "center",
@@ -432,10 +453,24 @@ const styles = StyleSheet.create({
     width: "100%",
     aspectRatio: 1,
     borderRadius: radii.md,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
+    overflow: "hidden"
   },
+  modalImageInner: { width: "100%", height: "100%" },
   modalImageEmpty: { alignItems: "center", justifyContent: "center" },
   modalImageEmptyText: { color: colors.muted, fontWeight: "700", fontSize: 13 },
+  modalSticker: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: radii.pill,
+    backgroundColor: "rgba(255, 255, 255, 0.94)",
+    borderWidth: 1,
+    borderColor: colors.ink
+  },
+  modalStickerText: { color: colors.ink, fontWeight: "900", fontSize: 12 },
   modalDate: { color: colors.muted, fontWeight: "800", fontSize: 12 },
   modalMemo: { color: colors.ink, fontWeight: "700", fontSize: 14, lineHeight: 20 },
   modalMetaRow: { flexDirection: "row", gap: 8 },
