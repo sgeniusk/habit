@@ -47,7 +47,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "kakao",
-        options: { redirectTo: REDIRECT_URL, skipBrowserRedirect: true }
+        options: {
+          redirectTo: REDIRECT_URL,
+          skipBrowserRedirect: true,
+          // 닉네임만 요청 — 이메일은 비즈니스 인증이 필요해 제외한다
+          scopes: "profile_nickname"
+        }
       });
       if (error || !data.url) return;
       const result = await WebBrowser.openAuthSessionAsync(data.url, REDIRECT_URL);
