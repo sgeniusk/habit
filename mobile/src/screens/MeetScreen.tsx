@@ -1,8 +1,16 @@
 // 모임 탭. AI 제안 → 초대 생성 → 링크 복사 → 수락 미리보기 → 첫 스냅 미션 → 공동 페르소나 성장.
 import { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 import * as Clipboard from "expo-clipboard";
-import { CheckCircle2, Clipboard as ClipboardIcon, Sparkles, Trophy, UserPlus, Users } from "lucide-react-native";
+import {
+  CheckCircle2,
+  Clipboard as ClipboardIcon,
+  Send,
+  Sparkles,
+  Trophy,
+  UserPlus,
+  Users
+} from "lucide-react-native";
 
 import { FormiAvatar } from "../components/FormiAvatar";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
@@ -42,6 +50,18 @@ export function MeetScreen() {
     if (!session) return;
     await Clipboard.setStringAsync(session.invite.inviteUrl);
     flashToast("초대 링크를 복사했어요.");
+  }
+
+  async function shareInvite() {
+    if (!session) return;
+    const title = localize(session.invite.roomTitle, "ko");
+    try {
+      await Share.share({
+        message: `${title}에 초대할게요. 같이 생활 스냅 남기며 페르소나를 키워요 🌱 ${session.invite.inviteUrl}`
+      });
+    } catch {
+      // 공유 취소나 실패는 조용히 넘어간다.
+    }
   }
 
   function previewAccept() {
@@ -121,6 +141,10 @@ export function MeetScreen() {
           </Text>
           <Text style={styles.cardBody}>{localize(session.invite.description, "ko")}</Text>
           <Text style={styles.inviteUrl}>{session.invite.inviteUrl}</Text>
+          <Pressable style={styles.primaryButton} onPress={shareInvite}>
+            <Send size={15} color={colors.white} />
+            <Text style={styles.primaryButtonText}>초대 보내기</Text>
+          </Pressable>
           <Pressable style={styles.secondaryButton} onPress={copyInviteLink}>
             <ClipboardIcon size={15} color={colors.ink} />
             <Text style={styles.secondaryButtonText}>초대 링크 복사</Text>
