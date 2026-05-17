@@ -27,6 +27,17 @@ const categoryLabelsKo: Record<string, string> = {
   hobby: "취미"
 };
 
+// 분야별 색 — 기록 카드의 왼쪽 컬러 바와 카테고리 라벨에 쓴다.
+const categoryColor: Record<string, string> = {
+  study: "#3d9a6e",
+  exercise: "#c06858",
+  meal: "#c89840",
+  reading: "#6f8bb0",
+  cleaning: "#7cc4a4",
+  selfcare: "#b487a8",
+  hobby: "#d2925f"
+};
+
 const placeLabelsKo: Record<string, string> = {
   home: "집",
   library: "도서관",
@@ -92,15 +103,18 @@ export function TodayScreen() {
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <View style={styles.topStrip}>
-        <View>
-          <Text style={styles.eyebrow}>Today</Text>
-          <Text style={styles.title}>오늘의 기록</Text>
+      <View>
+        <Text style={styles.eyebrow}>Today</Text>
+        <Text style={styles.title}>오늘의 기록</Text>
+      </View>
+
+      <View style={styles.streakCard}>
+        <Text style={styles.streakNum}>{streakDays}</Text>
+        <View style={styles.streakText}>
+          <Text style={styles.streakLabel}>연속 기록 일수</Text>
+          <Text style={styles.streakSub}>오늘 한 컷 남기면 계속 이어져요</Text>
         </View>
-        <View style={styles.streakBadge}>
-          <Check size={16} color={colors.ink} />
-          <Text style={styles.streakBadgeText}>{streakDays}일</Text>
-        </View>
+        <Check size={18} color={colors.gold} />
       </View>
 
       <Pressable
@@ -141,46 +155,50 @@ export function TodayScreen() {
         <Text style={styles.heroActivity}>{featuredActivity}.</Text>
       </View>
 
-      <View style={styles.timeline}>
+      <View style={styles.recordSection}>
         <Text style={styles.sectionTitle}>오늘 남긴 기록</Text>
         {records.length === 0 ? (
-          <Text style={styles.timelineEmpty}>
-            아직 기록이 없어요. 스냅 탭에서 첫 한 컷을 남겨봐요.
-          </Text>
+          <View style={styles.emptyCard}>
+            <Text style={styles.timelineEmpty}>
+              아직 기록이 없어요. 스냅 탭에서 첫 한 컷을 남겨봐요.
+            </Text>
+          </View>
         ) : (
-          records.slice(0, 5).map((record) => (
-            <Pressable
-              key={record.id}
-              style={({ pressed }) => [styles.recordRow, pressed && styles.recordRowPressed]}
-              onPress={() => setSelectedRecord(record)}
-            >
-              {record.imageUrl ? (
-                <View style={styles.recordThumb}>
-                  <Image
-                    source={{ uri: record.imageUrl }}
-                    style={styles.recordThumbImage}
-                  />
-                  {filterOverlay(record.filter) ? (
-                    <View style={[StyleSheet.absoluteFill, filterOverlay(record.filter)!]} />
-                  ) : null}
-                </View>
-              ) : (
-                <View style={[styles.recordThumb, styles.recordThumbEmpty]}>
-                  <Text style={styles.recordThumbEmoji}>
-                    {record.sticker?.split(" ")[0] ?? "🌱"}
+          records.slice(0, 5).map((record) => {
+            const tint = categoryColor[record.category] ?? colors.leaf;
+            return (
+              <Pressable
+                key={record.id}
+                style={({ pressed }) => [styles.recordCard, pressed && styles.recordRowPressed]}
+                onPress={() => setSelectedRecord(record)}
+              >
+                <View style={[styles.recordBar, { backgroundColor: tint }]} />
+                <View style={styles.recordBody}>
+                  <Text style={[styles.recordCategory, { color: tint }]}>
+                    {categoryLabelsKo[record.category] ?? record.category}
                   </Text>
+                  <Text style={styles.recordMemo} numberOfLines={2}>
+                    {record.memo ?? "스냅 기록"}
+                  </Text>
+                  <Text style={styles.recordMeta}>{formatRecordDate(record.createdAt)}</Text>
                 </View>
-              )}
-              <View style={styles.recordBody}>
-                <Text style={styles.recordCategory}>
-                  {categoryLabelsKo[record.category] ?? record.category}
-                </Text>
-                <Text style={styles.recordMemo} numberOfLines={1}>
-                  {record.memo ?? "스냅 기록"}
-                </Text>
-              </View>
-            </Pressable>
-          ))
+                {record.imageUrl ? (
+                  <View style={styles.recordThumb}>
+                    <Image source={{ uri: record.imageUrl }} style={styles.recordThumbImage} />
+                    {filterOverlay(record.filter) ? (
+                      <View style={[StyleSheet.absoluteFill, filterOverlay(record.filter)!]} />
+                    ) : null}
+                  </View>
+                ) : (
+                  <View style={[styles.recordThumb, styles.recordThumbEmpty]}>
+                    <Text style={styles.recordThumbEmoji}>
+                      {record.sticker?.split(" ")[0] ?? "🌱"}
+                    </Text>
+                  </View>
+                )}
+              </Pressable>
+            );
+          })
         )}
       </View>
 
@@ -302,21 +320,20 @@ function advisoryToneStyle(tone: "info" | "caution" | "warn") {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   content: { padding: spacing.lg, gap: spacing.md },
-  topStrip: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between" },
   eyebrow: { ...typography.eyebrow, color: colors.leaf, textTransform: "uppercase" },
   title: { ...typography.title, color: colors.ink },
-  streakBadge: {
+  streakCard: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: radii.pill,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.line
+    gap: 14,
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    backgroundColor: colors.goldSoft
   },
-  streakBadgeText: { color: colors.ink, fontWeight: "700", fontSize: 13 },
+  streakNum: { fontSize: 30, fontWeight: "700", color: colors.gold, lineHeight: 32 },
+  streakText: { flex: 1 },
+  streakLabel: { color: colors.ink, fontWeight: "600", fontSize: 14 },
+  streakSub: { color: colors.muted, fontWeight: "400", fontSize: 11, marginTop: 2 },
   heroCta: { padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.ink, ...shadows.card },
   heroCtaPressed: { opacity: 0.88 },
   heroCtaTitle: { color: colors.white, fontWeight: "700", fontSize: 16 },
@@ -380,45 +397,42 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   heroActivity: { color: colors.ink, fontWeight: "700", fontSize: 14, textAlign: "center" },
-  timeline: {
+  recordSection: { gap: 10 },
+  sectionTitle: { ...typography.h3, color: colors.ink },
+  emptyCard: {
     padding: spacing.lg,
     borderRadius: radii.lg,
     backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.line,
-    gap: 10
+    borderColor: colors.line
   },
-  sectionTitle: { ...typography.h3, color: colors.ink },
-  timelineEmpty: { color: colors.muted, fontWeight: "700", fontSize: 13 },
-  recordRow: { flexDirection: "row", alignItems: "center", gap: 10 },
+  timelineEmpty: { color: colors.muted, fontWeight: "400", fontSize: 13, lineHeight: 19 },
+  recordCard: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    backgroundColor: colors.white,
+    borderRadius: radii.lg,
+    overflow: "hidden",
+    ...shadows.soft
+  },
+  recordBar: { width: 4 },
   recordThumb: {
-    width: 46,
-    height: 46,
-    borderRadius: radii.md,
+    width: 58,
     backgroundColor: colors.background,
     overflow: "hidden"
   },
   recordThumbImage: { width: "100%", height: "100%" },
-  recordThumbEmpty: {
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: colors.line
-  },
-  recordThumbEmoji: { fontSize: 20 },
-  recordBody: { flex: 1, gap: 3 },
+  recordThumbEmpty: { alignItems: "center", justifyContent: "center" },
+  recordThumbEmoji: { fontSize: 22 },
+  recordBody: { flex: 1, gap: 3, padding: 12 },
   recordCategory: {
-    alignSelf: "flex-start",
-    paddingVertical: 3,
-    paddingHorizontal: 8,
-    borderRadius: radii.pill,
-    backgroundColor: colors.leafSoft,
-    color: colors.leaf,
     fontWeight: "700",
-    fontSize: 11,
-    overflow: "hidden"
+    fontSize: 9,
+    letterSpacing: 0.6,
+    textTransform: "uppercase"
   },
-  recordMemo: { color: colors.ink, fontWeight: "700", fontSize: 13 },
+  recordMemo: { color: colors.inkSoft, fontWeight: "500", fontSize: 12.5, lineHeight: 17 },
+  recordMeta: { color: colors.faint, fontWeight: "400", fontSize: 10, marginTop: 1 },
   recordRowPressed: { opacity: 0.6 },
   modalBackdrop: {
     flex: 1,
