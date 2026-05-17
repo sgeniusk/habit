@@ -13,3 +13,6 @@ android/
 .env.local
 .env.*.local
 .DS_Store
+
+# local env (Supabase keys)
+.env
