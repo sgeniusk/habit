@@ -5,12 +5,7 @@ import { Sparkles } from "lucide-react-native";
 
 import { FormiAvatar } from "../components/FormiAvatar";
 import { findPersonaByCategory, personaCatalog } from "../data/personaCatalog";
-import {
-  decorImageFor,
-  roomDecors,
-  roomImageFor,
-  roomScenes
-} from "../lib/formiAssets";
+import { roomImageFor, roomScenes } from "../lib/formiAssets";
 import { usePreferences } from "../lib/PreferencesContext";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { localize } from "../lib/i18n";
@@ -24,10 +19,9 @@ import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 
 export function HomeScreen() {
   const { records } = useSnapRecords();
-  const { preferences, setVoiceMode, setRoomScene, toggleRoomDecor } = usePreferences();
+  const { preferences, setVoiceMode, setRoomScene } = usePreferences();
   const voiceMode = preferences.voiceMode;
   const roomScene = preferences.roomScene;
-  const roomDecor = preferences.roomDecor;
 
   const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null);
 
@@ -145,34 +139,6 @@ export function HomeScreen() {
             style={StyleSheet.absoluteFill}
             resizeMode="cover"
           />
-          {roomDecor.includes("item-rug") ? (
-            <Image
-              source={decorImageFor("item-rug")}
-              style={styles.decorRug}
-              resizeMode="contain"
-            />
-          ) : null}
-          {roomDecor.includes("item-shelf") ? (
-            <Image
-              source={decorImageFor("item-shelf")}
-              style={styles.decorShelf}
-              resizeMode="contain"
-            />
-          ) : null}
-          {roomDecor.includes("item-lamp") ? (
-            <Image
-              source={decorImageFor("item-lamp")}
-              style={styles.decorLamp}
-              resizeMode="contain"
-            />
-          ) : null}
-          {roomDecor.includes("item-plant") ? (
-            <Image
-              source={decorImageFor("item-plant")}
-              style={styles.decorPlant}
-              resizeMode="contain"
-            />
-          ) : null}
           <View style={styles.roomCharacter}>
             <FormiAvatar category={activePersona.category} level={activeLevel} size={132} />
           </View>
@@ -191,25 +157,6 @@ export function HomeScreen() {
               </Text>
             </Pressable>
           ))}
-        </View>
-
-        <Text style={styles.roomPickerLabel}>꾸미기 아이템</Text>
-        <View style={styles.chipRow}>
-          {roomDecors.map((decor) => {
-            const on = roomDecor.includes(decor.id);
-            return (
-              <Pressable
-                key={decor.id}
-                style={[styles.chip, on && styles.chipActive]}
-                onPress={() => toggleRoomDecor(decor.id)}
-              >
-                <Text style={[styles.chipText, on && styles.chipTextActive]}>
-                  {on ? "✓ " : ""}
-                  {decor.label}
-                </Text>
-              </Pressable>
-            );
-          })}
         </View>
       </View>
 
@@ -402,17 +349,6 @@ const styles = StyleSheet.create({
     width: 132,
     alignItems: "center"
   },
-  decorRug: {
-    position: "absolute",
-    bottom: "5%",
-    left: "50%",
-    marginLeft: -94,
-    width: 188,
-    height: 70
-  },
-  decorShelf: { position: "absolute", bottom: "10%", left: "5%", width: 96, height: 116 },
-  decorLamp: { position: "absolute", bottom: "11%", right: "5%", width: 56, height: 132 },
-  decorPlant: { position: "absolute", bottom: "5%", right: "17%", width: 62, height: 92 },
   roomPickerLabel: {
     color: colors.muted,
     fontWeight: "800",
