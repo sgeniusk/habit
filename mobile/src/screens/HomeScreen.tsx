@@ -1,12 +1,13 @@
-// 집 탭. 대표 페르소나 영역 + 페르소나 컬렉션 + 말투 톤 토글.
-import { useMemo, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+// 집 탭. 대표 페르소나 영역 + 페르소나 컬렉션 + 매일 스냅 알림 + 말투 톤 토글.
+import { useCallback, useMemo, useState } from "react";
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import { Sparkles } from "lucide-react-native";
 
 import { FormiAvatar } from "../components/FormiAvatar";
 import { IsoRoom } from "../components/IsoRoom";
 import { findPersonaByCategory, personaCatalog } from "../data/personaCatalog";
 import { useAuth } from "../lib/AuthContext";
+import { requestNotificationPermission } from "../lib/notifications";
 import { usePreferences } from "../lib/PreferencesContext";
 import { useSnapRecords } from "../lib/SnapRecordsContext";
 import { isSupabaseConfigured } from "../lib/supabase";
@@ -19,13 +20,39 @@ import {
 } from "../lib/personaIdentity";
 import { colors, radii, shadows, spacing, typography } from "../lib/tokens";
 
+// 매일 스냅 알림 시간 프리셋
+const REMINDER_PRESETS = [
+  { label: "아침 8시", hour: 8, minute: 0 },
+  { label: "오후 1시", hour: 13, minute: 0 },
+  { label: "저녁 7시", hour: 19, minute: 0 },
+  { label: "밤 9시", hour: 21, minute: 0 }
+];
+
 export function HomeScreen() {
   const { records } = useSnapRecords();
-  const { preferences, setVoiceMode } = usePreferences();
-  const { isLoggedIn, signInWithKakao, signOut } = useAuth();
+  const { preferences, setVoiceMode, setReminderEnabled, setReminderTime } = usePreferences();
+  const { isLoggedIn, signInWithGoogle, signOut } = useAuth();
   const voiceMode = preferences.voiceMode;
 
   const [selectedPersonaId, setSelectedPersonaId] = useState<string | null>(null);
+
+  // 알림을 켤 때만 권한을 요청하고, 거부되면 켜지 않는다.
+  const handleToggleReminder = useCallback(
+    async (value: boolean) => {
+      if (value) {
+        const granted = await requestNotificationPermission();
+        if (!granted) {
+          Alert.alert(
+            "알림 권한이 필요해요",
+            "기기 설정에서 Formi 알림을 켜면 매일 스냅 알림을 받을 수 있어요."
+          );
+          return;
+        }
+      }
+      setReminderEnabled(value);
+    },
+    [setReminderEnabled]
+  );
 
   const summaries = useMemo(() => buildPersonaSummaries(records), [records]);
   const featuredPersona = useMemo(
@@ -158,17 +185,61 @@ export function HomeScreen() {
               <View style={styles.accountText}>
                 <Text style={styles.accountTitle}>기록을 안전하게</Text>
                 <Text style={styles.accountHint}>
-                  카카오로 로그인하면 폰을 바꿔도 페르소나가 따라와요.
+                  구글로 로그인하면 폰을 바꿔도 페르소나가 따라와요.
                 </Text>
               </View>
               <Pressable
-                style={({ pressed }) => [styles.kakaoButton, pressed && styles.pressed]}
-                onPress={signInWithKakao}
+                style={({ pressed }) => [styles.googleButton, pressed && styles.pressed]}
+                onPress={signInWithGoogle}
               >
-                <Text style={styles.kakaoButtonText}>카카오로 로그인</Text>
+                <Text style={styles.googleButtonText}>구글로 로그인</Text>
               </Pressable>
             </>
           )}
+        </View>
+      ) : null}
+
+      {Platform.OS !== "web" ? (
+        <View style={styles.reminderCard}>
+          <View style={styles.reminderHeader}>
+            <View style={styles.accountText}>
+              <Text style={styles.accountTitle}>매일 스냅 알림</Text>
+              <Text style={styles.accountHint}>
+                정한 시간에 오늘의 스냅을 잊지 않게 알려줘요.
+              </Text>
+            </View>
+            <Switch
+              value={preferences.reminderEnabled}
+              onValueChange={handleToggleReminder}
+              trackColor={{ false: colors.line, true: colors.leaf }}
+            />
+          </View>
+          {preferences.reminderEnabled ? (
+            <View style={styles.reminderTimes}>
+              {REMINDER_PRESETS.map((preset) => {
+                const active =
+                  preferences.reminderHour === preset.hour &&
+                  preferences.reminderMinute === preset.minute;
+                return (
+                  <Pressable
+                    key={preset.label}
+                    style={({ pressed }) => [
+                      styles.timeChip,
+                      active && styles.timeChipActive,
+                      pressed && styles.pressed
+                    ]}
+                    onPress={() => setReminderTime(preset.hour, preset.minute)}
+                  >
+                    <Text
+                      style={[styles.timeChipText, active && styles.timeChipTextActive]}
+                    >
+                      {preset.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          ) : null}
         </View>
       ) : null}
 
@@ -303,13 +374,15 @@ const styles = StyleSheet.create({
   accountText: { flex: 1, gap: 2 },
   accountTitle: { color: colors.ink, fontWeight: "600", fontSize: 14 },
   accountHint: { color: colors.muted, fontWeight: "400", fontSize: 11, lineHeight: 16 },
-  kakaoButton: {
+  googleButton: {
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: radii.sm,
-    backgroundColor: "#FEE500"
+    backgroundColor: colors.paper,
+    borderWidth: 1,
+    borderColor: colors.line
   },
-  kakaoButtonText: { color: "#191600", fontWeight: "700", fontSize: 13 },
+  googleButtonText: { color: colors.ink, fontWeight: "600", fontSize: 13 },
   signOutButton: {
     paddingVertical: 10,
     paddingHorizontal: 14,
@@ -318,6 +391,27 @@ const styles = StyleSheet.create({
     borderColor: colors.line
   },
   signOutText: { color: colors.muted, fontWeight: "600", fontSize: 13 },
+  reminderCard: {
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.line,
+    gap: spacing.md
+  },
+  reminderHeader: { flexDirection: "row", alignItems: "center", gap: 12 },
+  reminderTimes: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  timeChip: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: radii.sm,
+    backgroundColor: colors.paper,
+    borderWidth: 1,
+    borderColor: colors.line
+  },
+  timeChipActive: { backgroundColor: colors.leafSoft, borderColor: colors.leaf },
+  timeChipText: { color: colors.muted, fontWeight: "600", fontSize: 12 },
+  timeChipTextActive: { color: colors.leafDeep },
   pressed: { opacity: 0.85 },
   sectionTitle: { ...typography.h3, color: colors.ink },
   toneRow: { flexDirection: "row", gap: 8 },

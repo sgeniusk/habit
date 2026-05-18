@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useState, type React
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import type { PersonaVoiceMode } from "../types/habit";
+import { cancelDailyReminder, scheduleDailyReminder } from "./notifications";
 
 const PREFERENCES_KEY = "formi:preferences";
 
@@ -14,6 +15,10 @@ export type Preferences = {
   roomScene: string;
   roomDecor: string[];
   roomMood: string;
+  // 매일 스냅 알림 설정
+  reminderEnabled: boolean;
+  reminderHour: number;
+  reminderMinute: number;
 };
 
 const defaultPreferences: Preferences = {
@@ -23,7 +28,10 @@ const defaultPreferences: Preferences = {
   outfit: "집중 후드",
   roomScene: "room-warm",
   roomDecor: ["item-plant", "item-rug"],
-  roomMood: "day"
+  roomMood: "day",
+  reminderEnabled: false,
+  reminderHour: 21,
+  reminderMinute: 0
 };
 
 type PreferencesContextValue = {
@@ -36,6 +44,8 @@ type PreferencesContextValue = {
   setRoomScene(scene: string): void;
   toggleRoomDecor(decor: string): void;
   setRoomMood(mood: string): void;
+  setReminderEnabled(value: boolean): void;
+  setReminderTime(hour: number, minute: number): void;
 };
 
 const Context = createContext<PreferencesContextValue | null>(null);
@@ -102,6 +112,29 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     setPreferences((current) => ({ ...current, roomMood: mood }));
   }, []);
 
+  const setReminderEnabled = useCallback((value: boolean) => {
+    setPreferences((current) => ({ ...current, reminderEnabled: value }));
+  }, []);
+
+  const setReminderTime = useCallback((hour: number, minute: number) => {
+    setPreferences((current) => ({ ...current, reminderHour: hour, reminderMinute: minute }));
+  }, []);
+
+  // 알림 설정이 바뀌면 기기 예약을 다시 맞춘다.
+  useEffect(() => {
+    if (!loaded) return;
+    if (preferences.reminderEnabled) {
+      scheduleDailyReminder(preferences.reminderHour, preferences.reminderMinute);
+    } else {
+      cancelDailyReminder();
+    }
+  }, [
+    loaded,
+    preferences.reminderEnabled,
+    preferences.reminderHour,
+    preferences.reminderMinute
+  ]);
+
   return (
     <Context.Provider
       value={{
@@ -113,7 +146,9 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
         setOutfit,
         setRoomScene,
         toggleRoomDecor,
-        setRoomMood
+        setRoomMood,
+        setReminderEnabled,
+        setReminderTime
       }}
     >
       {children}
@@ -144,7 +179,23 @@ function mergePreferences(raw: string): Preferences {
         ? parsed.roomDecor.filter((item): item is string => typeof item === "string")
         : defaultPreferences.roomDecor,
       roomMood:
-        typeof parsed.roomMood === "string" ? parsed.roomMood : defaultPreferences.roomMood
+        typeof parsed.roomMood === "string" ? parsed.roomMood : defaultPreferences.roomMood,
+      reminderEnabled:
+        typeof parsed.reminderEnabled === "boolean"
+          ? parsed.reminderEnabled
+          : defaultPreferences.reminderEnabled,
+      reminderHour:
+        typeof parsed.reminderHour === "number" &&
+        parsed.reminderHour >= 0 &&
+        parsed.reminderHour <= 23
+          ? parsed.reminderHour
+          : defaultPreferences.reminderHour,
+      reminderMinute:
+        typeof parsed.reminderMinute === "number" &&
+        parsed.reminderMinute >= 0 &&
+        parsed.reminderMinute <= 59
+          ? parsed.reminderMinute
+          : defaultPreferences.reminderMinute
     };
   } catch {
     return defaultPreferences;

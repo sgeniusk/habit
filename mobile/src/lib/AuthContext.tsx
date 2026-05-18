@@ -1,4 +1,4 @@
-// 인증 컨텍스트. Supabase 세션을 추적하고 카카오 로그인 / 로그아웃을 제공한다.
+// 인증 컨텍스트. Supabase 세션을 추적하고 구글 로그인 / 로그아웃을 제공한다.
 // Supabase 미설정 시 모두 비활성(no-op) — 앱은 로컬 전용으로 동작한다.
 import {
   createContext,
@@ -15,14 +15,14 @@ import { supabase } from "./supabase";
 
 WebBrowser.maybeCompleteAuthSession();
 
-// 카카오 로그인 후 앱으로 돌아오는 딥링크. Supabase URL Configuration 에 등록해야 한다.
+// 소셜 로그인 후 앱으로 돌아오는 딥링크. Supabase URL Configuration 에 등록해야 한다.
 const REDIRECT_URL = "formi://auth-callback";
 
 type AuthContextValue = {
   session: Session | null;
-  // 익명이 아닌 진짜 계정(카카오 등)으로 로그인된 상태
+  // 익명이 아닌 진짜 계정(구글 등)으로 로그인된 상태
   isLoggedIn: boolean;
-  signInWithKakao(): Promise<void>;
+  signInWithGoogle(): Promise<void>;
   signOut(): Promise<void>;
 };
 
@@ -42,16 +42,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signInWithKakao = useCallback(async () => {
+  const signInWithGoogle = useCallback(async () => {
     if (!supabase) return;
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "kakao",
+        provider: "google",
         options: {
           redirectTo: REDIRECT_URL,
-          skipBrowserRedirect: true,
-          // 닉네임만 요청 — 이메일은 비즈니스 인증이 필요해 제외한다
-          scopes: "profile_nickname"
+          skipBrowserRedirect: true
         }
       });
       if (error || !data.url) return;
@@ -89,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   return (
-    <Context.Provider value={{ session, isLoggedIn, signInWithKakao, signOut }}>
+    <Context.Provider value={{ session, isLoggedIn, signInWithGoogle, signOut }}>
       {children}
     </Context.Provider>
   );
