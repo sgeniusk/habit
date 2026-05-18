@@ -7,15 +7,17 @@ const ANDROID_CHANNEL_ID = "daily-reminder";
 // 웹에서는 로컬 알림 예약이 불안정해 모두 비활성(no-op)으로 둔다.
 const isSupported = Platform.OS !== "web";
 
-// 앱이 켜져 있을 때도 배너를 보여준다.
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false
-  })
-});
+// 앱이 켜져 있을 때도 배너를 보여준다. 웹에서는 건너뛴다.
+if (isSupported) {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowBanner: true,
+      shouldShowList: true,
+      shouldPlaySound: false,
+      shouldSetBadge: false
+    })
+  });
+}
 
 // 알림 권한을 요청하고 최종 허용 여부를 돌려준다.
 export async function requestNotificationPermission(): Promise<boolean> {
